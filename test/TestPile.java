@@ -7,8 +7,8 @@ public class TestPile {
 	public static void main(String[] args) {
 		TestPile monTest = new TestPile();
 		monTest.testConstructeur1();
-		//monTest.testConstructeur2();
-		//monTest.testConstructeur3();
+		monTest.testConstructeur2();
+		monTest.testConstructeur3();
 	}
 	private void testConstructeur1() {
 		Pile p = new Pile();
@@ -30,6 +30,6 @@ public class TestPile {
 		p.ajouterCarte(new Carte(10));
 		p.ajouterCarte(new Carte(11));
 		p.ajouterCarte(new Carte(12));
-		Test.test(p.toString().compareTo("{(10,3),(11,5),(12,1)}")==0, "test de la méthode\"toString\"");
+		Test.test(p.toString().compareTo("{(10,3),(11,5),(12,1)}")==0, "test de la mï¿½thode\"toString\"");
 	}
 }
