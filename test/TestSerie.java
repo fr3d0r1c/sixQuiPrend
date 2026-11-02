@@ -7,14 +7,14 @@ public class TestSerie {
 	public static void main(String[] args) {
 		TestSerie monTest = new TestSerie();
 		monTest.testConstructeur1();
-		//monTest.testConstructeur2();
-		//monTest.testConstructeur3();
-		//monTest.testConstructeur4();
-		//monTest.testConstructeur5();
+		monTest.testConstructeur2();
+		monTest.testConstructeur3();
+		monTest.testConstructeur4();
+		monTest.testConstructeur5();
 	}
 	private void testConstructeur1() {
 		Serie s = new Serie();
-		Test.test(s.nombreDeCartes()==0, "test de la création d'une série");
+		Test.test(s.nombreDeCartes()==0, "test de la crï¿½ation d'une sï¿½rie");
 	}
 	private void testConstructeur2() {
 		Serie s = new Serie();
@@ -27,7 +27,7 @@ public class TestSerie {
 		s.ajouterCarte(new Carte(11));
 		s.ajouterCarte(new Carte(12));
 		Test.test(s.toString().compareTo("[(10,3),(11,5),(12,1)]")==0, 
-				"test de l'affichage d'une série");
+				"test de l'affichage d'une sï¿½rie");
 	}
 	private void testConstructeur4() {
 		Serie s = new Serie();
