@@ -7,15 +7,15 @@ public class TestMain {
 	public static void main(String[] args) {
 		TestMain monTest = new TestMain();
 		monTest.testConstructeur1();
-		//monTest.testConstructeur2();
-		//monTest.testConstructeur3();
-		//monTest.testConstructeur4();
-		//monTest.testConstructeur5();
-		//monTest.testConstructeur6();
+		monTest.testConstructeur2();
+		monTest.testConstructeur3();
+		monTest.testConstructeur4();
+		monTest.testConstructeur5();
+		monTest.testConstructeur6();
 	}
 	private void testConstructeur1() {
 		Main m = new Main();
-		Test.test(m.nombreDeCartes()==0, "test de la création d'une main");
+		Test.test(m.nombreDeCartes()==0, "test de la crï¿½ation d'une main");
 	}
 	private void testConstructeur2() {
 		Main m = new Main();
@@ -37,9 +37,9 @@ public class TestMain {
 		m.ajouterCarte(new Carte(11));
 		m.ajouterCarte(new Carte(12));
 		Carte c2 = m.prendreUneCarte(0);
-		Test.test(c1==c2, "test pour prendre la première carte de la main");
+		Test.test(c1==c2, "test pour prendre la premiï¿½re carte de la main");
 		Test.test(m.toString().compareTo("[(11,5),(12,1)]")==0, 
-				"test du reste de la main après avoir pris la première carte de la main");
+				"test du reste de la main aprï¿½s avoir pris la premiï¿½re carte de la main");
 	}
 	private void testConstructeur5() {
 		Main m = new Main();
@@ -48,9 +48,9 @@ public class TestMain {
 		m.ajouterCarte(c1);
 		m.ajouterCarte(new Carte(12));
 		Carte c2 = m.prendreUneCarte(1);
-		Test.test(c1==c2, "test pour prendre la deuxième carte de la main");
+		Test.test(c1==c2, "test pour prendre la deuxiï¿½me carte de la main");
 		Test.test(m.toString().compareTo("[(10,3),(12,1)]")==0, 
-				"test du reste de la main après avoir pris la deuxième carte de la main");
+				"test du reste de la main aprï¿½s avoir pris la deuxiï¿½me carte de la main");
 	}
 	private void testConstructeur6() {
 		Main m = new Main();
@@ -59,8 +59,8 @@ public class TestMain {
 		m.ajouterCarte(new Carte(11));
 		m.ajouterCarte(c1);
 		Carte c2 = m.prendreUneCarte(2);
-		Test.test(c1==c2, "test pour prendre la troisième carte de la main");
+		Test.test(c1==c2, "test pour prendre la troisiï¿½me carte de la main");
 		Test.test(m.toString().compareTo("[(10,3),(11,5)]")==0, 
-				"test du reste de la main après avoir pris la deuxième carte de la main");
+				"test du reste de la main aprï¿½s avoir pris la deuxiï¿½me carte de la main");
 	}
 }
