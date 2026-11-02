@@ -7,11 +7,11 @@ public class TestPioche {
 	public static void main(String[] args) {
 		TestPioche monTest = new TestPioche();
 		monTest.testConstructeur1();
-		//monTest.testConstructeur2();
-		//monTest.testConstructeur3();
-		//monTest.testConstructeur4();
-		//monTest.testConstructeur5();
-		//monTest.testConstructeur6();
+		monTest.testConstructeur2();
+		monTest.testConstructeur3();
+		monTest.testConstructeur4();
+		monTest.testConstructeur5();
+		monTest.testConstructeur6();
 	}
 	private void testConstructeur1() {
 		Pioche p = new Pioche();
@@ -29,14 +29,14 @@ public class TestPioche {
 		int i=1;
 		while(i<=104 && result)
 			result&=trouve[i++];
-		Test.test(result, "test de la présence de toutes les cartes");
+		Test.test(result, "test de la prï¿½sence de toutes les cartes");
 	}
 	private void testConstructeur3() {
 		Pioche p = new Pioche();
 		Test.test(p.nombreCartesDisponibles()==104, "test du nombre initial de cartes disponibles");
-		Test.test(p.estDisponible(0), "test de la disponibilité de la première carte de la pioche");
+		Test.test(p.estDisponible(0), "test de la disponibilitï¿½ de la premiï¿½re carte de la pioche");
 		Test.test(p.estDisponible(-1)==false && p.estDisponible(104)==false,
-				"test du paramètre de \"estDisponible\"");
+				"test du paramï¿½tre de \"estDisponible\"");
 	}	
 	private void testConstructeur4() {
 		Pioche p = new Pioche();
@@ -44,8 +44,8 @@ public class TestPioche {
 		Carte c2 = p.getCarte(1);
 		Carte c3 = p.piocher();
 		Carte c4 = p.piocher();
-		Test.test(c1==c3 && !p.estDisponible(0), "test de la pioche du premier élément");
-		Test.test(c2==c4 && !p.estDisponible(1), "test de la pioche du deuxième élément");
+		Test.test(c1==c3 && !p.estDisponible(0), "test de la pioche du premier ï¿½lï¿½ment");
+		Test.test(c2==c4 && !p.estDisponible(1), "test de la pioche du deuxiï¿½me ï¿½lï¿½ment");
 	}
 	private void testConstructeur5() {
 		Pioche p = new Pioche();
@@ -58,6 +58,6 @@ public class TestPioche {
 		for(int i=0; i<104; i++)
 			p.piocher();
 		p.reinitialiser();
-		Test.test(p.piocher()==p.getCarte(0), "test de la réinitialisation de la pioche");	
+		Test.test(p.piocher()==p.getCarte(0), "test de la rï¿½initialisation de la pioche");	
 	}
 }
