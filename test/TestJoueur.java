@@ -6,8 +6,8 @@ public class TestJoueur {
 	public static void main(String[] args) {
 		TestJoueur monTest = new TestJoueur();
 		monTest.testConstructeur1();
-		//monTest.testConstructeur2();
-		//monTest.testConstructeur3();
+		monTest.testConstructeur2();
+		monTest.testConstructeur3();
 	}
 	private void testConstructeur1() {
 		Joueur j = new Joueur("Arthur", false);
