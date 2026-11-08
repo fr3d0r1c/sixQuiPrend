@@ -36,6 +36,19 @@ public class Serie {
         this.nombreCartes = 0;
     }
 
+    public int calculPoints() {
+        int somme = 0;
+
+        for (int i = 0; i < nombreCartes; i++) {
+            Carte carte = tableau[i];
+            int nombreTetes = carte.getNombreTetesDeBoeuf();
+
+            somme += nombreTetes;
+        }
+
+        return somme;
+    }
+
     @Override
     public String toString() {
         String resultat = "[";
