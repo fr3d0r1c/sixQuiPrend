@@ -57,7 +57,7 @@ public class Application {
 				cartesChoisies[i] = choisirCarte(joueurs[i]);
 			}
 
-			System.out.println("Cartes choisies :");
+			System.out.println("=== CARTES CHOISIES ===");
 
 			for (int i = 0; i < nbJoueurs; i++) {
 				System.out.println(
@@ -83,7 +83,7 @@ public class Application {
 				}
 			}
 
-			System.out.println("Ordre de jeu :");
+			System.out.println("=== ORDRE DE JEU ===");
 
 			for (int i = 0; i < nbJoueurs; i++) {
 				System.out.println(
@@ -95,8 +95,17 @@ public class Application {
 
 			for (int i = 0; i < nbJoueurs; i++) {
 				deposerCarte(cartesChoisies[i], joueurs[i]);
+				
+				for (int s = 0; s < 4; s++) {
+					System.out.println(
+						"Serie " + s + " : "
+						+ jeu.getSerie(s)
+					);
+				}
 			}
 		}
+
+		System.out.println("=== FIN DE MANCHE ===");
 
 		calculerLesPoints();
 
@@ -111,19 +120,40 @@ public class Application {
 			int pointsPile = pile.calculPoints();
 			joueur.ajouterPoints(pointsPile);
 			pile.vider();
+
+			System.out.println(
+				joueur.getNom()
+				+ " recupere "
+				+ pointsPile
+				+ " points"
+			);
+
+			System.out.println(
+				joueur.getNom()
+				+ " total : "
+				+ joueur.getNombreDePoints()
+			);
 		}
 	}
 
 	private void initialiserManche() {
 		Pioche pioche = jeu.getPioche();
-		
 		pioche.reinitialiser();
+
 		for (int i = 0; i < 4; i++) {
 			Serie serie = jeu.getSerie(i);
 			Carte carte = pioche.piocher();
 
 			serie.vider();
 			serie.ajouterCarte(carte);
+		}
+
+		System.out.println("=== DEBUT DE MANCHE ===");
+
+		for (int i = 0; i < 4; i++) {
+			System.out.println(
+				"Serie " + i + " : " + jeu.getSerie(i)
+			);
 		}
 
 		for (int i = 0; i < nbJoueurs; i++) {
@@ -170,11 +200,11 @@ public class Application {
 			System.out.println(main);
 			System.out.print("Choisissez une carte : ");
 			int choix = clavier.nextInt();
-			while (choix < 0 || choix >= nombreCartes) {
+			while (choix < 1 || choix >= nombreCartes) {
 				System.out.print("Choix invalide. Réessayez : ");
 				choix = clavier.nextInt();
 			}
-			carteChoisie = main.prendreUneCarte(choix);
+			carteChoisie = main.prendreUneCarte(choix - 1);
 		}
 
 		return carteChoisie;
@@ -205,6 +235,11 @@ public class Application {
 	}
 	
 	private void deposerCarte(Carte c, Joueur j) {
+		System.out.println(
+			j.getNom()
+			+ " depose "
+			+ c
+		);
 		// on déposer sur l'un des séries la carte 'c' du joueur 'j'
 		int meilleureSerie = -1;
 		int meilleureValeur = -1;
@@ -224,21 +259,29 @@ public class Application {
 			int choix = choisirSerie(j);
 			prendreToutesLesCartesDeLaSerie(j, choix);
 			jeu.getSerie(choix).ajouterCarte(c);
+			System.out.println(
+				j.getNom()
+				+ " prend la serie "
+				+ choix
+			);
 		} else {
 			Serie serie = jeu.getSerie(meilleureSerie);
 			if (serie.nombreDeCartes() == 5) {
 				prendreToutesLesCartesDeLaSerie(j, meilleureSerie);
 				serie.ajouterCarte(c);
+				System.out.println(
+					j.getNom()
+					+ " prend les 5 cartes de la serie "
+					+ meilleureSerie
+				);
 			} else {
 				serie.ajouterCarte(c);
+				System.out.println(
+					c + " ajoutee a la serie "
+					+ meilleureSerie
+				);
 			}
 		}
-
-		System.out.println(
-			j.getNom()
-			+ " dépose "
-			+ c
-		);
 
 	}
 	
