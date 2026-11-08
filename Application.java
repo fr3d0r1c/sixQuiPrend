@@ -57,6 +57,16 @@ public class Application {
 				cartesChoisies[i] = choisirCarte(joueurs[i]);
 			}
 
+			System.out.println("Cartes choisies :");
+
+			for (int i = 0; i < nbJoueurs; i++) {
+				System.out.println(
+					joueurs[i].getNom()
+					+ " joue "
+					+ cartesChoisies[i]
+				);
+			}
+
 			for (int i = 0; i < nbJoueurs - 1; i++) {
 				for (int j = i + 1; j < nbJoueurs; j++) {
 
@@ -71,6 +81,16 @@ public class Application {
 						}
 
 				}
+			}
+
+			System.out.println("Ordre de jeu :");
+
+			for (int i = 0; i < nbJoueurs; i++) {
+				System.out.println(
+					joueurs[i].getNom()
+					+ " -> "
+					+ cartesChoisies[i]
+				);
 			}
 
 			for (int i = 0; i < nbJoueurs; i++) {
@@ -213,6 +233,12 @@ public class Application {
 				serie.ajouterCarte(c);
 			}
 		}
+
+		System.out.println(
+			j.getNom()
+			+ " dépose "
+			+ c
+		);
 
 	}
 	
