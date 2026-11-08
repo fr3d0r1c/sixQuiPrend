@@ -1,0 +1,27 @@
+# Compilation Java
+*.class
+
+# Dossiers de build
+bin/
+build/
+out/
+target/
+
+# VS Code
+.vscode/
+
+# IntelliJ
+.idea/
+*.iml
+
+# Eclipse
+.settings/
+.project
+.classpath
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+# Thumbs.db
