@@ -47,6 +47,39 @@ public class Application {
 		// (les avatars prendront leur carte aléatoirement)
 		// les joueurs jouent chaun leur tour, en fonction de la valeur des cartes jouées
 
+		initialiserManche();
+		Carte[] cartesChoisies = new Carte[nbJoueurs];
+		Joueur[] joueurs = new Joueur[nbJoueurs];
+
+		while(jeu.getJoueur(0).getMain().nombreDeCartes() > 0) {
+			for (int i = 0; i < nbJoueurs; i++) {
+				joueurs[i] = jeu.getJoueur(i);
+				cartesChoisies[i] = choisirCarte(joueurs[i]);
+			}
+
+			for (int i = 0; i < nbJoueurs - 1; i++) {
+				for (int j = i + 1; j < nbJoueurs; j++) {
+
+						if (cartesChoisies[i].getValeur() > cartesChoisies[j].getValeur()) {
+							Carte tempCarte = cartesChoisies[i];
+            				cartesChoisies[i] = cartesChoisies[j];
+							cartesChoisies[j] = tempCarte;
+
+							Joueur tempJoueur = joueurs[i];
+							joueurs[i] = joueurs[j];
+            				joueurs[j] = tempJoueur;
+						}
+
+				}
+			}
+
+			for (int i = 0; i < nbJoueurs; i++) {
+				deposerCarte(cartesChoisies[i], joueurs[i]);
+			}
+		}
+
+		calculerLesPoints();
+
 	}
 
 	private void calculerLesPoints() {
@@ -153,11 +186,48 @@ public class Application {
 	
 	private void deposerCarte(Carte c, Joueur j) {
 		// on déposer sur l'un des séries la carte 'c' du joueur 'j'
+		int meilleureSerie = -1;
+		int meilleureValeur = -1;
+
+		for (int i = 0; i < 4; i++) {
+			int valeurSerie = jeu.getSerie(i).derniereCarte().getValeur();
+
+			if (valeurSerie < c.getValeur()) {
+				if (valeurSerie > meilleureValeur) {
+					meilleureValeur = valeurSerie;
+					meilleureSerie = i;
+				}
+			}
+		}
+
+		if (meilleureSerie == -1) {
+			int choix = choisirSerie(j);
+			prendreToutesLesCartesDeLaSerie(j, choix);
+			jeu.getSerie(choix).ajouterCarte(c);
+		} else {
+			Serie serie = jeu.getSerie(meilleureSerie);
+			if (serie.nombreDeCartes() == 5) {
+				prendreToutesLesCartesDeLaSerie(j, meilleureSerie);
+				serie.ajouterCarte(c);
+			} else {
+				serie.ajouterCarte(c);
+			}
+		}
+
 	}
 	
 	private void prendreToutesLesCartesDeLaSerie(Joueur j, int choix) {
 		// on met toutes les cartes de la série choisie dans
 		// la pile du joueur 'j'
+
+		Serie serie = jeu.getSerie(choix);
+		Pile pile = j.getPile();
+
+		for (int i = 0; i < serie.nombreDeCartes(); i++) {
+			pile.ajouterCarte(serie.getCarte(i));
+		}
+
+		serie.vider();
 	}
 
 	public static void main(String[] args) {
