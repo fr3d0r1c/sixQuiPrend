@@ -156,6 +156,8 @@ public class Application {
 			);
 		}
 
+		System.out.println();
+
 		for (int i = 0; i < nbJoueurs; i++) {
 			Joueur joueur = jeu.getJoueur(i);
 			
@@ -200,7 +202,7 @@ public class Application {
 			System.out.println(main);
 			System.out.print("Choisissez une carte : ");
 			int choix = clavier.nextInt();
-			while (choix < 1 || choix >= nombreCartes) {
+			while (choix < 1 || choix > nombreCartes) {
 				System.out.print("Choix invalide. Réessayez : ");
 				choix = clavier.nextInt();
 			}
@@ -225,7 +227,7 @@ public class Application {
 			System.out.print("Choisissez une série : ");
 			choix = clavier.nextInt();
 
-			while (choix < 0 || choix >= 4) {
+			while (choix < 0 || choix > 4) {
 				System.out.print("Choix invalide. Réessayez : ");
 				choix = clavier.nextInt();
 			}
