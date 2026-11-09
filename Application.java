@@ -192,6 +192,11 @@ public class Application {
 	private Carte choisirCarte(Joueur j) {
 		Main main = j.getMain();
 		int nombreCartes = main.nombreDeCartes();
+		
+		if (nombreCartes == 1) {
+			return main.prendreUneCarte(0);
+		}
+
 		Carte carteChoisie;
 		Random r = new Random();
 
