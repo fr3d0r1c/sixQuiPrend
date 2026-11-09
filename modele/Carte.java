@@ -39,4 +39,16 @@ public class Carte {
     public String toString() {
         return "(" + this.valeur + "," + this.nombreTetesDeBoeuf + ")";
     }
+
+    public String toAscii() {
+        String valeur = String.format("%3d", this.valeur);
+
+        String tetes = String.format("%2d", this.nombreTetesDeBoeuf);
+
+        return 
+            "+---------+\n" +
+            "|   " + valeur + "   |\n" +
+            "|  " + tetes + " 🐂  |\n" +
+            "+---------+";
+    }
 }

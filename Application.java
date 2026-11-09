@@ -164,6 +164,8 @@ public class Application {
 				Carte carte = pioche.piocher();
 				main.ajouterCarte(carte);
 			}
+
+			joueur.getMain().trierMain();
 		}
 	}
 
@@ -310,7 +312,7 @@ public class Application {
 			System.out.println(
 				(i + 1) + 
 				" -> " +
-				main.getCarte(i)
+				main.getCarte(i).toAscii()
 			);
 		}
 	}
