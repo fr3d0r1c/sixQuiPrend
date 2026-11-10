@@ -40,15 +40,13 @@ public class Carte {
         return "(" + this.valeur + "," + this.nombreTetesDeBoeuf + ")";
     }
 
-    public String toAscii() {
-        String valeur = String.format("%3d", this.valeur);
+    public String[] toAsciiLines() {
 
-        String tetes = String.format("%2d", this.nombreTetesDeBoeuf);
-
-        return 
-            "+---------+\n" +
-            "|   " + valeur + "   |\n" +
-            "|  " + tetes + " 🐂  |\n" +
-            "+---------+";
+        return new String[] {
+            "+---------+",
+            String.format("|   %3d   |", getValeur()),
+            String.format("|  TB:%2d  |", getNombreTetesDeBoeuf()),
+            "+---------+"
+        };
     }
 }

@@ -96,12 +96,7 @@ public class Application {
 			for (int i = 0; i < nbJoueurs; i++) {
 				deposerCarte(cartesChoisies[i], joueurs[i]);
 				
-				for (int s = 0; s < 4; s++) {
-					System.out.println(
-						"Serie " + (s + 1) + " : "
-						+ jeu.getSerie(s)
-					);
-				}
+				afficherPlateau();
 			}
 		}
 
@@ -148,13 +143,12 @@ public class Application {
 			serie.ajouterCarte(carte);
 		}
 
-		System.out.println("=== DEBUT DE MANCHE ===");
+		System.out.println();
+		System.out.println("=========================================");
+		System.out.println("           DEBUT DE MANCHE");
+		System.out.println("=========================================");
 
-		for (int i = 0; i < 4; i++) {
-			System.out.println(
-				"Serie " + (i + 1) + " : " + jeu.getSerie(i)
-			);
-		}
+		afficherPlateau();
 
 		for (int i = 0; i < nbJoueurs; i++) {
 			Joueur joueur = jeu.getJoueur(i);
@@ -309,32 +303,150 @@ public class Application {
 		int nombreCartes = main.nombreDeCartes();
 
 		for (int i = 0; i < nombreCartes; i++) {
-			System.out.println(
-				(i + 1) + 
-				" -> " +
-				main.getCarte(i).toAscii()
-			);
+			System.out.print("    " + (i + 1) + "         ");
+		}
+		System.out.println();
+
+		String[][] cartes = new String[nombreCartes][];
+
+		for (int i = 0; i < nombreCartes; i++) {
+			cartes[i] = main.getCarte(i).toAsciiLines();
+		}
+
+		for (int ligne = 0; ligne < 4; ligne++) {
+
+			for (int carte = 0; carte < nombreCartes; carte++) {
+				System.out.print(cartes[carte][ligne] + " ");
+			}
+
+			System.out.println();
 		}
 	}
 
 	private void afficherSeries() {
-		System.out.println("====================================");
-		System.out.println("SERIES");
-		System.out.println("====================================");
+		System.out.println("=========================================");
+		System.out.println("                 PLATEAU");
+		System.out.println("=========================================");
+
+		Serie[] series = new Serie[4];
 
 		for (int i = 0; i < 4; i++) {
-			System.out.println(
-				(i + 1)
-				+ " -> "
-				+ jeu.getSerie(i)
-				+ "    "  
-				+ jeu.getSerie(i).calculPoints() + " points"
+			series[i] = jeu.getSerie(i);
+		} 
+
+		for (int i = 0; i < 4; i++) {
+			System.out.printf("     Serie %-2d        ", i + 1);
+		}
+		System.out.println();
+
+		// Dernière carte de chaque série
+		String[][] cartes = new String[4][];
+
+		for (int i = 0; i < 4; i++) {
+			cartes[i] = series[i]
+				.derniereCarte()
+				.toAsciiLines();
+		}
+
+		for (int ligne = 0; ligne < 4; ligne++) {
+
+			for (int serie = 0; serie < 4; serie++) {
+				System.out.print(cartes[serie][ligne] + "   ");
+			}
+
+			System.out.println();
+		}
+
+		System.out.println();
+
+		// Infos complémentaires
+		for (int i = 0; i < 4; i++) {
+			System.out.printf(
+				"[%d cartes | %d pts]    ",
+				series[i].nombreDeCartes(),
+				series[i].calculPoints()
 			);
-    	}
+		}
+
+		System.out.println();
 
 		System.out.println("====================================");
 
 	}
+
+	private void afficherPlateau() {
+
+    System.out.println();
+    System.out.println("=========================================");
+    System.out.println("                 PLATEAU");
+    System.out.println("=========================================");
+
+    Serie[] series = new Serie[4];
+    String[][] cartes = new String[4][];
+
+    for (int i = 0; i < 4; i++) {
+        series[i] = jeu.getSerie(i);
+        cartes[i] = series[i]
+                .derniereCarte()
+                .toAsciiLines();
+    }
+
+    // Titres
+    for (int i = 0; i < 4; i++) {
+        System.out.printf("     Serie %-2d        ", i + 1);
+    }
+    System.out.println();
+
+    // Cartes ASCII
+    for (int ligne = 0; ligne < 4; ligne++) {
+
+        for (int serie = 0; serie < 4; serie++) {
+            System.out.print(
+                cartes[serie][ligne]
+                + "   "
+            );
+        }
+
+        System.out.println();
+    }
+
+    System.out.println();
+
+    // Nombre de cartes
+    for (int i = 0; i < 4; i++) {
+        System.out.printf(
+            "[%d cartes]     ",
+            series[i].nombreDeCartes()
+        );
+    }
+
+    System.out.println();
+
+    // Nombre de points
+    for (int i = 0; i < 4; i++) {
+        System.out.printf(
+            "[%d points]     ",
+            series[i].calculPoints()
+        );
+    }
+
+    System.out.println();
+    System.out.println();
+
+    // Contenu complet de chaque série
+    for (int i = 0; i < 4; i++) {
+        System.out.println(
+            "Serie "
+            + (i + 1)
+            + " : "
+            + series[i]
+        );
+    }
+
+    System.out.println("=========================================");
+}
+
+
 	public static void main(String[] args) {
 		Application monAppli = new Application();
 		monAppli.jouer();		
