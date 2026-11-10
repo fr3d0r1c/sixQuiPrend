@@ -98,7 +98,7 @@ public class Application {
 				
 				for (int s = 0; s < 4; s++) {
 					System.out.println(
-						"Serie " + s + " : "
+						"Serie " + (s + 1) + " : "
 						+ jeu.getSerie(s)
 					);
 				}
@@ -152,7 +152,7 @@ public class Application {
 
 		for (int i = 0; i < 4; i++) {
 			System.out.println(
-				"Serie " + i + " : " + jeu.getSerie(i)
+				"Serie " + (i+1) + " : " + jeu.getSerie(i)
 			);
 		}
 
@@ -226,19 +226,19 @@ public class Application {
 			choix = r.nextInt(4);
 		} else {
 			for (int i = 0; i < 4; i++) {
-				System.out.println(i + " : " + jeu.getSerie(i));
+				System.out.println((i+1) + " : " + jeu.getSerie(i));
 			}
 			
 			System.out.print("Choisissez une série : ");
 			choix = clavier.nextInt();
 
-			while (choix < 0 || choix > 4) {
+			while (choix < 1 || choix > 4) {
 				System.out.print("Choix invalide. Réessayez : ");
 				choix = clavier.nextInt();
 			}
 		}
 
-		return choix;
+		return choix - 1;
 	}
 	
 	private void deposerCarte(Carte c, Joueur j) {
@@ -269,7 +269,7 @@ public class Application {
 			System.out.println(
 				j.getNom()
 				+ " prend la serie "
-				+ choix
+				+ (choix + 1)
 			);
 		} else {
 			Serie serie = jeu.getSerie(meilleureSerie);
@@ -279,13 +279,13 @@ public class Application {
 				System.out.println(
 					j.getNom()
 					+ " prend les 5 cartes de la serie "
-					+ meilleureSerie
+					+ (meilleureSerie + 1)
 				);
 			} else {
 				serie.ajouterCarte(c);
 				System.out.println(
 					c + " ajoutee a la serie "
-					+ meilleureSerie
+					+ (meilleureSerie + 1)
 				);
 			}
 		}
