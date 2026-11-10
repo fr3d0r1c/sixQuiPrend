@@ -220,27 +220,29 @@ public class Application {
 	
 	private int choisirSerie(Joueur j) {
 		Random r = new Random();
-		int choix;
 
 		if (j.estAvatar()) {
-			choix = r.nextInt(4);
-		} else {
-			for (int i = 0; i < 4; i++) {
-				System.out.println((i+1) + " : " + jeu.getSerie(i));
-			}
-			
-			System.out.print("Choisissez une série : ");
-			choix = clavier.nextInt();
+			return r.nextInt(4);
+		}
 
-			while (choix < 1 || choix > 4) {
-				System.out.print("Choix invalide. Réessayez : ");
-				choix = clavier.nextInt();
-			}
+		int choix;
+
+		for (int i = 0; i < 4; i++) {
+			System.out.println((i + 1) + " : " + jeu.getSerie(i));
+		}
+
+		System.out.print("Choisissez une série : ");
+		choix = clavier.nextInt();
+
+		while (choix < 1 || choix > 4) {
+			System.out.print("Choix invalide. Réessayez : ");
+			choix = clavier.nextInt();
 		}
 
 		return choix - 1;
 	}
-	
+
+
 	private void deposerCarte(Carte c, Joueur j) {
 		System.out.println(
 			j.getNom()
