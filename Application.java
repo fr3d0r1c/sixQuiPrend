@@ -187,11 +187,12 @@ public class Application {
 		Main main = j.getMain();
 		int nombreCartes = main.nombreDeCartes();
 		Carte carteChoisie;
-		Random r = new Random();
+		//Random r = new Random();
 
 		if (j.estAvatar()) {
-			int numCarte = r.nextInt(nombreCartes);
-			carteChoisie = main.prendreUneCarte(numCarte);
+			//int numCarte = r.nextInt(nombreCartes);
+			//carteChoisie = main.prendreUneCarte(numCarte);
+			carteChoisie = choisirCarteBotFacile(j);
 		} else {
 			afficherMain(j);
 			System.out.print("Choisissez une carte : ");
@@ -376,75 +377,79 @@ public class Application {
 
 	private void afficherPlateau() {
 
-    System.out.println();
-    System.out.println("=========================================");
-    System.out.println("                 PLATEAU");
-    System.out.println("=========================================");
+		System.out.println();
+		System.out.println("=========================================");
+		System.out.println("                 PLATEAU");
+		System.out.println("=========================================");
 
-    Serie[] series = new Serie[4];
-    String[][] cartes = new String[4][];
+		Serie[] series = new Serie[4];
+		String[][] cartes = new String[4][];
 
-    for (int i = 0; i < 4; i++) {
-        series[i] = jeu.getSerie(i);
-        cartes[i] = series[i]
-                .derniereCarte()
-                .toAsciiLines();
-    }
+		for (int i = 0; i < 4; i++) {
+			series[i] = jeu.getSerie(i);
+			cartes[i] = series[i]
+					.derniereCarte()
+					.toAsciiLines();
+		}
 
-    // Titres
-    for (int i = 0; i < 4; i++) {
-        System.out.printf("     Serie %-2d        ", i + 1);
-    }
-    System.out.println();
+		// Titres
+		for (int i = 0; i < 4; i++) {
+			System.out.printf("     Serie %-2d        ", i + 1);
+		}
+		System.out.println();
 
-    // Cartes ASCII
-    for (int ligne = 0; ligne < 4; ligne++) {
+		// Cartes ASCII
+		for (int ligne = 0; ligne < 4; ligne++) {
 
-        for (int serie = 0; serie < 4; serie++) {
-            System.out.print(
-                cartes[serie][ligne]
-                + "   "
-            );
-        }
+			for (int serie = 0; serie < 4; serie++) {
+				System.out.print(
+					cartes[serie][ligne]
+					+ "   "
+				);
+			}
 
-        System.out.println();
-    }
+			System.out.println();
+		}
 
-    System.out.println();
+		System.out.println();
 
-    // Nombre de cartes
-    for (int i = 0; i < 4; i++) {
-        System.out.printf(
-            "[%d cartes]     ",
-            series[i].nombreDeCartes()
-        );
-    }
+		// Nombre de cartes
+		for (int i = 0; i < 4; i++) {
+			System.out.printf(
+				"[%d cartes]     ",
+				series[i].nombreDeCartes()
+			);
+		}
 
-    System.out.println();
+		System.out.println();
 
-    // Nombre de points
-    for (int i = 0; i < 4; i++) {
-        System.out.printf(
-            "[%d points]     ",
-            series[i].calculPoints()
-        );
-    }
+		// Nombre de points
+		for (int i = 0; i < 4; i++) {
+			System.out.printf(
+				"[%d points]     ",
+				series[i].calculPoints()
+			);
+		}
 
-    System.out.println();
-    System.out.println();
+		System.out.println();
+		System.out.println();
 
-    // Contenu complet de chaque série
-    for (int i = 0; i < 4; i++) {
-        System.out.println(
-            "Serie "
-            + (i + 1)
-            + " : "
-            + series[i]
-        );
-    }
+		// Contenu complet de chaque série
+		for (int i = 0; i < 4; i++) {
+			System.out.println(
+				"Serie "
+				+ (i + 1)
+				+ " : "
+				+ series[i]
+			);
+		}
 
-    System.out.println("=========================================");
-}
+		System.out.println("=========================================");
+	}
+
+	private Carte choisirCarteBotFacile(Joueur j) {
+		return j.getMain().prendreUneCarte(0);
+	}
 
 
 	public static void main(String[] args) {
