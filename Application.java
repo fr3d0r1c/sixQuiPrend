@@ -94,13 +94,14 @@ public class Application {
 
 			for (int i = 0; i < nbJoueurs; i++) {
 				deposerCarte(cartesChoisies[i], joueurs[i]);
-				
-				for (int s = 0; s < 4; s++) {
-					System.out.println(
-						"Serie " + (s + 1) + " : "
-						+ jeu.getSerie(s)
-					);
-				}
+			}
+
+			System.out.println("=== SÉRIES APRÈS CE TOUR ===");
+			for (int s = 0; s < 4; s++) {
+				System.out.println(
+					"Serie " + (s + 1) + " : "
+					+ jeu.getSerie(s)
+				);
 			}
 		}
 
@@ -233,7 +234,17 @@ public class Application {
 			);
 
 			for (int i = 0; i < 4; i++) {
-				System.out.println((i + 1) + " : " + jeu.getSerie(i));
+				int points = jeu.getSerie(i).calculPoints();
+
+				System.out.println(
+					(i + 1)
+					+ " : "
+					+ jeu.getSerie(i)
+					+ " "
+					+ points
+					+ " tete"
+					+ (points > 1 ? "s" : "")
+				);
 			}
 
 			System.out.print("Choisissez une série : ");
@@ -269,22 +280,30 @@ public class Application {
 
 		if (meilleureSerie == -1) {
 			int choix = choisirSerie(j);
+			int points = jeu.getSerie(choix).calculPoints();
 			prendreToutesLesCartesDeLaSerie(j, choix);
 			jeu.getSerie(choix).ajouterCarte(c);
 			System.out.println(
 				j.getNom()
 				+ " prend la serie "
 				+ (choix + 1)
+				+ " (+" + points
+				+ " tête"
+				+ (points > 1 ? "s" : "") + ")"
 			);
 		} else {
 			Serie serie = jeu.getSerie(meilleureSerie);
 			if (serie.nombreDeCartes() == 5) {
+				int points = serie.calculPoints();
 				prendreToutesLesCartesDeLaSerie(j, meilleureSerie);
 				serie.ajouterCarte(c);
 				System.out.println(
 					j.getNom()
 					+ " prend les 5 cartes de la serie "
 					+ (meilleureSerie + 1)
+					+ " (+" + points
+					+ " tête"
+					+ (points > 1 ? "s" : "") + ")"
 				);
 			} else {
 				serie.ajouterCarte(c);
