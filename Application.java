@@ -24,6 +24,8 @@ public class Application {
 		for (int i = 1; i < nbJoueurs; i++) {
 			jeu.ajouterJoueur(new Joueur("Bot" + i, true, TypeBot.ALEATOIRE));
 		}
+
+		affihcerRegles();
 	}
 	
 	public void jouer() {
@@ -486,7 +488,25 @@ public class Application {
 		}
 	}
 
+	private void affihcerRegles() {
+		Joueur joueur = jeu.getJoueur(0);
 
+		System.out.println("Bienvenue " + joueur.getNom() + " !");
+
+		System.out.println(
+			"But du jeu : ramasser le moins de têtes de boeufs possible"
+		);
+
+		System.out.println(
+			"(23,1) -> Carte numéro 23, 1 tête de boeuf"
+		);
+
+		System.out.println(
+			"La partie se termine dès qu'un joueur dépasse 66 têtes."
+		);
+
+		System.out.println();
+	}
 	public static void main(String[] args) {
 		Application monAppli = new Application();
 		monAppli.jouer();		
