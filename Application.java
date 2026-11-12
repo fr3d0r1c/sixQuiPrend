@@ -7,6 +7,7 @@ public class Application {
 	private Jeu jeu;
 	private int nbJoueurs;
 	private Scanner clavier;
+	Random r = new Random();
 	
 	private void initialisationPartie() {
 		System.out.print("Combien de joueur (2 à 10) ? ");
@@ -198,7 +199,6 @@ public class Application {
 		}
 
 		Carte carteChoisie;
-		Random r = new Random();
 
 		if (j.estAvatar()) {
 			int numCarte = r.nextInt(nombreCartes);
@@ -219,27 +219,28 @@ public class Application {
 	}
 	
 	private int choisirSerie(Joueur j) {
-		Random r = new Random();
+		int choix;
 
 		if (j.estAvatar()) {
 			return r.nextInt(4);
-		}
+		} else {
 
-		int choix;
+			for (int i = 0; i < 4; i++) {
+				System.out.println((i + 1) + " : " + jeu.getSerie(i));
+			}
 
-		for (int i = 0; i < 4; i++) {
-			System.out.println((i + 1) + " : " + jeu.getSerie(i));
-		}
-
-		System.out.print("Choisissez une série : ");
-		choix = clavier.nextInt();
-
-		while (choix < 1 || choix > 4) {
-			System.out.print("Choix invalide. Réessayez : ");
+			System.out.print("Choisissez une série : ");
 			choix = clavier.nextInt();
+
+			while (choix < 1 || choix > 4) {
+				System.out.print("Choix invalide. Réessayez : ");
+				choix = clavier.nextInt();
+			}
+
+			choix = choix - 1;
 		}
 
-		return choix - 1;
+		return choix;
 	}
 
 
