@@ -7,26 +7,22 @@ public class Application {
 	private Jeu jeu;
 	private int nbJoueurs;
 	private Scanner clavier;
-	
+	private Random r = new Random();
+
 	private void initialisationPartie() {
 		System.out.print("Combien de joueur (2 à 10) ? ");
-		nbJoueurs = clavier.nextInt();
-		while (nbJoueurs < 2 || nbJoueurs > 10) {
-			System.out.print("Erreur : Nombre de joueurs invalide. Réessayez : ");
-			nbJoueurs = clavier.nextInt();
-		}
-		clavier.nextLine();
+		nbJoueurs = lireEntier(2, 10);
 
 		jeu = new Jeu(nbJoueurs);
 
 		System.out.print("Bonjour, qui es-tu ? ");
 		String nom = clavier.nextLine();
 
-		Joueur joueur = new Joueur(nom, false);
+		Joueur joueur = new Joueur(nom, false, null);
 		jeu.ajouterJoueur(joueur);
 
 		for (int i = 1; i < nbJoueurs; i++) {
-			jeu.ajouterJoueur(new Joueur("Bot" + i, true));
+			jeu.ajouterJoueur(new Joueur("Bot" + i, true, TypeBot.ALEATOIRE));
 		}
 	}
 	
@@ -38,7 +34,8 @@ public class Application {
 			afficherScores();
 		} while (!partieFinie());
 		System.out.println("LA PARTIE EST FINIE");
-		clavier.close(); 	
+		afficherGagnant();
+		clavier.close();	
 	}
 	
 	private void jouerUneManche() {
@@ -187,46 +184,52 @@ public class Application {
 		Main main = j.getMain();
 		int nombreCartes = main.nombreDeCartes();
 		Carte carteChoisie;
-		//Random r = new Random();
+
+		// Dernière carte : aucun choix possible, on la joue directement
+		if (nombreCartes == 1) {
+			return main.prendreUneCarte(0);
+		}
 
 		if (j.estAvatar()) {
-			//int numCarte = r.nextInt(nombreCartes);
-			//carteChoisie = main.prendreUneCarte(numCarte);
-			carteChoisie = choisirCarteBotFacile(j);
+			switch (j.getTypeBot()) {
+				case ALEATOIRE:
+					int numCarte = r.nextInt(nombreCartes);
+					carteChoisie = main.prendreUneCarte(numCarte);
+					break;
+
+				case FACILE:
+					carteChoisie = choisirCarteBotFacile(j);
+					break;
+
+				default:
+					throw new IllegalStateException("Type de bot non géré : " + j.getTypeBot());
+			}
 		} else {
 			afficherMain(j);
 			System.out.print("Choisissez une carte : ");
-			int choix = clavier.nextInt();
-			while (choix < 1 || choix > nombreCartes) {
-				System.out.print("Choix invalide. Réessayez : ");
-				choix = clavier.nextInt();
-			}
+			int choix = lireEntier(1, nombreCartes);
 			carteChoisie = main.prendreUneCarte(choix - 1);
 		}
 
 		return carteChoisie;
-		
+
 	}
-	
+
 	private int choisirSerie(Joueur j) {
-		Random r = new Random();
 		int choix;
 
 		if (j.estAvatar()) {
 			choix = r.nextInt(4);
+		} else {
+			afficherSeries();
+
+			System.out.print("Choisissez une série (1-4) : ");
+			choix = lireEntier(1, 4);
+
+			choix = choix - 1;
 		}
 
-		afficherSeries();
-
-		System.out.print("Choisissez une série (1-4) : ");
-		choix = clavier.nextInt();
-
-		while (choix < 1 || choix > 4) {
-			System.out.print("Choix invalide. Réessayez : ");
-			choix = clavier.nextInt();
-		}
-
-		return choix - 1;
+		return choix;
 	}
 	
 	private void deposerCarte(Carte c, Joueur j) {
@@ -449,6 +452,38 @@ public class Application {
 
 	private Carte choisirCarteBotFacile(Joueur j) {
 		return j.getMain().prendreUneCarte(0);
+	}
+
+	private void afficherGagnant() {
+		Joueur meilleurJoueur = jeu.getJoueur(0);
+		int ptsWinner = meilleurJoueur.getNombreDePoints();
+
+		for (int i = 1; i < nbJoueurs; i++) {
+			Joueur joueur = jeu.getJoueur(i);
+			int nbPoints = joueur.getNombreDePoints();
+			if (nbPoints < ptsWinner) {
+				ptsWinner = nbPoints;
+				meilleurJoueur = joueur;
+			}
+		}
+
+		System.out.println("Le gagnant est " + meilleurJoueur.getNom() + " avec " + ptsWinner + " points");
+	}
+
+	private int lireEntier(int min, int max) {
+		while (true) {
+			String ligne = clavier.nextLine().trim();
+			try {
+				int nombre = Integer.parseInt(ligne);
+				if (nombre >= min && nombre <= max) {
+					return nombre;
+				}
+			} catch (NumberFormatException e) {
+				// Ignore et réessayer
+			}
+
+			System.out.print("Choix invalide (" + min + " à " + max + "). Réessayez : ");
+		}
 	}
 
 

@@ -6,10 +6,14 @@ public class Joueur {
     private Main maMain;
     private int nombreDePoints;
     private boolean avatar;
+    private TypeBot typeBot;
 
-    public Joueur(String nom, boolean estUnAvatar) {
+    public Joueur(String nom, boolean estUnAvatar, TypeBot typeBot) {
         this.nom = nom;
         this.avatar = estUnAvatar;
+        if (estUnAvatar) {
+            this.typeBot = typeBot;
+        }
         this.nombreDePoints = 0;
         this.maPile = new Pile();
         this.maMain = new Main();
@@ -17,6 +21,10 @@ public class Joueur {
 
     public String getNom() {
         return this.nom;
+    }
+
+    public TypeBot getTypeBot() {
+        return this.typeBot;
     }
 
     public int getNombreDePoints() {
