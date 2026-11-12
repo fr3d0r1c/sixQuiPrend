@@ -11,12 +11,7 @@ public class Application {
 	
 	private void initialisationPartie() {
 		System.out.print("Combien de joueur (2 à 10) ? ");
-		nbJoueurs = clavier.nextInt();
-		while (nbJoueurs < 2 || nbJoueurs > 10) {
-			System.out.print("Erreur : Nombre de joueurs invalide. Réessayez : ");
-			nbJoueurs = clavier.nextInt();
-		}
-		clavier.nextLine();
+		nbJoueurs = lireEntier(2, 10);
 
 		jeu = new Jeu(nbJoueurs);
 
@@ -206,13 +201,17 @@ public class Application {
 		if (j.estAvatar()) {
 			carteChoisie = main.prendreUneCarte(numCarte);
 		} else {
-			System.out.println(main);
-			System.out.print("Choisissez une carte : ");
-			int choix = clavier.nextInt();
-			while (choix < 1 || choix > nombreCartes) {
-				System.out.print("Choix invalide. Réessayez : ");
-				choix = clavier.nextInt();
+			System.out.print("Ta main : ");
+			for (int i = 0; i < nombreCartes; i++) {
+				System.out.print(
+					(i+1) + ":" + main.getCarte(i) + " "
+				);
 			}
+
+			System.out.println();
+
+			System.out.print("Choisissez une carte (1 - " + nombreCartes + "): ");
+			int choix = lireEntier(1, nombreCartes);
 			carteChoisie = main.prendreUneCarte(choix - 1);
 		}
 
@@ -232,12 +231,7 @@ public class Application {
 			}
 
 			System.out.print("Choisissez une série : ");
-			choix = clavier.nextInt();
-
-			while (choix < 1 || choix > 4) {
-				System.out.print("Choix invalide. Réessayez : ");
-				choix = clavier.nextInt();
-			}
+			choix = lireEntier(1, 4);
 
 			choix = choix - 1;
 		}
@@ -325,6 +319,23 @@ public class Application {
 		}
 
 		System.out.println("Le gagnant est " + meilleurJoueur.getNom() + " avec " + ptsWinner + " points");
+	}
+
+	private int lireEntier(int min, int max) {
+		while (true) {
+			String ligne = clavier.nextLine().trim();
+			try {
+				int nombre = Integer.parseInt(ligne);
+				if (nombre >= min && nombre <= max) {
+					return nombre;
+				}
+			} catch (NumberFormatException e) {
+				// Ignore et réessayer
+			}
+
+			System.out.print("Choix invalide (" + min + " à " + max + "). Réessayez : ");
+		}
+
 	}
 
 	public static void main(String[] args) {

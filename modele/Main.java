@@ -44,6 +44,10 @@ public class Main {
         }
     }
 
+    public Carte getCarte(int i) {
+        return this.tableau[i];
+    }
+
     @Override
     public String toString() {
         String resultat = "[";
