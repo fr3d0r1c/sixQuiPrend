@@ -193,6 +193,7 @@ public class Application {
 	private Carte choisirCarte(Joueur j) {
 		Main main = j.getMain();
 		int nombreCartes = main.nombreDeCartes();
+		int numCarte = r.nextInt(nombreCartes);
 		
 		if (nombreCartes == 1) {
 			return main.prendreUneCarte(0);
@@ -201,7 +202,6 @@ public class Application {
 		Carte carteChoisie;
 
 		if (j.estAvatar()) {
-			int numCarte = r.nextInt(nombreCartes);
 			carteChoisie = main.prendreUneCarte(numCarte);
 		} else {
 			System.out.println(main);
