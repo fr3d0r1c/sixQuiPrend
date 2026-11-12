@@ -39,6 +39,7 @@ public class Application {
 			afficherScores();
 		} while (!partieFinie());
 		System.out.println("LA PARTIE EST FINIE");
+		afficherGagnant();
 		clavier.close(); 	
 	}
 	
@@ -161,12 +162,13 @@ public class Application {
 
 		for (int i = 0; i < nbJoueurs; i++) {
 			Joueur joueur = jeu.getJoueur(i);
-			
+			Main main = joueur.getMain();
 			for (int j = 0; j < 10; j++) {
-				Main main = joueur.getMain();
 				Carte carte = pioche.piocher();
 				main.ajouterCarte(carte);
 			}
+			
+			main.trier();
 		}
 	}
 
@@ -307,6 +309,22 @@ public class Application {
 		}
 
 		serie.vider();
+	}
+
+	private void afficherGagnant() {
+		Joueur meilleurJoueur = jeu.getJoueur(0);
+		int ptsWinner = meilleurJoueur.getNombreDePoints();
+
+		for (int i = 0; i < nbJoueurs; i++) {
+			Joueur joueur = jeu.getJoueur(i);
+			int nbPoints = joueur.getNombreDePoints();
+			if (nbPoints < ptsWinner) {
+				ptsWinner = nbPoints;
+				meilleurJoueur = joueur;
+			}
+		}
+
+		System.out.println("Le gagnant est " + meilleurJoueur.getNom() + " avec " + ptsWinner + " points");
 	}
 
 	public static void main(String[] args) {

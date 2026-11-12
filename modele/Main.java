@@ -32,6 +32,18 @@ public class Main {
         return carteRetiree;
     }
 
+    public void trier() {
+        for (int i = 0; i < nombreCartes - 1; i++) {
+            for (int j = i + 1; j < nombreCartes; j++) {
+                if (tableau[i].getValeur() > tableau[j].getValeur()) {
+                    Carte tempCarte = tableau[i];
+                    tableau[i] = tableau[j];
+                    tableau[j] = tempCarte;
+                }
+            }
+        }
+    }
+
     @Override
     public String toString() {
         String resultat = "[";
