@@ -59,4 +59,11 @@ public class Pioche {
 
         return carte;
     }
+
+    @Override
+    public String toString() {
+        return "Pioche : " 
+        + nombreCartesDisponibles() 
+        + " cartes disponibles sur 104.";
+    }
 }
