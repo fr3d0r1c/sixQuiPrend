@@ -120,7 +120,7 @@ public class Application {
 
 			System.out.println(
 				joueur.getNom()
-				+ " recupere "
+				+ " récupère "
 				+ formaterQuantite(pointsPile, UNITE_POINT)
 			);
 
@@ -370,9 +370,9 @@ public class Application {
 		// Infos complémentaires
 		for (int i = 0; i < 4; i++) {
 			System.out.printf(
-				"[%d cartes | %d pts]    ",
-				series[i].nombreDeCartes(),
-				series[i].calculPoints()
+				"[%s | %s]    ",
+				formaterQuantite(series[i].nombreDeCartes(), UNITE_CARTE),
+				formaterQuantite(series[i].calculPoints(), UNITE_TETE)
 			);
 		}
 
@@ -423,8 +423,8 @@ public class Application {
 		// Nombre de cartes
 		for (int i = 0; i < 4; i++) {
 			System.out.printf(
-				"[%d cartes]     ",
-				series[i].nombreDeCartes()
+				"[%s]     ",
+				formaterQuantite(series[i].nombreDeCartes(), UNITE_CARTE)
 			);
 		}
 
@@ -433,8 +433,8 @@ public class Application {
 		// Nombre de points
 		for (int i = 0; i < 4; i++) {
 			System.out.printf(
-				"[%d points]     ",
-				series[i].calculPoints()
+				"[%s]     ",
+				formaterQuantite(series[i].calculPoints(), UNITE_TETE)
 			);
 		}
 
