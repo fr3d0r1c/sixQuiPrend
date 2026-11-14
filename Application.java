@@ -7,6 +7,9 @@ public class Application {
 	private Jeu jeu;
 	private int nbJoueurs;
 	private Scanner clavier;
+	private static final String UNITE_POINT = "pt";
+	private static final String UNITE_TETE = "tête";
+	
 	Random r = new Random();
 	
 	private void initialisationPartie() {
@@ -123,16 +126,14 @@ public class Application {
 
 			System.out.println(
 				joueur.getNom()
-				+ " récupere "
-				+ pointsPile
-				+ " point"
-				+ (pointsPile > 1 ? "s" : "")
+				+ " récupère "
+				+ formaterQuantite(pointsPile, UNITE_POINT)
 			);
 
 			System.out.println(
 				joueur.getNom()
 				+ " total : "
-				+ joueur.getNombreDePoints()
+				+ formaterQuantite(joueur.getNombreDePoints(), UNITE_POINT)
 			);
 		}
 	}
@@ -187,7 +188,7 @@ public class Application {
 			Joueur joueur = jeu.getJoueur(i);
 			String nom = joueur.getNom();
 			int nbPoints = joueur.getNombreDePoints();
-			System.out.println(nom + " : " + nbPoints + " point" + (nbPoints > 1 ? "s" : ""));
+			System.out.println(nom + " : " + formaterQuantite(nbPoints, UNITE_POINT));
 		}
 	}
 	
@@ -242,9 +243,7 @@ public class Application {
 					+ " : "
 					+ jeu.getSerie(i)
 					+ " "
-					+ points
-					+ " tete"
-					+ (points > 1 ? "s" : "")
+					+ formaterQuantite(points, UNITE_TETE)
 				);
 			}
 
@@ -288,9 +287,9 @@ public class Application {
 				j.getNom()
 				+ " prend la serie "
 				+ (choix + 1)
-				+ " (+" + points
-				+ " tête"
-				+ (points > 1 ? "s" : "") + ")"
+				+ " (+"
+				+ formaterQuantite(points, UNITE_TETE)
+				+ ")"
 			);
 		} else {
 			Serie serie = jeu.getSerie(meilleureSerie);
@@ -302,9 +301,9 @@ public class Application {
 					j.getNom()
 					+ " prend les 5 cartes de la serie "
 					+ (meilleureSerie + 1)
-					+ " (+" + points
-					+ " tête"
-					+ (points > 1 ? "s" : "") + ")"
+					+ " (+"
+					+ formaterQuantite(points, UNITE_TETE)
+					+ ")"
 				);
 			} else {
 				serie.ajouterCarte(c);
@@ -344,7 +343,7 @@ public class Application {
 			}
 		}
 
-		System.out.println("Le gagnant est " + meilleurJoueur.getNom() + " avec " + ptsWinner + " point" + (ptsWinner > 1 ? "s" : ""));
+		System.out.println("Le gagnant est " + meilleurJoueur.getNom() + " avec " + formaterQuantite(ptsWinner, UNITE_POINT));
 	}
 
 	private int lireEntier(int min, int max) {
@@ -383,6 +382,11 @@ public class Application {
 
 		System.out.println();
 	}
+
+	private String formaterQuantite(int nombre, String mot) {
+		return nombre + " " +  mot + (nombre > 1 ? "s" : "");
+	}
+
 	public static void main(String[] args) {
 		Application monAppli = new Application();
 		monAppli.jouer();		
