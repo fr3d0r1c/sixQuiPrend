@@ -225,6 +225,11 @@ public class Application {
 		if (j.estAvatar()) {
 			choix = r.nextInt(4);
 		} else {
+
+			System.out.println(
+				"Ta carte est plus petite que toutes les séries : tu dois en ramasser une. "
+			);
+			
 			afficherSeries();
 
 			System.out.print("Choisissez une série (1-4) : ");
