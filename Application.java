@@ -8,6 +8,9 @@ public class Application {
 	private int nbJoueurs;
 	private Scanner clavier;
 	private Random r = new Random();
+	private static final String UNITE_TETE = "tête";
+	private static final String UNITE_POINT = "pt";
+	private static final String UNITE_CARTE = "carte";
 
 	private void initialisationPartie() {
 		System.out.print("Combien de joueur (2 à 10) ? ");
@@ -118,14 +121,13 @@ public class Application {
 			System.out.println(
 				joueur.getNom()
 				+ " recupere "
-				+ pointsPile
-				+ " points"
+				+ formaterQuantite(pointsPile, UNITE_POINT)
 			);
 
 			System.out.println(
 				joueur.getNom()
 				+ " total : "
-				+ joueur.getNombreDePoints()
+				+ formaterQuantite(joueur.getNombreDePoints(), UNITE_POINT)
 			);
 		}
 	}
@@ -178,7 +180,7 @@ public class Application {
 			Joueur joueur = jeu.getJoueur(i);
 			String nom = joueur.getNom();
 			int nbPoints = joueur.getNombreDePoints();
-			System.out.println(nom + " : " + nbPoints + " points");
+			System.out.println(nom + " : " + formaterQuantite(nbPoints, UNITE_POINT));
 		}
 	}
 	
@@ -469,7 +471,7 @@ public class Application {
 			}
 		}
 
-		System.out.println("Le gagnant est " + meilleurJoueur.getNom() + " avec " + ptsWinner + " points");
+		System.out.println("Le gagnant est " + meilleurJoueur.getNom() + " avec " + formaterQuantite(ptsWinner, UNITE_POINT));
 	}
 
 	private int lireEntier(int min, int max) {
@@ -506,6 +508,10 @@ public class Application {
 		);
 
 		System.out.println();
+	}
+
+	private String formaterQuantite(int nombre, String mot) {
+		return nombre + " " + mot + (nombre > 1 ? "s" : "");
 	}
 	public static void main(String[] args) {
 		Application monAppli = new Application();

@@ -19,6 +19,10 @@ public class Joueur {
         this.maMain = new Main();
     }
 
+    public Joueur(String nom, boolean estUnAvatar) {
+        this(nom, estUnAvatar, TypeBot.ALEATOIRE);
+    }
+
     public String getNom() {
         return this.nom;
     }

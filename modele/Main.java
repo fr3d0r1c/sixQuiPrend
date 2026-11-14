@@ -21,6 +21,10 @@ public class Main {
     }
 
     public Carte prendreUneCarte(int i) {
+        if (i < 0 || i > nombreCartes - 1) {
+            return null;
+        }
+
         Carte carteRetiree = tableau[i];
 
         for (int j = i; j < nombreCartes - 1; j++) {
