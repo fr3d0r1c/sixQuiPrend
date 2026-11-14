@@ -35,6 +35,24 @@ public class Jeu {
         }
     }
 
+    public int trouverSerie(Carte c) {
+        int meilleureSerie = -1;
+		int meilleureValeur = -1;
+
+        for (int i = 0; i < 4; i++) {
+            int valeurSerie = getSerie(i).derniereCarte().getValeur();
+
+            if (valeurSerie < c.getValeur()) {
+                if (valeurSerie > meilleureValeur) {
+                    meilleureValeur = valeurSerie;
+                    meilleureSerie = i;
+                }
+            }
+        }
+
+        return meilleureSerie;
+    }
+
     public Pioche getPioche() {
         return this.maPioche;
     }

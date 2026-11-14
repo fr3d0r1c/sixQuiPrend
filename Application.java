@@ -242,25 +242,13 @@ public class Application {
 	}
 	
 	private void deposerCarte(Carte c, Joueur j) {
+		int meilleureSerie = jeu.trouverSerie(c);
+		
 		System.out.println(
 			j.getNom()
 			+ " depose "
 			+ c
 		);
-		// on déposer sur l'un des séries la carte 'c' du joueur 'j'
-		int meilleureSerie = -1;
-		int meilleureValeur = -1;
-
-		for (int i = 0; i < 4; i++) {
-			int valeurSerie = jeu.getSerie(i).derniereCarte().getValeur();
-
-			if (valeurSerie < c.getValeur()) {
-				if (valeurSerie > meilleureValeur) {
-					meilleureValeur = valeurSerie;
-					meilleureSerie = i;
-				}
-			}
-		}
 
 		if (meilleureSerie == -1) {
 			int choix = choisirSerie(j);
