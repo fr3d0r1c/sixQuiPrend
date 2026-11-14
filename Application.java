@@ -123,9 +123,10 @@ public class Application {
 
 			System.out.println(
 				joueur.getNom()
-				+ " recupere "
+				+ " récupere "
 				+ pointsPile
-				+ " points"
+				+ " point"
+				+ (pointsPile > 1 ? "s" : "")
 			);
 
 			System.out.println(
@@ -186,7 +187,7 @@ public class Application {
 			Joueur joueur = jeu.getJoueur(i);
 			String nom = joueur.getNom();
 			int nbPoints = joueur.getNombreDePoints();
-			System.out.println(nom + " : " + nbPoints + " points");
+			System.out.println(nom + " : " + nbPoints + " point" + (nbPoints > 1 ? "s" : ""));
 		}
 	}
 	
@@ -343,7 +344,7 @@ public class Application {
 			}
 		}
 
-		System.out.println("Le gagnant est " + meilleurJoueur.getNom() + " avec " + ptsWinner + " points");
+		System.out.println("Le gagnant est " + meilleurJoueur.getNom() + " avec " + ptsWinner + " point" + (ptsWinner > 1 ? "s" : ""));
 	}
 
 	private int lireEntier(int min, int max) {
