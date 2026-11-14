@@ -28,7 +28,7 @@ public class Application {
 			jeu.ajouterJoueur(new Joueur("Bot" + i, true, TypeBot.ALEATOIRE));
 		}
 
-		affihcerRegles();
+		afficherRegles();
 	}
 	
 	public void jouer() {
@@ -97,9 +97,9 @@ public class Application {
 
 			for (int i = 0; i < nbJoueurs; i++) {
 				deposerCarte(cartesChoisies[i], joueurs[i]);
-				
-				afficherPlateau();
 			}
+
+			afficherPlateau();
 		}
 
 		System.out.println("=== FIN DE MANCHE ===");
@@ -503,7 +503,7 @@ public class Application {
 		}
 	}
 
-	private void affihcerRegles() {
+	private void afficherRegles() {
 		Joueur joueur = jeu.getJoueur(0);
 
 		System.out.println("Bienvenue " + joueur.getNom() + " !");
