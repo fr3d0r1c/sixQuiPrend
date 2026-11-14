@@ -229,7 +229,7 @@ public class Application {
 			System.out.println(
 				"Ta carte est plus petite que toutes les séries : tu dois en ramasser une. "
 			);
-			
+
 			afficherSeries();
 
 			System.out.print("Choisissez une série (1-4) : ");
@@ -264,22 +264,30 @@ public class Application {
 
 		if (meilleureSerie == -1) {
 			int choix = choisirSerie(j);
+			int points = jeu.getSerie(choix).calculPoints();
 			prendreToutesLesCartesDeLaSerie(j, choix);
 			jeu.getSerie(choix).ajouterCarte(c);
 			System.out.println(
 				j.getNom()
 				+ " prend la serie "
 				+ (choix + 1)
+				+ " (+"
+				+ formaterQuantite(points, UNITE_TETE)
+				+ ")"
 			);
 		} else {
 			Serie serie = jeu.getSerie(meilleureSerie);
 			if (serie.nombreDeCartes() == 5) {
+				int points = serie.calculPoints();
 				prendreToutesLesCartesDeLaSerie(j, meilleureSerie);
 				serie.ajouterCarte(c);
 				System.out.println(
 					j.getNom()
 					+ " prend les 5 cartes de la serie "
 					+ (meilleureSerie + 1)
+					+ " (+"
+					+ formaterQuantite(points, UNITE_TETE)
+					+ ")"
 				);
 			} else {
 				serie.ajouterCarte(c);
