@@ -1,6 +1,7 @@
 package test;
 
 import modele.Carte;
+import modele.CarteJouee;
 import modele.Jeu;
 import modele.Joueur;
 
@@ -17,6 +18,7 @@ public class TestJeu {
         monTest.testConstructeur8();
         monTest.testConstructeur9();
         monTest.testConstructeur10();
+        monTest.testConstructeur11();
     }
 
     private void testConstructeur1() {
@@ -148,5 +150,30 @@ public class TestJeu {
         j3.ajouterPoints(10);
 
         Test.test(jeu.trouverGagnant() == j3, "le vainqueur est j3");
+    }
+
+    private void testConstructeur11() {
+        Jeu jeu = new Jeu(2);
+        Joueur j1 = new Joueur("Claude", false);
+        Joueur j2 = new Joueur("Bot", true);
+        Joueur j3 = new Joueur("Bot2", true);
+
+        CarteJouee[] cartesJouees = new CarteJouee[3];
+        cartesJouees[0] = new CarteJouee(new Carte(50), j1);
+        cartesJouees[1] = new CarteJouee(new Carte(10), j2);
+        cartesJouees[2] = new CarteJouee(new Carte(30), j3);
+
+        jeu.ordonnerCartesJouees(cartesJouees);
+
+        // 3. Les cartes sont dans l'ordre croissant
+        Test.test(cartesJouees[0].getCarte().getValeur() == 10, "la plus petite carte (10) joue en premier");
+        Test.test(cartesJouees[1].getCarte().getValeur() == 30, "la carte 30 joue en deuxième");
+        Test.test(cartesJouees[2].getCarte().getValeur() == 50, "la plus grande carte (50) joue en dernier");
+
+        // 4. Chaque carte est restée avec son joueur
+        Test.test(cartesJouees[0].getJoueur() == j2, "la carte 10 appartient toujours à j2");
+        Test.test(cartesJouees[1].getJoueur() == j3, "la carte 30 appartient toujours à j3");
+        Test.test(cartesJouees[2].getJoueur() == j1, "la carte 50 appartient toujours à j1");
+
     }
 }

@@ -109,4 +109,17 @@ public class Jeu {
         return meilleurJoueur;
     }
 
+    public void ordonnerCartesJouees(CarteJouee[] cartesJouees) {
+        for (int i = 0; i < cartesJouees.length - 1; i++) {
+            for (int j = i + 1; j < cartesJouees.length; j++) {
+
+                if (cartesJouees[i].getCarte().getValeur() > cartesJouees[j].getCarte().getValeur()) {
+                    CarteJouee tempCarteJouee = cartesJouees[i];
+                    cartesJouees[i] = cartesJouees[j];
+                    cartesJouees[j] = tempCarteJouee;
+                }
+            }
+        }
+    }
+
 }
