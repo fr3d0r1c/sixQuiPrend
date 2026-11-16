@@ -82,4 +82,15 @@ public class Jeu {
 		serie.vider();
 	}
 
+    public boolean estFinie() {
+        for (int i = 0; i < getNombreJoueurs(); i++) {
+            Joueur joueur = getJoueur(i);
+            int nbPoints = joueur.getNombreDePoints();
+            if (nbPoints > 66) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

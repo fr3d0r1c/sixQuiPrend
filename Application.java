@@ -37,7 +37,7 @@ public class Application {
 		do {
 			jouerUneManche();
 			afficherScores();
-		} while (!partieFinie());
+		} while (!jeu.estFinie());
 		System.out.println("LA PARTIE EST FINIE");
 		afficherGagnant();
 		clavier.close();	
@@ -162,17 +162,6 @@ public class Application {
 
 			joueur.getMain().trierMain();
 		}
-	}
-
-	private boolean partieFinie() {
-		for (int i = 0; i < nbJoueurs; i++) {
-			Joueur joueur = jeu.getJoueur(i);
-			int nbPoints = joueur.getNombreDePoints();
-			if (nbPoints > 66) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	private void afficherScores() {

@@ -11,6 +11,10 @@ public class TestJeu {
         monTest.testConstructeur2();
 		monTest.testConstructeur3();
         monTest.testConstructeur4();
+        monTest.testConstructeur5();
+        monTest.testConstructeur6();
+        monTest.testConstructeur7();
+        monTest.testConstructeur8();
     }
 
     private void testConstructeur1() {
@@ -55,5 +59,61 @@ public class TestJeu {
         Test.test(tetes == 9, "ramasserSerie renvoie le nombre de têtes ramassées");
         Test.test(joueur.getPile().calculPoints() == 9, "les cartes ramassées sont dans la pile du joueur");
         Test.test(jeu.getSerie(0).nombreDeCartes() == 1, "la série ne contient plus que la carte jouée");
+    }
+
+    private void testConstructeur5() {
+        Jeu jeu = new Jeu(2);
+        Joueur j1 = new Joueur("Claude", false);
+        Joueur j2 = new Joueur("Bot", true);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+
+        j1.ajouterPoints(0);
+        j2.ajouterPoints(0);
+
+        Test.test(jeu.estFinie() == false, "la partie n'est pas finie au début (0 et 0)");
+
+    }
+
+    private void testConstructeur6() {
+        Jeu jeu = new Jeu(2);
+        Joueur j1 = new Joueur("Claude", false);
+        Joueur j2 = new Joueur("Bot", true);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+
+        j1.ajouterPoints(67);
+        j2.ajouterPoints(10);
+
+        Test.test(jeu.estFinie() == true, "la partie est terminé à 67 (67 et 10)");
+
+    }
+
+    private void testConstructeur7() {
+        Jeu jeu = new Jeu(2);
+        Joueur j1 = new Joueur("Claude", false);
+        Joueur j2 = new Joueur("Bot", true);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+
+        j1.ajouterPoints(66);
+        j2.ajouterPoints(10);
+
+        Test.test(jeu.estFinie() == false, "la partie n'est pas fini à 66 (66 et 10)");
+
+    }
+
+    private void testConstructeur8() {
+        Jeu jeu = new Jeu(2);
+        Joueur j1 = new Joueur("Claude", false);
+        Joueur j2 = new Joueur("Bot", true);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+
+        j1.ajouterPoints(10);
+        j2.ajouterPoints(80);
+
+        Test.test(jeu.estFinie() == true, "la partie est terminé pour le second joueur (10 et 80)");
+
     }
 }
