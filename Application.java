@@ -50,53 +50,38 @@ public class Application {
 		// les joueurs jouent chaun leur tour, en fonction de la valeur des cartes jouées
 
 		initialiserManche();
-		Carte[] cartesChoisies = new Carte[nbJoueurs];
-		Joueur[] joueurs = new Joueur[nbJoueurs];
+		CarteJouee[] cartesJouees = new CarteJouee[nbJoueurs];
 
 		while(jeu.getJoueur(0).getMain().nombreDeCartes() > 0) {
 			for (int i = 0; i < nbJoueurs; i++) {
-				joueurs[i] = jeu.getJoueur(i);
-				cartesChoisies[i] = choisirCarte(joueurs[i]);
+				Joueur joueur = jeu.getJoueur(i);
+				cartesJouees[i] = new CarteJouee(choisirCarte(joueur), joueur);
 			}
 
 			System.out.println("=== CARTES CHOISIES ===");
 
 			for (int i = 0; i < nbJoueurs; i++) {
 				System.out.println(
-					joueurs[i].getNom()
+					cartesJouees[i].getJoueur().getNom()
 					+ " joue "
-					+ cartesChoisies[i]
+					+ cartesJouees[i].getCarte()
 				);
 			}
 
-			for (int i = 0; i < nbJoueurs - 1; i++) {
-				for (int j = i + 1; j < nbJoueurs; j++) {
-
-						if (cartesChoisies[i].getValeur() > cartesChoisies[j].getValeur()) {
-							Carte tempCarte = cartesChoisies[i];
-            				cartesChoisies[i] = cartesChoisies[j];
-							cartesChoisies[j] = tempCarte;
-
-							Joueur tempJoueur = joueurs[i];
-							joueurs[i] = joueurs[j];
-            				joueurs[j] = tempJoueur;
-						}
-
-				}
-			}
+			jeu.ordonnerCartesJouees(cartesJouees);
 
 			System.out.println("=== ORDRE DE JEU ===");
 
 			for (int i = 0; i < nbJoueurs; i++) {
 				System.out.println(
-					joueurs[i].getNom()
+					cartesJouees[i].getJoueur().getNom()
 					+ " -> "
-					+ cartesChoisies[i]
+					+ cartesJouees[i].getCarte()
 				);
 			}
 
 			for (int i = 0; i < nbJoueurs; i++) {
-				deposerCarte(cartesChoisies[i], joueurs[i]);
+				deposerCarte(cartesJouees[i].getCarte(), cartesJouees[i].getJoueur());
 			}
 
 			afficherPlateau();
