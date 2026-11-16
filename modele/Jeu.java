@@ -56,4 +56,30 @@ public class Jeu {
     public Pioche getPioche() {
         return this.maPioche;
     }
+
+    public int ramasserSerie(int numeroSerie, Joueur j, Carte c) {
+		Serie serie = getSerie(numeroSerie);
+		int nombreDeTetes = serie.calculPoints();
+
+        prendreToutesLesCartesDeLaSerie(j, numeroSerie);
+
+        serie.ajouterCarte(c);
+
+		return nombreDeTetes;
+	}
+
+    private void prendreToutesLesCartesDeLaSerie(Joueur j, int choix) {
+		// on met toutes les cartes de la série choisie dans
+		// la pile du joueur 'j'
+
+		Serie serie = getSerie(choix);
+		Pile pile = j.getPile();
+
+		for (int i = 0; i < serie.nombreDeCartes(); i++) {
+			pile.ajouterCarte(serie.getCarte(i));
+		}
+
+		serie.vider();
+	}
+
 }

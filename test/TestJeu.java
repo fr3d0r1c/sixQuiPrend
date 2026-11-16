@@ -2,6 +2,7 @@ package test;
 
 import modele.Carte;
 import modele.Jeu;
+import modele.Joueur;
 
 public class TestJeu {
     public static void main(String[] args) {
@@ -9,6 +10,7 @@ public class TestJeu {
         monTest.testConstructeur1();
         monTest.testConstructeur2();
 		monTest.testConstructeur3();
+        monTest.testConstructeur4();
     }
 
     private void testConstructeur1() {
@@ -39,5 +41,19 @@ public class TestJeu {
         jeu.getSerie(3).ajouterCarte(new Carte(40));
         Test.test(jeu.trouverSerie(new Carte(99)) == 3,
                 "une carte de valeur 99 va dans la série avec comme dernière carte 40");
+    }
+
+    private void testConstructeur4() {
+        Jeu jeu = new Jeu(2);
+        Joueur joueur = new Joueur("Arthur", false);
+        jeu.getSerie(0).ajouterCarte(new Carte(10));
+        jeu.getSerie(0).ajouterCarte(new Carte(11));
+        jeu.getSerie(0).ajouterCarte(new Carte(12));
+
+        int tetes = jeu.ramasserSerie(0, joueur, new Carte(50));
+
+        Test.test(tetes == 9, "ramasserSerie renvoie le nombre de têtes ramassées");
+        Test.test(joueur.getPile().calculPoints() == 9, "les cartes ramassées sont dans la pile du joueur");
+        Test.test(jeu.getSerie(0).nombreDeCartes() == 1, "la série ne contient plus que la carte jouée");
     }
 }

@@ -252,9 +252,7 @@ public class Application {
 
 		if (meilleureSerie == -1) {
 			int choix = choisirSerie(j);
-			int points = jeu.getSerie(choix).calculPoints();
-			prendreToutesLesCartesDeLaSerie(j, choix);
-			jeu.getSerie(choix).ajouterCarte(c);
+			int points = jeu.ramasserSerie(choix, j, c);
 			System.out.println(
 				j.getNom()
 				+ " prend la serie "
@@ -266,9 +264,7 @@ public class Application {
 		} else {
 			Serie serie = jeu.getSerie(meilleureSerie);
 			if (serie.nombreDeCartes() == 5) {
-				int points = serie.calculPoints();
-				prendreToutesLesCartesDeLaSerie(j, meilleureSerie);
-				serie.ajouterCarte(c);
+				int points = jeu.ramasserSerie(meilleureSerie, j, c);
 				System.out.println(
 					j.getNom()
 					+ " prend les 5 cartes de la serie "
@@ -288,20 +284,7 @@ public class Application {
 
 	}
 	
-	private void prendreToutesLesCartesDeLaSerie(Joueur j, int choix) {
-		// on met toutes les cartes de la série choisie dans
-		// la pile du joueur 'j'
-
-		Serie serie = jeu.getSerie(choix);
-		Pile pile = j.getPile();
-
-		for (int i = 0; i < serie.nombreDeCartes(); i++) {
-			pile.ajouterCarte(serie.getCarte(i));
-		}
-
-		serie.vider();
-	}
-
+	
 	private void afficherMain(Joueur j) {
 		Main main = j.getMain();
 
