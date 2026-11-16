@@ -15,6 +15,8 @@ public class TestJeu {
         monTest.testConstructeur6();
         monTest.testConstructeur7();
         monTest.testConstructeur8();
+        monTest.testConstructeur9();
+        monTest.testConstructeur10();
     }
 
     private void testConstructeur1() {
@@ -85,7 +87,7 @@ public class TestJeu {
         j1.ajouterPoints(67);
         j2.ajouterPoints(10);
 
-        Test.test(jeu.estFinie() == true, "la partie est terminé à 67 (67 et 10)");
+        Test.test(jeu.estFinie() == true, "la partie est terminée à 67 (67 et 10)");
 
     }
 
@@ -99,8 +101,7 @@ public class TestJeu {
         j1.ajouterPoints(66);
         j2.ajouterPoints(10);
 
-        Test.test(jeu.estFinie() == false, "la partie n'est pas fini à 66 (66 et 10)");
-
+        Test.test(jeu.estFinie() == false, "la partie n'est pas finie à 66 (66 et 10)");
     }
 
     private void testConstructeur8() {
@@ -113,7 +114,39 @@ public class TestJeu {
         j1.ajouterPoints(10);
         j2.ajouterPoints(80);
 
-        Test.test(jeu.estFinie() == true, "la partie est terminé pour le second joueur (10 et 80)");
+        Test.test(jeu.estFinie() == true, "la partie est terminée pour le second joueur (10 et 80)");
 
+    }
+
+    private void testConstructeur9() {
+        Jeu jeu = new Jeu(2);
+        Joueur j1 = new Joueur("Claude", false);
+        Joueur j2 = new Joueur("Bot", true);
+        Joueur j3 = new Joueur("Bot2", true);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+        jeu.ajouterJoueur(j3);
+
+        j1.ajouterPoints(30);
+        j2.ajouterPoints(10);
+        j3.ajouterPoints(20);
+
+        Test.test(jeu.trouverGagnant() == j2, "le vainqueur est j2");
+    }
+
+    private void testConstructeur10() {
+        Jeu jeu = new Jeu(2);
+        Joueur j1 = new Joueur("Claude", false);
+        Joueur j2 = new Joueur("Bot", true);
+        Joueur j3 = new Joueur("Bot2", true);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+        jeu.ajouterJoueur(j3);
+
+        j1.ajouterPoints(30);
+        j2.ajouterPoints(20);
+        j3.ajouterPoints(10);
+
+        Test.test(jeu.trouverGagnant() == j3, "le vainqueur est j3");
     }
 }

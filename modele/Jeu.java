@@ -93,4 +93,20 @@ public class Jeu {
         return false;
     }
 
+    public Joueur trouverGagnant() {
+        Joueur meilleurJoueur = getJoueur(0);
+        int ptsWinner = meilleurJoueur.getNombreDePoints();
+
+        for (int i = 1; i < getNombreJoueurs(); i++) {
+            Joueur joueur = getJoueur(i);
+            int nbPoints = joueur.getNombreDePoints();
+            if (nbPoints < ptsWinner) {
+                ptsWinner = nbPoints;
+                meilleurJoueur = joueur;
+            }
+        }
+
+        return meilleurJoueur;
+    }
+
 }

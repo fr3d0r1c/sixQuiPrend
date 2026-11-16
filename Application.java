@@ -432,19 +432,9 @@ public class Application {
 	}
 
 	private void afficherGagnant() {
-		Joueur meilleurJoueur = jeu.getJoueur(0);
-		int ptsWinner = meilleurJoueur.getNombreDePoints();
+		Joueur meilleurJoueur = jeu.trouverGagnant();
 
-		for (int i = 1; i < nbJoueurs; i++) {
-			Joueur joueur = jeu.getJoueur(i);
-			int nbPoints = joueur.getNombreDePoints();
-			if (nbPoints < ptsWinner) {
-				ptsWinner = nbPoints;
-				meilleurJoueur = joueur;
-			}
-		}
-
-		System.out.println("Le gagnant est " + meilleurJoueur.getNom() + " avec " + formaterQuantite(ptsWinner, UNITE_POINT));
+		System.out.println("Le gagnant est " + meilleurJoueur.getNom() + " avec " + formaterQuantite(meilleurJoueur.getNombreDePoints(), UNITE_POINT));
 	}
 
 	private int lireEntier(int min, int max) {
