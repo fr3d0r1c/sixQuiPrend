@@ -1,4 +1,3 @@
-import java.util.Random;
 import java.util.Scanner;
 
 import modele.*;
@@ -7,7 +6,6 @@ public class Application {
 	private Jeu jeu;
 	private int nbJoueurs;
 	private Scanner clavier;
-	private Random r = new Random();
 	private static final String UNITE_TETE = "tête";
 	private static final String UNITE_POINT = "pt";
 	private static final String UNITE_CARTE = "carte";
@@ -169,19 +167,7 @@ public class Application {
 		}
 
 		if (j.estAvatar()) {
-			switch (j.getTypeBot()) {
-				case ALEATOIRE:
-					int numCarte = r.nextInt(nombreCartes);
-					carteChoisie = main.prendreUneCarte(numCarte);
-					break;
-
-				case FACILE:
-					carteChoisie = choisirCarteBotFacile(j);
-					break;
-
-				default:
-					throw new IllegalStateException("Type de bot non géré : " + j.getTypeBot());
-			}
+			carteChoisie = jeu.choisirCarteBot(j);
 		} else {
 			afficherMain(j);
 			System.out.print("Choisissez une carte : ");
@@ -197,7 +183,7 @@ public class Application {
 		int choix;
 
 		if (j.estAvatar()) {
-			choix = r.nextInt(4);
+			choix = jeu.choisirSerieBot(j);
 		} else {
 
 			System.out.println(
@@ -410,10 +396,6 @@ public class Application {
 		}
 
 		System.out.println("=========================================");
-	}
-
-	private Carte choisirCarteBotFacile(Joueur j) {
-		return j.getMain().prendreUneCarte(0);
 	}
 
 	private void afficherGagnant() {

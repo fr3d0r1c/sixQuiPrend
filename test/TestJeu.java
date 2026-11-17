@@ -4,6 +4,7 @@ import modele.Carte;
 import modele.CarteJouee;
 import modele.Jeu;
 import modele.Joueur;
+import modele.TypeBot;
 
 public class TestJeu {
     public static void main(String[] args) {
@@ -19,6 +20,9 @@ public class TestJeu {
         monTest.testConstructeur9();
         monTest.testConstructeur10();
         monTest.testConstructeur11();
+        monTest.testConstructeur12();
+        monTest.testConstructeur13();
+        monTest.testConstructeur14();
     }
 
     private void testConstructeur1() {
@@ -175,5 +179,63 @@ public class TestJeu {
         Test.test(cartesJouees[1].getJoueur() == j3, "la carte 30 appartient toujours à j3");
         Test.test(cartesJouees[2].getJoueur() == j1, "la carte 50 appartient toujours à j1");
 
+    }
+
+    private void testConstructeur12() {
+        Jeu jeu = new Jeu(2);
+        Joueur bot = new Joueur("Bot", true, TypeBot.FACILE);
+         bot.getMain().ajouterCarte(new Carte(10));
+        bot.getMain().ajouterCarte(new Carte(11));
+        bot.getMain().ajouterCarte(new Carte(12));
+
+        Carte carteJouee = jeu.choisirCarteBot(bot);
+
+        Test.test(carteJouee.getValeur() == 10, "le bot FACILE joue sa plus petite carte");
+        Test.test(bot.getMain().nombreDeCartes() == 2, "la carte jouée a été retirée de la main");
+    }
+
+    private void testConstructeur13() {
+        Jeu jeu = new Jeu(2);
+        boolean toujoursValide = true;
+
+        for (int essai = 0; essai < 100; essai++) {
+            Joueur bot = new Joueur("Bot", true, TypeBot.ALEATOIRE);
+            bot.getMain().ajouterCarte(new Carte(10));
+            bot.getMain().ajouterCarte(new Carte(11));
+            bot.getMain().ajouterCarte(new Carte(12));
+
+            Carte carteJouee = jeu.choisirCarteBot(bot);
+
+            if (carteJouee == null) {
+                toujoursValide = false;
+            } else {
+                int v = carteJouee.getValeur();
+                if (v != 10 && v != 11 && v != 12) {
+                    toujoursValide = false;
+                }
+            }
+            if (bot.getMain().nombreDeCartes() != 2) {
+                toujoursValide = false;
+            }
+        }
+
+        Test.test(toujoursValide, "sur 100 essais, le bot ALEATOIRE joue toujours une carte de sa main");
+    }
+
+    private void testConstructeur14() {
+        Jeu jeu = new Jeu(2);
+        boolean toujoursValide = true;
+
+        for (int essai = 0; essai < 100; essai++) {
+            Joueur bot = new Joueur("Bot", true);
+
+            int choix = jeu.choisirSerieBot(bot);
+
+            if (choix < 0 || choix > 3 ) {
+                toujoursValide = false; 
+            }
+        }
+
+        Test.test(toujoursValide, "sur 100 essais, Le joueur choisir toujours une série de 0 à 3.");
     }
 }

@@ -1,10 +1,12 @@
 package modele;
+import java.util.Random;
 
 public class Jeu {
     private Pioche maPioche;
     private Joueur[] tableauJoueurs;
     private int nombreJoueurs;
     private Serie[] tableauSeries;
+    private Random r = new Random();
 
     public Jeu(int nbJoueurs){
         this.maPioche = new Pioche();
@@ -121,5 +123,32 @@ public class Jeu {
             }
         }
     }
+
+    public Carte choisirCarteBot(Joueur j) {
+        Carte carteChoisie;
+        switch(j.getTypeBot()) {
+            case ALEATOIRE:
+                int numCarte = r.nextInt(j.getMain().nombreDeCartes());
+                carteChoisie = j.getMain().prendreUneCarte(numCarte);
+                break;
+            
+            case FACILE:
+                carteChoisie = choisirCarteBotFacile(j);
+                break;
+
+            default:
+				throw new IllegalStateException("Type de bot non géré : " + j.getTypeBot());
+        }
+
+        return carteChoisie;
+    }
+
+    public int choisirSerieBot(Joueur j) {
+        return r.nextInt(4);
+    }
+
+    private Carte choisirCarteBotFacile(Joueur j) {
+		return j.getMain().prendreUneCarte(0);
+	}
 
 }
