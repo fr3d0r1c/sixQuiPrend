@@ -92,19 +92,19 @@ public class Application {
 	}
 
 	private void calculerLesPoints() {
-		// pour chaque joueur, on regarde les points des piles et on ajoute
+		int[] scoreAvant = new int[nbJoueurs];
+		for(int i=0; i < scoreAvant.length; i++) {
+			Joueur j = jeu.getJoueur(i);
+			scoreAvant[i] = j.getNombreDePoints();
+		}
+		jeu.terminerManche();
+
 		for (int i=0; i < nbJoueurs; i++) {
 			Joueur joueur = jeu.getJoueur(i);
-			Pile pile = joueur.getPile();
-
-			int pointsPile = pile.calculPoints();
-			joueur.ajouterPoints(pointsPile);
-			pile.vider();
-
 			System.out.println(
 				joueur.getNom()
 				+ " récupère "
-				+ formaterQuantite(pointsPile, UNITE_POINT)
+				+ formaterQuantite(joueur.getNombreDePoints() - scoreAvant[i], UNITE_POINT)
 			);
 
 			System.out.println(

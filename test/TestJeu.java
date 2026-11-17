@@ -5,6 +5,7 @@ import modele.CarteJouee;
 import modele.Jeu;
 import modele.Joueur;
 import modele.Main;
+import modele.Serie;
 import modele.TypeBot;
 
 public class TestJeu {
@@ -26,6 +27,10 @@ public class TestJeu {
         monTest.testConstructeur14();
         monTest.testConstructeur15();
         monTest.testConstructeur16();
+        monTest.testPoserCarteBotCasNormal();
+        monTest.testPoserCarteBotSixiemeCarte();
+        monTest.testPoserCarteBotCarteTropPetite();
+        monTest.testTerminerManche();
         
     }
 
@@ -295,5 +300,88 @@ public class TestJeu {
             }
         }
         Test.test(seriesOk, "après une 2e préparation, chaque série ne contient toujours qu'une carte");
+    }
+
+    private void testPoserCarteBotCasNormal() {
+        Jeu jeu = new Jeu(2);
+        Joueur bot = new Joueur("Bot", true, TypeBot.ALEATOIRE);
+
+        jeu.ajouterJoueur(bot);
+
+        jeu.getSerie(0).ajouterCarte(new Carte(10));
+        jeu.getSerie(1).ajouterCarte(new Carte(20));
+        jeu.getSerie(2).ajouterCarte(new Carte(30));
+        jeu.getSerie(3).ajouterCarte(new Carte(40));
+
+        jeu.poserCarteBot(new CarteJouee(new Carte(22), bot));
+
+        Test.test(jeu.getSerie(1).nombreDeCartes() == 2, "la carte 22 s'ajoute à la série de dernière carte 20");
+        Test.test(jeu.getSerie(1).derniereCarte().getValeur() == 22, "22 est maintenant la dernière carte de la série");
+        Test.test(bot.getPile().calculPoints() == 0, "le bot n'a rien ramassé");
+    }
+
+    private void testPoserCarteBotSixiemeCarte() {
+        // 1. PRÉPARER : la série 1 contient déjà 5 cartes
+        Jeu jeu = new Jeu(2);
+        Joueur bot = new Joueur("Bot", true, TypeBot.ALEATOIRE);
+        jeu.getSerie(0).ajouterCarte(new Carte(10));
+        for (int v = 16; v <= 20; v++) {
+            jeu.getSerie(1).ajouterCarte(new Carte(v));
+        }
+        jeu.getSerie(2).ajouterCarte(new Carte(30));
+        jeu.getSerie(3).ajouterCarte(new Carte(40));
+
+        // 2. AGIR
+        jeu.poserCarteBot(new CarteJouee(new Carte(22), bot));
+
+        // 3. VÉRIFIER
+        Test.test(jeu.getSerie(1).nombreDeCartes() == 1, "après la 6e carte, la série ne contient plus que la 22");
+        Test.test(jeu.getSerie(1).derniereCarte().getValeur() == 22, "la 22 démarre la nouvelle série");
+        Test.test(bot.getPile().calculPoints() > 0, "le bot a ramassé les 5 cartes");
+    }
+
+    private void testPoserCarteBotCarteTropPetite() {
+        // 1. PRÉPARER
+        Jeu jeu = new Jeu(2);
+        Joueur bot = new Joueur("Bot", true, TypeBot.ALEATOIRE);
+        jeu.getSerie(0).ajouterCarte(new Carte(10));
+        jeu.getSerie(1).ajouterCarte(new Carte(20));
+        jeu.getSerie(2).ajouterCarte(new Carte(30));
+        jeu.getSerie(3).ajouterCarte(new Carte(40));
+
+        // 2. AGIR
+        jeu.poserCarteBot(new CarteJouee(new Carte(5), bot));
+
+        // 3. VÉRIFIER
+        // On ne sait pas QUELLE série le bot a ramassée : on la cherche
+        boolean trouvee = false;
+        for (int i = 0; i < 4; i++) {
+            Serie s = jeu.getSerie(i);
+            if (s.nombreDeCartes() == 1 && s.derniereCarte().getValeur() == 5) {
+                trouvee = true;
+            }
+        }
+        Test.test(trouvee, "la carte 5 a démarré une nouvelle série");
+        Test.test(bot.getPile().calculPoints() > 0, "le bot a ramassé une série");
+    }
+
+    private void testTerminerManche() {
+        Jeu jeu = new Jeu(2);
+        Joueur bot1 = new Joueur("Bot1", true, TypeBot.FACILE);
+        Joueur bot2 = new Joueur("Bot2", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(bot1);
+        jeu.ajouterJoueur(bot2);
+
+        bot1.ajouterPoints(10);
+        bot1.getPile().ajouterCarte(new Carte(10));
+        bot1.getPile().ajouterCarte(new Carte(11));
+        bot1.getPile().ajouterCarte(new Carte(12));
+
+        jeu.terminerManche();
+
+        Test.test(bot1.getNombreDePoints() == 19, "les points de la pile s'ajoutent au score (10+3+5+1 = 19)");
+        Test.test(bot1.getPile().calculPoints() == 0, "la pile est vidée après la manche");
+        Test.test(bot2.getNombreDePoints() == 0, "une pile vide n'ajoute aucun point");
+
     }
 }

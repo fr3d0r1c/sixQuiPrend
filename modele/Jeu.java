@@ -175,4 +175,35 @@ public class Jeu {
             joueur.getMain().trierMain();
         }
     }
+
+    // ATTENTION : même logique que deposerCarte() dans Application.
+    // Toute modification de la règle de dépôt doit être faite aux deux endroits.
+    public void poserCarteBot(CarteJouee carteJouee) {
+        Joueur j = carteJouee.getJoueur();
+        Carte c = carteJouee.getCarte();
+        int meilleureSerie = trouverSerie(c);
+
+        if (meilleureSerie == -1) {
+            int choix = choisirSerieBot(j);
+            ramasserSerie(choix, j, c);
+        } else {
+            Serie serie = getSerie(meilleureSerie);
+            if (serie.nombreDeCartes() == 5) {
+                ramasserSerie(meilleureSerie, j, c);
+            } else {
+                serie.ajouterCarte(c);
+            }
+        }
+    }
+
+    public void terminerManche() {
+        for (int i=0; i < getNombreJoueurs(); i++) {
+            Joueur joueur = getJoueur(i);
+            Pile pile = joueur.getPile();
+
+            int pointsPile = pile.calculPoints();
+            joueur.ajouterPoints(pointsPile);
+            pile.vider();
+        }
+    }
 }
