@@ -1,8 +1,9 @@
+import modele.*;
 public class BenchmarkBots {
     
     public static void main(String[] args) {
 
-        int nbParties = 100;
+        int nbParties = 1000;
 
         int victoiresBotAleatoire = 0;
         int victoiresBotFacile = 0;
@@ -16,23 +17,16 @@ public class BenchmarkBots {
 
         for (int i = 0; i < nbParties; i++) {
 
-            System.out.println(
-                "Simulation de la partie"
-                + (i + 1)
-            );
+            Jeu jeu = new Jeu(2);
+            Joueur botAleatoire = new Joueur("Aleatoire", true, TypeBot.ALEATOIRE);
+            Joueur botFacile = new Joueur("Facile", true, TypeBot.FACILE);
+            jeu.ajouterJoueur(botFacile);
+            jeu.ajouterJoueur(botAleatoire);
 
-            /*
-             * Ici viendra :
-             *
-             * 1. Création d'une partie
-             * 2. Création du bot aléatoire
-             * 3. Création du bot facile
-             * 4. Lancement automatique de la partie
-             * 5. Récupération des scores
-             */
+            jeu.jouerPartieAutomatique();
 
-            int scoreAleatoire = 0;
-            int scoreFacile = 0;
+            int scoreAleatoire = botAleatoire.getNombreDePoints();
+            int scoreFacile = botFacile.getNombreDePoints();
 
             scoreCumuleBotAleatoire += scoreAleatoire;
             scoreCumuleBotFacile += scoreFacile;
