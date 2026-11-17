@@ -4,6 +4,7 @@ import modele.Carte;
 import modele.CarteJouee;
 import modele.Jeu;
 import modele.Joueur;
+import modele.Main;
 import modele.TypeBot;
 
 public class TestJeu {
@@ -23,6 +24,9 @@ public class TestJeu {
         monTest.testConstructeur12();
         monTest.testConstructeur13();
         monTest.testConstructeur14();
+        monTest.testConstructeur15();
+        monTest.testConstructeur16();
+        
     }
 
     private void testConstructeur1() {
@@ -225,9 +229,9 @@ public class TestJeu {
     private void testConstructeur14() {
         Jeu jeu = new Jeu(2);
         boolean toujoursValide = true;
+        Joueur bot = new Joueur("Bot", true);
 
         for (int essai = 0; essai < 100; essai++) {
-            Joueur bot = new Joueur("Bot", true);
 
             int choix = jeu.choisirSerieBot(bot);
 
@@ -236,6 +240,60 @@ public class TestJeu {
             }
         }
 
-        Test.test(toujoursValide, "sur 100 essais, Le joueur choisir toujours une série de 0 à 3.");
+        Test.test(toujoursValide, "sur 100 essais, le joueur choisit toujours une série de 0 à 3.");
+    }
+
+    private void testConstructeur15() {
+        Jeu jeu = new Jeu(3);
+        jeu.ajouterJoueur(new Joueur("Claude", false));
+        jeu.ajouterJoueur(new Joueur("Bot1", true));
+        jeu.ajouterJoueur(new Joueur("Bot2", true));
+
+        jeu.preparerManche();
+        
+        boolean seriesOk = true;
+        for (int i = 0; i < 4; i++) {
+            if (jeu.getSerie(i).nombreDeCartes() != 1) {
+                seriesOk = false;
+            }
+        }
+        Test.test(seriesOk, "chaque série commence avec une seule carte");
+
+        boolean mainsOk = true;
+        boolean mainsTriees = true;
+        for (int i = 0; i < 3; i++) {
+            Main main = jeu.getJoueur(i).getMain();
+            if (main.nombreDeCartes() != 10) {
+                mainsOk = false;
+            }
+            for (int c = 0; c < main.nombreDeCartes() - 1; c++) {
+                if (main.getCarte(c).getValeur() > main.getCarte(c+1).getValeur()) {
+                    mainsTriees = false;
+                }
+            }
+        }
+        Test.test(mainsOk, "chaque joueur reçoit 10 cartes");
+        Test.test(mainsTriees, "la main de chaque joueur est triée");
+
+        Test.test(jeu.getPioche().nombreCartesDisponibles() == 70,
+                "la pioche a perdu les 34 cartes distribuées");
+    }
+
+    private void testConstructeur16() {
+        Jeu jeu = new Jeu(3);
+        jeu.ajouterJoueur(new Joueur("Claude", false));
+        jeu.ajouterJoueur(new Joueur("Bot1", true));
+        jeu.ajouterJoueur(new Joueur("Bot2", true));
+
+        jeu.preparerManche();
+        jeu.preparerManche();
+        
+        boolean seriesOk = true;
+        for (int i = 0; i < 4; i++) {
+            if (jeu.getSerie(i).nombreDeCartes() != 1) {
+                seriesOk = false;
+            }
+        }
+        Test.test(seriesOk, "après une 2e préparation, chaque série ne contient toujours qu'une carte");
     }
 }

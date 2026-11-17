@@ -151,4 +151,28 @@ public class Jeu {
 		return j.getMain().prendreUneCarte(0);
 	}
 
+    public void preparerManche() {
+        Pioche pioche = getPioche();
+        pioche.reinitialiser();
+
+        for (int i = 0; i < 4; i++) {
+            Serie serie = getSerie(i);
+            Carte carte = pioche.piocher();
+
+            serie.vider();
+            serie.ajouterCarte(carte);
+        }
+
+        for (int i = 0; i < getNombreJoueurs(); i++) {
+            Joueur joueur = getJoueur(i);
+            Main main = joueur.getMain();
+
+            for (int j = 0; j < 10; j++) {
+                Carte carte = pioche.piocher();
+                main.ajouterCarte(carte);
+            }
+
+            joueur.getMain().trierMain();
+        }
+    }
 }

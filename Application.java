@@ -116,16 +116,7 @@ public class Application {
 	}
 
 	private void initialiserManche() {
-		Pioche pioche = jeu.getPioche();
-		pioche.reinitialiser();
-
-		for (int i = 0; i < 4; i++) {
-			Serie serie = jeu.getSerie(i);
-			Carte carte = pioche.piocher();
-
-			serie.vider();
-			serie.ajouterCarte(carte);
-		}
+		jeu.preparerManche();
 
 		System.out.println();
 		System.out.println("=========================================");
@@ -133,18 +124,6 @@ public class Application {
 		System.out.println("=========================================");
 
 		afficherPlateau();
-
-		for (int i = 0; i < nbJoueurs; i++) {
-			Joueur joueur = jeu.getJoueur(i);
-			
-			for (int j = 0; j < 10; j++) {
-				Main main = joueur.getMain();
-				Carte carte = pioche.piocher();
-				main.ajouterCarte(carte);
-			}
-
-			joueur.getMain().trierMain();
-		}
 	}
 	
 	private void afficherScores() {
