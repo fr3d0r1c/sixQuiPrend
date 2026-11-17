@@ -206,4 +206,31 @@ public class Jeu {
             pile.vider();
         }
     }
+
+    public void jouerMancheAutomatique() {
+        preparerManche();
+        CarteJouee[] cartesJouees = new CarteJouee[getNombreJoueurs()];
+
+        while (getJoueur(0).getMain().nombreDeCartes() > 0) {
+            for (int i = 0; i < getNombreJoueurs(); i++) {
+                Joueur joueur = getJoueur(i);
+                cartesJouees[i] = new CarteJouee(choisirCarteBot(joueur), joueur);
+            }
+
+            ordonnerCartesJouees(cartesJouees);
+
+            for (int i=0; i < getNombreJoueurs(); i++) {
+                poserCarteBot(cartesJouees[i]);
+            }
+        }
+
+        terminerManche();
+    }
+
+    public void jouerPartieAutomatique() {
+        // ATTENTION : Les joueurs doivent être obligatoirement des bots
+        do {
+            jouerMancheAutomatique();
+        } while(!estFinie());
+    }
 }

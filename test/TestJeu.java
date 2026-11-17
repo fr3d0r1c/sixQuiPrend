@@ -31,6 +31,7 @@ public class TestJeu {
         monTest.testPoserCarteBotSixiemeCarte();
         monTest.testPoserCarteBotCarteTropPetite();
         monTest.testTerminerManche();
+        monTest.testJouerPartieAutomatique();
         
     }
 
@@ -382,6 +383,31 @@ public class TestJeu {
         Test.test(bot1.getNombreDePoints() == 19, "les points de la pile s'ajoutent au score (10+3+5+1 = 19)");
         Test.test(bot1.getPile().calculPoints() == 0, "la pile est vidée après la manche");
         Test.test(bot2.getNombreDePoints() == 0, "une pile vide n'ajoute aucun point");
+    }
 
+    private void testJouerPartieAutomatique() {
+        Jeu jeu = new Jeu(4);
+        boolean quelqunQuiDepasse = false;
+        
+        Joueur bot1 = new Joueur("Bot1", true, TypeBot.FACILE);
+        Joueur bot2 = new Joueur("Bot2", true, TypeBot.ALEATOIRE);
+        Joueur bot3 = new Joueur("Bot3", true, TypeBot.FACILE);
+        Joueur bot4 = new Joueur("Bot4", true, TypeBot.ALEATOIRE);
+        jeu.ajouterJoueur(bot1);
+        jeu.ajouterJoueur(bot2);
+        jeu.ajouterJoueur(bot3);
+        jeu.ajouterJoueur(bot4);
+
+        jeu.jouerPartieAutomatique();
+
+        for (int i = 0; i < jeu.getNombreJoueurs(); i++) {
+            if (jeu.getJoueur(i).getNombreDePoints() > 66) {
+                quelqunQuiDepasse = true;
+            }
+        }
+
+        Test.test(jeu.estFinie() == true, "La partie est finie");
+        Test.test(quelqunQuiDepasse, "au moins un joueur a dépassé 66 points");
+        Test.test(jeu.trouverGagnant() != null, "Le gagnant n'est pas null");
     }
 }
