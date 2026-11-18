@@ -3,7 +3,7 @@ public class BenchmarkBots {
     
     public static void main(String[] args) {
 
-        TypeBot[] participants = { TypeBot.FACILE, TypeBot.ALEATOIRE, TypeBot.FACILE, TypeBot.ALEATOIRE };
+        TypeBot[] participants = { TypeBot.ALEATOIRE, TypeBot.FACILE, TypeBot.MOYEN};
 
         int nbParties = 1000;
         int egalites = 0;
@@ -63,7 +63,7 @@ public class BenchmarkBots {
         }
 
         System.out.println(
-            "Parties avec une égalités : " 
+            "Parties avec une égalité : " 
             + egalites
             + " parties"
         );

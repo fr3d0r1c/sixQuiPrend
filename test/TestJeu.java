@@ -36,6 +36,10 @@ public class TestJeu {
         monTest.testEstEgalite2();
         monTest.testEstEgalite3();
         monTest.testEstEgalite4();
+        monTest.testBotMoyenCarteTropPetite();
+        monTest.testBotMoyenEcartMinimal();
+        monTest.testBotMoyenEviteSixiemeCarte();
+        monTest.testBotMoyenSituDangeureuse();
     }
 
     private void testConstructeur1() {
@@ -429,7 +433,7 @@ public class TestJeu {
 
         jeu.estEgalite();
 
-        Test.test(jeu.estEgalite() == false, "Un seul gagant");
+        Test.test(jeu.estEgalite() == false, "Un seul gagnant");
     }
 
     private  void testEstEgalite2() {
@@ -483,6 +487,67 @@ public class TestJeu {
 
         jeu.estEgalite();
 
-        Test.test(jeu.estEgalite() == false, "egalité mais pas pour la première place");
+        Test.test(jeu.estEgalite() == false, "égalité mais pas pour la première place");
+    }
+
+    private Jeu creerJeuAvecSeries() {
+        Jeu jeu = new Jeu(2);
+        jeu.getSerie(0).ajouterCarte(new Carte(10));
+        jeu.getSerie(1).ajouterCarte(new Carte(20));
+        jeu.getSerie(2).ajouterCarte(new Carte(30));
+        jeu.getSerie(3).ajouterCarte(new Carte(40));
+        return jeu;
+    }
+
+    private void testBotMoyenEcartMinimal() {
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur bot = new Joueur("Bot", true, TypeBot.MOYEN);
+        bot.getMain().ajouterCarte(new Carte(23));
+        bot.getMain().ajouterCarte(new Carte(35));
+        bot.getMain().ajouterCarte(new Carte(49));
+
+        Carte carteJouee = jeu.choisirCarteBot(bot);
+
+        Test.test(carteJouee.getValeur() == 23, "le bot MOYEN joue la carte la plus proche d'une série (23 sur 20)");
+        Test.test(bot.getMain().nombreDeCartes() == 2, "la carte jouée a été retirée de la main");
+    }
+
+    private void testBotMoyenCarteTropPetite() {
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur bot = new Joueur("Bot", true, TypeBot.MOYEN);
+        bot.getMain().ajouterCarte(new Carte(5));
+        bot.getMain().ajouterCarte(new Carte(45));
+
+        Carte carteJouee = jeu.choisirCarteBot(bot);
+
+        Test.test(carteJouee.getValeur() == 45, "le bot MOYEN évite la carte trop petite");
+    }
+
+    private void testBotMoyenEviteSixiemeCarte() {
+        Jeu jeu = creerJeuAvecSeries();  
+        jeu.getSerie(1).vider();
+        for (int v = 16; v <= 20; v++) {
+            jeu.getSerie(1).ajouterCarte(new Carte(v));
+        }
+
+        Joueur bot = new Joueur("Bot", true, TypeBot.MOYEN);
+        bot.getMain().ajouterCarte(new Carte(22));
+        bot.getMain().ajouterCarte(new Carte(48));
+
+        Carte carteJouee = jeu.choisirCarteBot(bot);
+
+        Test.test(carteJouee.getValeur() == 48, "le bot MOYEN écarte une carte qui serait la 6ème");
+    }
+
+    private void testBotMoyenSituDangeureuse() {
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur bot = new Joueur("Bot", true, TypeBot.MOYEN);
+        bot.getMain().ajouterCarte(new Carte(3));
+        bot.getMain().ajouterCarte(new Carte(7));
+        bot.getMain().ajouterCarte(new Carte(9));
+
+        Carte carteJouee = jeu.choisirCarteBot(bot);
+
+        Test.test(carteJouee.getValeur() == 3, "si toutes ses cartes sont dangereuses, le bot MOYEN joue la plus petite");
     }
 }

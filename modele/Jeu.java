@@ -136,6 +136,10 @@ public class Jeu {
                 carteChoisie = choisirCarteBotFacile(j);
                 break;
 
+            case MOYEN:
+                carteChoisie = choisirCarteBotMoyen(j);
+                break;
+
             default:
 				throw new IllegalStateException("Type de bot non géré : " + j.getTypeBot());
         }
@@ -245,5 +249,37 @@ public class Jeu {
         }
 
         return nbAuScoreMin > 1;
+    }
+
+    private Carte choisirCarteBotMoyen(Joueur j) {
+        Main main = j.getMain();
+        int meilleurIndex = -1;
+        int meilleurEcart  = Integer.MAX_VALUE;
+
+        for (int i = 0; i < main.nombreDeCartes(); i++) {
+            Carte carte = main.getCarte(i);
+            int numeroSerie = trouverSerie(carte);
+
+            if(numeroSerie == -1) {
+                continue;
+            }
+
+            Serie serie = getSerie(numeroSerie);
+            if (serie.nombreDeCartes() == 5) {
+                continue;
+            }
+
+            int ecart = carte.getValeur() - serie.derniereCarte().getValeur();
+            if (ecart < meilleurEcart) {
+                meilleurEcart = ecart;
+                meilleurIndex = i;
+            }
+        }
+
+        if (meilleurIndex == -1) {
+            meilleurIndex = 0;
+        }
+
+        return main.prendreUneCarte(meilleurIndex);
     }
 }
