@@ -140,6 +140,10 @@ public class Jeu {
                 carteChoisie = choisirCarteBotMoyen(j);
                 break;
 
+            case DIFFICILE:
+                carteChoisie = choisirCarteBotDifficile(j);
+                break;
+
             default:
 				throw new IllegalStateException("Type de bot non géré : " + j.getTypeBot());
         }
@@ -156,8 +160,10 @@ public class Jeu {
 
             case FACILE:
             case MOYEN:
+            case DIFFICILE:
                 choix = trouverSerieMoinsChere();
                 break;
+
 
             default:
 				throw new IllegalStateException("Type de bot non géré : " + j.getTypeBot());
@@ -311,5 +317,56 @@ public class Jeu {
         }
 
         return meilleureSerie;
+    }
+
+    private Carte choisirCarteBotDifficile(Joueur j) {
+        Main main = j.getMain();
+
+        int indexSur = -1;
+        double meilleurRisque = Double.MAX_VALUE;
+
+        int indexDangereux = -1;
+        int meilleurCout = Integer.MAX_VALUE;
+
+        for (int i = 0; i < main.nombreDeCartes(); i++) {
+            Carte carte = main.getCarte(i);
+            int numeroSerie = trouverSerie(carte);
+
+            if (numeroSerie == -1) {
+                // DANGER 1 : trop petite → on ramasserait la série la moins chère
+                int cout = getSerie(trouverSerieMoinsChere()).calculPoints();
+                if (cout < meilleurCout) {
+                    meilleurCout = cout;
+                    indexDangereux = i;
+                }
+                continue;
+            }
+
+            Serie serie = getSerie(numeroSerie);
+
+            if (serie.nombreDeCartes() == 5) {
+                 int cout = serie.calculPoints();
+                 if (cout < meilleurCout) {
+                    meilleurCout = cout;
+                    indexDangereux = i;
+                 }
+                 continue;
+            }
+            
+            int ecart = carte.getValeur() - serie.derniereCarte().getValeur();
+            int placesRestantes = 5 - serie.nombreDeCartes();
+            double risque = (double) ecart / placesRestantes;
+
+            if (risque < meilleurRisque) {
+                meilleurRisque = risque;
+                indexSur = i;
+            }
+        }
+
+        if (indexSur != -1) {
+            return main.prendreUneCarte(indexSur);
+        }
+
+        return main.prendreUneCarte(indexDangereux);
     }
 }

@@ -42,6 +42,8 @@ public class TestJeu {
         monTest.testBotMoyenSituDangeureuse();
         monTest.testBotMoyenRamasseSerieMoinsChereEnDernier();
         monTest.testBotMoyenRamasseSerieMoinsChereEnPremier();
+        monTest.testBotDifficileSixiemeCarteMoinsChere();
+        monTest.testBotDifficileCarteLaPlusSure();
     }
 
     private void testConstructeur1() {
@@ -579,6 +581,49 @@ public class TestJeu {
         int serieChoisie = jeu.choisirSerieBot(bot);
 
         Test.test(serieChoisie == 0, "le bot MOYEN ramasse la série la moins chère (la première, 1 tête)");
+    }
+
+    private void testBotDifficileSixiemeCarteMoinsChere() {
+        Jeu jeu = creerJeuAvecSeries();
+
+        // Série 1 : 5 cartes jusqu'à 20, CHÈRE (5 + 2 + 1 + 1 + 3 = 12 têtes)
+        jeu.getSerie(1).vider();
+        jeu.getSerie(1).ajouterCarte(new Carte(11));   // 5 têtes
+        jeu.getSerie(1).ajouterCarte(new Carte(15));   // 2 têtes
+        jeu.getSerie(1).ajouterCarte(new Carte(18));   // 1 tête
+        jeu.getSerie(1).ajouterCarte(new Carte(19));   // 1 tête
+        jeu.getSerie(1).ajouterCarte(new Carte(20));   // 3 têtes
+
+        // Série 3 : 5 cartes jusqu'à 40, MOINS CHÈRE (1 + 1 + 1 + 1 + 3 = 7 têtes)
+        jeu.getSerie(3).vider();
+        for (int v = 36; v <= 40; v++) {
+            jeu.getSerie(3).ajouterCarte(new Carte(v));
+        }
+
+        Joueur bot = new Joueur("Bot", true, TypeBot.DIFFICILE);
+        bot.getMain().ajouterCarte(new Carte(25));
+        bot.getMain().ajouterCarte(new Carte(45));
+
+        Carte carteJouee = jeu.choisirCarteBot(bot);
+
+        Test.test(carteJouee.getValeur() == 45, "le bot DIFFICILE choisit la 6e carte qui coûte le moins de têtes");
+    }
+
+    private void testBotDifficileCarteLaPlusSure() {
+        Jeu jeu = creerJeuAvecSeries();
+
+        jeu.getSerie(1).vider();
+        for (int v = 17; v <= 20; v++) {
+            jeu.getSerie(1).ajouterCarte(new Carte(v));
+        }
+
+        Joueur bot = new Joueur("Bot", true, TypeBot.DIFFICILE);
+        bot.getMain().ajouterCarte(new Carte(23));
+        bot.getMain().ajouterCarte(new Carte(48));
+
+        Carte carteJouee = jeu.choisirCarteBot(bot);
+
+        Test.test(carteJouee.getValeur() == 48, "le bot DIFFICILE choisit la carte qui comporte le moins de risque");
     }
 
 }
