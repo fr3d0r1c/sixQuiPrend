@@ -3,40 +3,40 @@ public class BenchmarkBots {
     
     public static void main(String[] args) {
 
+        TypeBot[] participants = { TypeBot.FACILE, TypeBot.ALEATOIRE, TypeBot.FACILE, TypeBot.ALEATOIRE };
+
         int nbParties = 1000;
 
-        int victoiresBotAleatoire = 0;
-        int victoiresBotFacile = 0;
-
-        int scoreCumuleBotAleatoire = 0;
-        int scoreCumuleBotFacile = 0;
+        int nbTypes = TypeBot.values().length;
+        int[] victoires = new int[nbTypes];
+        int[] scoreCumule = new int[nbTypes];
+        int[] nbJoueursParTypes = new int[nbTypes];
 
         System.out.println("================================");
         System.out.println("BENCHMARK DES BOTS");
         System.out.println("================================");
 
         for (int i = 0; i < nbParties; i++) {
-
-            Jeu jeu = new Jeu(2);
-            Joueur botAleatoire = new Joueur("Aleatoire", true, TypeBot.ALEATOIRE);
-            Joueur botFacile = new Joueur("Facile", true, TypeBot.FACILE);
-            jeu.ajouterJoueur(botFacile);
-            jeu.ajouterJoueur(botAleatoire);
+            
+            Jeu jeu = new Jeu(participants.length);
+            for (int j = 0; j < participants.length; j++) {
+                TypeBot type = participants[j];
+                Joueur bot = new Joueur("Bot" + j, true, type);
+                jeu.ajouterJoueur(bot);
+            }
 
             jeu.jouerPartieAutomatique();
 
-            int scoreAleatoire = botAleatoire.getNombreDePoints();
-            int scoreFacile = botFacile.getNombreDePoints();
+            for (int j = 0; j < jeu.getNombreJoueurs(); j++) {
+                Joueur joueur = jeu.getJoueur(j);
+                int indexType = joueur.getTypeBot().ordinal();
 
-            scoreCumuleBotAleatoire += scoreAleatoire;
-            scoreCumuleBotFacile += scoreFacile;
+                scoreCumule[indexType] += joueur.getNombreDePoints();
+                nbJoueursParTypes[indexType]++;
+            }
 
-            if (scoreAleatoire < scoreFacile) {
-                victoiresBotAleatoire++;
-            }
-            else if (scoreFacile < scoreAleatoire) {
-                victoiresBotFacile++;
-            }
+            Joueur gagnant = jeu.trouverGagnant();
+            victoires[gagnant.getTypeBot().ordinal()]++;
         }
 
         System.out.println();
@@ -44,28 +44,17 @@ public class BenchmarkBots {
         System.out.println("RESULTATS");
         System.out.println("================================");
 
-        System.out.println(
-            "Bot Aleatoire : "
-            + victoiresBotAleatoire
-            + " victoires"
-        );
+        for (TypeBot type : TypeBot.values()) {
+            int index = type.ordinal();
 
-        System.out.println(
-            "Bot Facile : "
-            + victoiresBotFacile
-            + " victoires"
-        );
-
-        System.out.println();
-
-        System.out.println(
-            "Score moyen Bot Aleatoire : "
-            + ((double) scoreCumuleBotAleatoire / nbParties)
-        );
-
-        System.out.println(
-            "Score moyen Bot Facile : "
-            + ((double) scoreCumuleBotFacile / nbParties)
-        );
+            if (nbJoueursParTypes[index] > 0) {
+                double scoreMoyen = (double) scoreCumule[index] / nbJoueursParTypes[index];
+                System.out.println(
+                    "Bot " + type
+                    + " : " + victoires[index] + " victoires"
+                    + ", score moyen " + scoreMoyen
+                );
+            }
+        }
     }
 }

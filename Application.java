@@ -365,14 +365,13 @@ public class Application {
 		System.out.println();
 
 		// Contenu complet de chaque série
-		for (int i = 0; i < 4; i++) {
+		/*for (int i = 0; i < 4; i++) {
 			System.out.println(
-				"Serie "
-				+ (i + 1)
+				"Serie "		+ (i + 1)
 				+ " : "
 				+ series[i]
 			);
-		}
+		}*/
 
 		System.out.println("=========================================");
 	}
