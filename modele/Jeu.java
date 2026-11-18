@@ -233,4 +233,17 @@ public class Jeu {
             jouerMancheAutomatique();
         } while(!estFinie());
     }
+
+    public boolean estEgalite() {
+        int scoreMin = trouverGagnant().getNombreDePoints();
+
+        int nbAuScoreMin = 0;
+        for(int i = 0; i < getNombreJoueurs(); i++) {
+            if (getJoueur(i).getNombreDePoints() == scoreMin) {
+                nbAuScoreMin++;
+            }
+        }
+
+        return nbAuScoreMin > 1;
+    }
 }

@@ -32,7 +32,10 @@ public class TestJeu {
         monTest.testPoserCarteBotCarteTropPetite();
         monTest.testTerminerManche();
         monTest.testJouerPartieAutomatique();
-        
+        monTest.testEstEgalite1();
+        monTest.testEstEgalite2();
+        monTest.testEstEgalite3();
+        monTest.testEstEgalite4();
     }
 
     private void testConstructeur1() {
@@ -409,5 +412,77 @@ public class TestJeu {
         Test.test(jeu.estFinie() == true, "La partie est finie");
         Test.test(quelqunQuiDepasse, "au moins un joueur a dépassé 66 points");
         Test.test(jeu.trouverGagnant() != null, "Le gagnant n'est pas null");
+    }
+
+    private  void testEstEgalite1() {
+        Jeu jeu = new Jeu(3);
+        Joueur j1 = new Joueur("Claude", false);
+        Joueur j2 = new Joueur("Bot1", true);
+        Joueur j3 = new Joueur("Bot2", true);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+        jeu.ajouterJoueur(j3);
+
+        j1.ajouterPoints(10);
+        j2.ajouterPoints(20);
+        j3.ajouterPoints(30);
+
+        jeu.estEgalite();
+
+        Test.test(jeu.estEgalite() == false, "Un seul gagant");
+    }
+
+    private  void testEstEgalite2() {
+        Jeu jeu = new Jeu(3);
+        Joueur j1 = new Joueur("Claude", false);
+        Joueur j2 = new Joueur("Bot1", true);
+        Joueur j3 = new Joueur("Bot2", true);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+        jeu.ajouterJoueur(j3);
+
+        j1.ajouterPoints(10);
+        j2.ajouterPoints(10);
+        j3.ajouterPoints(30);
+
+        jeu.estEgalite();
+
+        Test.test(jeu.estEgalite() == true, "égalité entre les deux premiers");
+    }
+
+    private  void testEstEgalite3() {
+        Jeu jeu = new Jeu(3);
+        Joueur j1 = new Joueur("Claude", false);
+        Joueur j2 = new Joueur("Bot1", true);
+        Joueur j3 = new Joueur("Bot2", true);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+        jeu.ajouterJoueur(j3);
+
+        j1.ajouterPoints(30);
+        j2.ajouterPoints(10);
+        j3.ajouterPoints(10);
+
+        jeu.estEgalite();
+
+        Test.test(jeu.estEgalite() == true, "égalité qui ne concerne pas le premier joueur");
+    }
+
+    private  void testEstEgalite4() {
+        Jeu jeu = new Jeu(3);
+        Joueur j1 = new Joueur("Claude", false);
+        Joueur j2 = new Joueur("Bot1", true);
+        Joueur j3 = new Joueur("Bot2", true);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+        jeu.ajouterJoueur(j3);
+
+        j1.ajouterPoints(10);
+        j2.ajouterPoints(20);
+        j3.ajouterPoints(20);
+
+        jeu.estEgalite();
+
+        Test.test(jeu.estEgalite() == false, "egalité mais pas pour la première place");
     }
 }

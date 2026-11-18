@@ -6,6 +6,7 @@ public class BenchmarkBots {
         TypeBot[] participants = { TypeBot.FACILE, TypeBot.ALEATOIRE, TypeBot.FACILE, TypeBot.ALEATOIRE };
 
         int nbParties = 1000;
+        int egalites = 0;
 
         int nbTypes = TypeBot.values().length;
         int[] victoires = new int[nbTypes];
@@ -35,8 +36,12 @@ public class BenchmarkBots {
                 nbJoueursParTypes[indexType]++;
             }
 
-            Joueur gagnant = jeu.trouverGagnant();
-            victoires[gagnant.getTypeBot().ordinal()]++;
+            if (jeu.estEgalite() == true) {
+                egalites++;
+            } else {
+                Joueur gagnant = jeu.trouverGagnant();
+                victoires[gagnant.getTypeBot().ordinal()]++;
+            }
         }
 
         System.out.println();
@@ -56,5 +61,11 @@ public class BenchmarkBots {
                 );
             }
         }
+
+        System.out.println(
+            "Parties avec une égalités : " 
+            + egalites
+            + " parties"
+        );
     }
 }
