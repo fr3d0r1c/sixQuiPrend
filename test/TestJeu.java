@@ -1,12 +1,6 @@
 package test;
 
-import modele.Carte;
-import modele.CarteJouee;
-import modele.Jeu;
-import modele.Joueur;
-import modele.Main;
-import modele.Serie;
-import modele.TypeBot;
+import modele.*;
 
 public class TestJeu {
     public static void main(String[] args) {
@@ -44,6 +38,7 @@ public class TestJeu {
         monTest.testBotMoyenRamasseSerieMoinsChereEnPremier();
         monTest.testBotDifficileSixiemeCarteMoinsChere();
         monTest.testBotDifficileCarteLaPlusSure();
+        monTest.testCreerStrategie();
     }
 
     private void testConstructeur1() {
@@ -626,4 +621,10 @@ public class TestJeu {
         Test.test(carteJouee.getValeur() == 48, "le bot DIFFICILE choisit la carte qui comporte le moins de risque");
     }
 
+    private void testCreerStrategie() {
+        Test.test(TypeBot.ALEATOIRE.creerStrategie() instanceof BotAleatoire, "ALEATOIRE crée un BotAleatoire");
+        Test.test(TypeBot.FACILE.creerStrategie() instanceof BotFacile, "FACILE crée un BotFacile");
+        Test.test(TypeBot.MOYEN.creerStrategie() instanceof BotMoyen, "MOYEN crée un BotMoyen");
+        Test.test(TypeBot.DIFFICILE.creerStrategie() instanceof BotDifficile, "DIFFICILE crée un BotDifficile");
+    }
 }

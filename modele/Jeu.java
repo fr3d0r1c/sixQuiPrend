@@ -1,12 +1,10 @@
 package modele;
-import java.util.Random;
 
 public class Jeu {
     private Pioche maPioche;
     private Joueur[] tableauJoueurs;
     private int nombreJoueurs;
     private Serie[] tableauSeries;
-    private Random r = new Random();
 
     public Jeu(int nbJoueurs){
         this.maPioche = new Pioche();
@@ -125,56 +123,12 @@ public class Jeu {
     }
 
     public Carte choisirCarteBot(Joueur j) {
-        Carte carteChoisie;
-        switch(j.getTypeBot()) {
-            case ALEATOIRE:
-                int numCarte = r.nextInt(j.getMain().nombreDeCartes());
-                carteChoisie = j.getMain().prendreUneCarte(numCarte);
-                break;
-            
-            case FACILE:
-                carteChoisie = choisirCarteBotFacile(j);
-                break;
-
-            case MOYEN:
-                carteChoisie = choisirCarteBotMoyen(j);
-                break;
-
-            case DIFFICILE:
-                carteChoisie = choisirCarteBotDifficile(j);
-                break;
-
-            default:
-				throw new IllegalStateException("Type de bot non géré : " + j.getTypeBot());
-        }
-
-        return carteChoisie;
+        return j.getStrategie().choisirCarte(j, this);
     }
 
     public int choisirSerieBot(Joueur j) {
-        int choix;
-        switch (j.getTypeBot()) {
-            case ALEATOIRE:
-                choix =  r.nextInt(4);
-                break;
-
-            case FACILE:
-            case MOYEN:
-            case DIFFICILE:
-                choix = trouverSerieMoinsChere();
-                break;
-
-
-            default:
-				throw new IllegalStateException("Type de bot non géré : " + j.getTypeBot());
-        }
-
-        return choix;
+        return j.getStrategie().choisirSerie(j, this);
     }
-
-    private Carte choisirCarteBotFacile(Joueur j) {
-		return j.getMain().prendreUneCarte(0);
-	}
 
     public void preparerManche() {
         Pioche pioche = getPioche();
@@ -272,39 +226,7 @@ public class Jeu {
         return nbAuScoreMin > 1;
     }
 
-    private Carte choisirCarteBotMoyen(Joueur j) {
-        Main main = j.getMain();
-        int meilleurIndex = -1;
-        int meilleurEcart  = Integer.MAX_VALUE;
-
-        for (int i = 0; i < main.nombreDeCartes(); i++) {
-            Carte carte = main.getCarte(i);
-            int numeroSerie = trouverSerie(carte);
-
-            if(numeroSerie == -1) {
-                continue;
-            }
-
-            Serie serie = getSerie(numeroSerie);
-            if (serie.nombreDeCartes() == 5) {
-                continue;
-            }
-
-            int ecart = carte.getValeur() - serie.derniereCarte().getValeur();
-            if (ecart < meilleurEcart) {
-                meilleurEcart = ecart;
-                meilleurIndex = i;
-            }
-        }
-
-        if (meilleurIndex == -1) {
-            meilleurIndex = 0;
-        }
-
-        return main.prendreUneCarte(meilleurIndex);
-    }
-
-    private int trouverSerieMoinsChere() {
+    public int trouverSerieMoinsChere() {
         int meilleureSerie = 0;
         int ptsSerie = Integer.MAX_VALUE;
         for (int i = 0; i < 4; i++) {
@@ -317,56 +239,5 @@ public class Jeu {
         }
 
         return meilleureSerie;
-    }
-
-    private Carte choisirCarteBotDifficile(Joueur j) {
-        Main main = j.getMain();
-
-        int indexSur = -1;
-        double meilleurRisque = Double.MAX_VALUE;
-
-        int indexDangereux = -1;
-        int meilleurCout = Integer.MAX_VALUE;
-
-        for (int i = 0; i < main.nombreDeCartes(); i++) {
-            Carte carte = main.getCarte(i);
-            int numeroSerie = trouverSerie(carte);
-
-            if (numeroSerie == -1) {
-                // DANGER 1 : trop petite → on ramasserait la série la moins chère
-                int cout = getSerie(trouverSerieMoinsChere()).calculPoints();
-                if (cout < meilleurCout) {
-                    meilleurCout = cout;
-                    indexDangereux = i;
-                }
-                continue;
-            }
-
-            Serie serie = getSerie(numeroSerie);
-
-            if (serie.nombreDeCartes() == 5) {
-                 int cout = serie.calculPoints();
-                 if (cout < meilleurCout) {
-                    meilleurCout = cout;
-                    indexDangereux = i;
-                 }
-                 continue;
-            }
-            
-            int ecart = carte.getValeur() - serie.derniereCarte().getValeur();
-            int placesRestantes = 5 - serie.nombreDeCartes();
-            double risque = (double) ecart / placesRestantes;
-
-            if (risque < meilleurRisque) {
-                meilleurRisque = risque;
-                indexSur = i;
-            }
-        }
-
-        if (indexSur != -1) {
-            return main.prendreUneCarte(indexSur);
-        }
-
-        return main.prendreUneCarte(indexDangereux);
     }
 }
