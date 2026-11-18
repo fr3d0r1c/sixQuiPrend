@@ -21,6 +21,10 @@ public class Main {
     }
 
     public Carte prendreUneCarte(int i) {
+        if (i < 0 || i > nombreCartes - 1) {
+            return null;
+        }
+
         Carte carteRetiree = tableau[i];
 
         for (int j = i; j < nombreCartes - 1; j++) {
@@ -30,6 +34,22 @@ public class Main {
         nombreCartes--;
 
         return carteRetiree;
+    }
+
+    public Carte getCarte(int i) {
+        return this.tableau[i];
+    }
+
+    public void trierMain() {
+        for (int i = 0; i < this.nombreCartes - 1; i++) {
+            for (int j = i + 1; j < nombreCartes; j++) {
+                if (tableau[i].getValeur() > tableau[j].getValeur()) {
+                    Carte tempCarte = tableau[i];
+                    tableau[i] = tableau[j];
+                    tableau[j] = tempCarte;
+                }
+            }
+        }
     }
 
     @Override

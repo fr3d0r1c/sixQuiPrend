@@ -35,7 +35,209 @@ public class Jeu {
         }
     }
 
+    public int trouverSerie(Carte c) {
+        int meilleureSerie = -1;
+		int meilleureValeur = -1;
+
+        for (int i = 0; i < 4; i++) {
+            int valeurSerie = getSerie(i).derniereCarte().getValeur();
+
+            if (valeurSerie < c.getValeur()) {
+                if (valeurSerie > meilleureValeur) {
+                    meilleureValeur = valeurSerie;
+                    meilleureSerie = i;
+                }
+            }
+        }
+
+        return meilleureSerie;
+    }
+
     public Pioche getPioche() {
         return this.maPioche;
+    }
+
+    public int ramasserSerie(int numeroSerie, Joueur j, Carte c) {
+		Serie serie = getSerie(numeroSerie);
+		int nombreDeTetes = serie.calculPoints();
+
+        prendreToutesLesCartesDeLaSerie(j, numeroSerie);
+
+        serie.ajouterCarte(c);
+
+		return nombreDeTetes;
+	}
+
+    private void prendreToutesLesCartesDeLaSerie(Joueur j, int choix) {
+		// on met toutes les cartes de la série choisie dans
+		// la pile du joueur 'j'
+
+		Serie serie = getSerie(choix);
+		Pile pile = j.getPile();
+
+		for (int i = 0; i < serie.nombreDeCartes(); i++) {
+			pile.ajouterCarte(serie.getCarte(i));
+		}
+
+		serie.vider();
+	}
+
+    public boolean estFinie() {
+        for (int i = 0; i < getNombreJoueurs(); i++) {
+            Joueur joueur = getJoueur(i);
+            int nbPoints = joueur.getNombreDePoints();
+            if (nbPoints > 66) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Joueur trouverGagnant() {
+        Joueur meilleurJoueur = getJoueur(0);
+        int ptsWinner = meilleurJoueur.getNombreDePoints();
+
+        for (int i = 1; i < getNombreJoueurs(); i++) {
+            Joueur joueur = getJoueur(i);
+            int nbPoints = joueur.getNombreDePoints();
+            if (nbPoints < ptsWinner) {
+                ptsWinner = nbPoints;
+                meilleurJoueur = joueur;
+            }
+        }
+
+        return meilleurJoueur;
+    }
+
+    public void ordonnerCartesJouees(CarteJouee[] cartesJouees) {
+        for (int i = 0; i < cartesJouees.length - 1; i++) {
+            for (int j = i + 1; j < cartesJouees.length; j++) {
+
+                if (cartesJouees[i].getCarte().getValeur() > cartesJouees[j].getCarte().getValeur()) {
+                    CarteJouee tempCarteJouee = cartesJouees[i];
+                    cartesJouees[i] = cartesJouees[j];
+                    cartesJouees[j] = tempCarteJouee;
+                }
+            }
+        }
+    }
+
+    public Carte choisirCarteBot(Joueur j) {
+        return j.getStrategie().choisirCarte(j, this);
+    }
+
+    public int choisirSerieBot(Joueur j) {
+        return j.getStrategie().choisirSerie(j, this);
+    }
+
+    public void preparerManche() {
+        Pioche pioche = getPioche();
+        pioche.reinitialiser();
+
+        for (int i = 0; i < 4; i++) {
+            Serie serie = getSerie(i);
+            Carte carte = pioche.piocher();
+
+            serie.vider();
+            serie.ajouterCarte(carte);
+        }
+
+        for (int i = 0; i < getNombreJoueurs(); i++) {
+            Joueur joueur = getJoueur(i);
+            Main main = joueur.getMain();
+
+            for (int j = 0; j < 10; j++) {
+                Carte carte = pioche.piocher();
+                main.ajouterCarte(carte);
+            }
+
+            joueur.getMain().trierMain();
+        }
+    }
+
+    // ATTENTION : même logique que deposerCarte() dans Application.
+    // Toute modification de la règle de dépôt doit être faite aux deux endroits.
+    public void poserCarteBot(CarteJouee carteJouee) {
+        Joueur j = carteJouee.getJoueur();
+        Carte c = carteJouee.getCarte();
+        int meilleureSerie = trouverSerie(c);
+
+        if (meilleureSerie == -1) {
+            int choix = choisirSerieBot(j);
+            ramasserSerie(choix, j, c);
+        } else {
+            Serie serie = getSerie(meilleureSerie);
+            if (serie.nombreDeCartes() == 5) {
+                ramasserSerie(meilleureSerie, j, c);
+            } else {
+                serie.ajouterCarte(c);
+            }
+        }
+    }
+
+    public void terminerManche() {
+        for (int i=0; i < getNombreJoueurs(); i++) {
+            Joueur joueur = getJoueur(i);
+            Pile pile = joueur.getPile();
+
+            int pointsPile = pile.calculPoints();
+            joueur.ajouterPoints(pointsPile);
+            pile.vider();
+        }
+    }
+
+    public void jouerMancheAutomatique() {
+        preparerManche();
+        CarteJouee[] cartesJouees = new CarteJouee[getNombreJoueurs()];
+
+        while (getJoueur(0).getMain().nombreDeCartes() > 0) {
+            for (int i = 0; i < getNombreJoueurs(); i++) {
+                Joueur joueur = getJoueur(i);
+                cartesJouees[i] = new CarteJouee(choisirCarteBot(joueur), joueur);
+            }
+
+            ordonnerCartesJouees(cartesJouees);
+
+            for (int i=0; i < getNombreJoueurs(); i++) {
+                poserCarteBot(cartesJouees[i]);
+            }
+        }
+
+        terminerManche();
+    }
+
+    public void jouerPartieAutomatique() {
+        // ATTENTION : Les joueurs doivent être obligatoirement des bots
+        do {
+            jouerMancheAutomatique();
+        } while(!estFinie());
+    }
+
+    public boolean estEgalite() {
+        int scoreMin = trouverGagnant().getNombreDePoints();
+
+        int nbAuScoreMin = 0;
+        for(int i = 0; i < getNombreJoueurs(); i++) {
+            if (getJoueur(i).getNombreDePoints() == scoreMin) {
+                nbAuScoreMin++;
+            }
+        }
+
+        return nbAuScoreMin > 1;
+    }
+
+    public int trouverSerieMoinsChere() {
+        int meilleureSerie = 0;
+        int ptsSerie = Integer.MAX_VALUE;
+        for (int i = 0; i < 4; i++) {
+            Serie serie = getSerie(i);
+            int nbTetes = serie.calculPoints();
+            if (nbTetes < ptsSerie) {
+                ptsSerie = nbTetes;
+                meilleureSerie = i;
+            }
+        }
+
+        return meilleureSerie;
     }
 }
