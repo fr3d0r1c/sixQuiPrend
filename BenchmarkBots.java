@@ -3,7 +3,7 @@ public class BenchmarkBots {
     
     public static void main(String[] args) {
 
-        TypeBot[] participants = { TypeBot.ALEATOIRE, TypeBot.FACILE, TypeBot.MOYEN};
+        TypeBot[] participants = { TypeBot.ALEATOIRE, TypeBot.FACILE, TypeBot.MOYEN, TypeBot.DIFFICILE};
 
         int nbParties = 1000;
         int egalites = 0;
