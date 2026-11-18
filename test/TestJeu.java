@@ -40,6 +40,8 @@ public class TestJeu {
         monTest.testBotMoyenEcartMinimal();
         monTest.testBotMoyenEviteSixiemeCarte();
         monTest.testBotMoyenSituDangeureuse();
+        monTest.testBotMoyenRamasseSerieMoinsChereEnDernier();
+        monTest.testBotMoyenRamasseSerieMoinsChereEnPremier();
     }
 
     private void testConstructeur1() {
@@ -550,4 +552,33 @@ public class TestJeu {
 
         Test.test(carteJouee.getValeur() == 3, "si toutes ses cartes sont dangereuses, le bot MOYEN joue la plus petite");
     }
+
+    private void testBotMoyenRamasseSerieMoinsChereEnDernier() {
+        Jeu jeu = new Jeu(2);
+        jeu.getSerie(0).ajouterCarte(new Carte(55));
+        jeu.getSerie(1).ajouterCarte(new Carte(10));
+        jeu.getSerie(2).ajouterCarte(new Carte(11));
+        jeu.getSerie(2).ajouterCarte(new Carte(13));
+
+        Joueur bot = new Joueur("Bot", true, TypeBot.MOYEN);
+
+        int serieChoisie = jeu.choisirSerieBot(bot);
+
+        Test.test(serieChoisie == 3, "le bot MOYEN ramasse la série la moins chère (la dernière, 1 tête)");
+    }
+
+    private void testBotMoyenRamasseSerieMoinsChereEnPremier() {
+        Jeu jeu = new Jeu(2);
+        jeu.getSerie(0).ajouterCarte(new Carte(13));
+        jeu.getSerie(1).ajouterCarte(new Carte(10));
+        jeu.getSerie(2).ajouterCarte(new Carte(11));
+        jeu.getSerie(3).ajouterCarte(new Carte(55));
+
+        Joueur bot = new Joueur("Bot", true, TypeBot.MOYEN);
+
+        int serieChoisie = jeu.choisirSerieBot(bot);
+
+        Test.test(serieChoisie == 0, "le bot MOYEN ramasse la série la moins chère (la première, 1 tête)");
+    }
+
 }

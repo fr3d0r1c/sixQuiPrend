@@ -148,7 +148,22 @@ public class Jeu {
     }
 
     public int choisirSerieBot(Joueur j) {
-        return r.nextInt(4);
+        int choix;
+        switch (j.getTypeBot()) {
+            case ALEATOIRE:
+                choix =  r.nextInt(4);
+                break;
+
+            case FACILE:
+            case MOYEN:
+                choix = trouverSerieMoinsChere();
+                break;
+
+            default:
+				throw new IllegalStateException("Type de bot non géré : " + j.getTypeBot());
+        }
+
+        return choix;
     }
 
     private Carte choisirCarteBotFacile(Joueur j) {
@@ -281,5 +296,20 @@ public class Jeu {
         }
 
         return main.prendreUneCarte(meilleurIndex);
+    }
+
+    private int trouverSerieMoinsChere() {
+        int meilleureSerie = 0;
+        int ptsSerie = Integer.MAX_VALUE;
+        for (int i = 0; i < 4; i++) {
+            Serie serie = getSerie(i);
+            int nbTetes = serie.calculPoints();
+            if (nbTetes < ptsSerie) {
+                ptsSerie = nbTetes;
+                meilleureSerie = i;
+            }
+        }
+
+        return meilleureSerie;
     }
 }
