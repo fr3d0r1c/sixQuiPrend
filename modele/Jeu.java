@@ -5,6 +5,8 @@ public class Jeu {
     private Joueur[] tableauJoueurs;
     private int nombreJoueurs;
     private Serie[] tableauSeries;
+    private CarteJouee[] tourEnCours;
+    private int prochaineCarte;
 
     public Jeu(int nbJoueurs){
         this.maPioche = new Pioche();
@@ -163,12 +165,7 @@ public class Jeu {
         int meilleureSerie = trouverSerie(c);
 
         if (meilleureSerie == -1) {
-            int choix;
-            if (j.estAvatar()) {
-                choix = choisirSerieBot(j);
-            } else {
-                choix = trouverSerieMoinsChere(); // PROVISOIRE
-            }
+            int choix = choisirSerieBot(j);
             ramasserSerie(choix, j, c);
         } else {
             Serie serie = getSerie(meilleureSerie);
@@ -246,7 +243,7 @@ public class Jeu {
         return meilleureSerie;
     }
 
-    public void jouerTour(Joueur humain, Carte carteHumain) {
+    public boolean jouerTour(Joueur humain, Carte carteHumain) {
         CarteJouee[] cartesJouees = new CarteJouee[getNombreJoueurs()];
 
         for (int i = 0; i < getNombreJoueurs(); i++) {
@@ -260,8 +257,34 @@ public class Jeu {
 
         ordonnerCartesJouees(cartesJouees);
 
-        for (int i = 0; i < getNombreJoueurs(); i++) {
-            poserCarteBot(cartesJouees[i]);
+        this.tourEnCours = cartesJouees;
+        this.prochaineCarte = 0;
+        return continuerTour();
+    }
+
+    private boolean continuerTour() {
+        while (prochaineCarte < tourEnCours.length) {
+            CarteJouee cj = tourEnCours[prochaineCarte];
+
+            if (!cj.getJoueur().estAvatar() && trouverSerie(cj.getCarte()) == -1) {
+                return true;
+            }
+
+            poserCarteBot(cj);
+            prochaineCarte++;
         }
+        tourEnCours = null;
+        return false;
+    }
+
+    public boolean choisirSerieHumain(int numeroSerie) {
+        CarteJouee cj = tourEnCours[prochaineCarte];
+        ramasserSerie(numeroSerie, cj.getJoueur(), cj.getCarte());
+        prochaineCarte++;
+        return continuerTour();
+    }
+
+    public boolean attendChoixSerie() {
+        return tourEnCours != null;
     }
 }

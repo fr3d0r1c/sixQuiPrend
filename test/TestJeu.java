@@ -40,6 +40,7 @@ public class TestJeu {
         monTest.testBotDifficileCarteLaPlusSure();
         monTest.testCreerStrategie();
         monTest.testJouerTour();
+        monTest.testJouerTourAttendChoixSerie();
     }
 
     private void testConstructeur1() {
@@ -639,7 +640,11 @@ public class TestJeu {
         jeu.preparerManche();
 
         Carte carte = humain.getMain().prendreUneCarte(0);
-        jeu.jouerTour(humain, carte);
+
+        boolean attente = jeu.jouerTour(humain, carte);
+        if (attente == true) {
+            jeu.choisirSerieHumain(0);
+        }
 
         int total = jeu.getSerie(0).nombreDeCartes()
         + jeu.getSerie(1).nombreDeCartes()
@@ -652,5 +657,31 @@ public class TestJeu {
         Test.test(humain.getMain().nombreDeCartes() == 9, "l'humain a 9 cartes après un tour");
         Test.test(bot.getMain().nombreDeCartes() == 9, "le bot a aussi joué une carte");
         Test.test(total == 6, "les cartes jouées sont placées ou ramassées dans une série");
+    }
+
+    private void testJouerTourAttendChoixSerie() {
+        // PRÉPARER : séries 10, 20, 30, 40
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur humain = new Joueur("Humain", false);
+        Joueur bot = new Joueur("Bot", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(humain);
+        jeu.ajouterJoueur(bot);
+        bot.getMain().ajouterCarte(new Carte(50));
+
+        // AGIR 1 : l'humain joue le 5, trop petit pour toutes les séries
+        boolean attente = jeu.jouerTour(humain, new Carte(5));
+
+        // VÉRIFIER 1 : le jeu attend, et le 50 du bot n'est PAS encore posé
+        Test.test(attente == true, "le jeu attend le choix de l'humain");
+        Test.test(jeu.getSerie(3).nombreDeCartes() == 1, "le 50 du bot attend son tour (le 5 passe avant)");
+
+        // AGIR 2 : l'humain choisit la série 3 (la carte 30)
+        boolean encore = jeu.choisirSerieHumain(2);
+
+        // VÉRIFIER 2 : le tour est fini, tout est à sa place
+        Test.test(encore == false, "le tour est terminé après le choix");
+        Test.test(humain.getPile().nombreDeCartes() == 1, "l'humain a ramassé la série du 30");
+        Test.test(jeu.getSerie(2).derniereCarte().getValeur() == 5, "le 5 remplace la série ramassée");
+        Test.test(jeu.getSerie(3).nombreDeCartes() == 2, "le 50 du bot a été posé après le 40");
     }
 }
