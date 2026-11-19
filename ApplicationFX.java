@@ -20,41 +20,35 @@ public class ApplicationFX extends javafx.application.Application {
     
     @Override
     public void start(Stage fenetre) {
-        Button bouton = new Button("Jouer");
-
+        // 1. LE MODÈLE (inchangé)
         Jeu jeu = new Jeu(2);
         Joueur moi = new Joueur("Moi", false);
         Joueur bot = new Joueur("Bot 1", true, TypeBot.MOYEN);
         jeu.ajouterJoueur(moi);
         jeu.ajouterJoueur(bot);
+        jeu.preparerManche();
 
         jeu.preparerManche();
         PlateauVue plateau = new PlateauVue(jeu);
         plateau.setPadding(new Insets(20));
 
-        bouton.setOnAction(e -> {
-            jeu.poserCarteBot(new CarteJouee(jeu.choisirCarteBot(bot), bot));
-            plateau.rafraichir();
-        });
-
         Label info = new Label("Choisis une carte");
 
         mainVue = new MainVue(moi, numero -> {
-            Carte choisie = moi.getMain().prendreUneCarte(numero);
-            info.setText("Tu as joué le " + choisie.getValeur());
-            mainVue.rafraichir();
+            Carte choisie = moi.getMain().prendreUneCarte(numero);   // a. retirer la carte de la main
+            jeu.jouerTour(moi, choisie);                                     // b. jouer le tour complet
+            info.setText("Tu as joué le " + choisie.getValeur());    // c. informer le joueur
+            plateau.rafraichir();                                         // d. redessiner le plateau
+            mainVue.rafraichir();                                           //    et la main
         });
 
         BorderPane ecran = new BorderPane();
         ecran.setPadding(new Insets(15));
-
         ecran.setTop(info);
         ecran.setCenter(plateau);
-        ecran.setRight(bouton);
         ecran.setBottom(mainVue);
 
         Scene scene = new Scene(ecran, 900, 620);
-
         fenetre.setTitle("Six qui prend");
         fenetre.setScene(scene);
         fenetre.show();

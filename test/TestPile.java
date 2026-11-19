@@ -9,6 +9,7 @@ public class TestPile {
 		monTest.testConstructeur1();
 		monTest.testConstructeur2();
 		monTest.testConstructeur3();
+		monTest.testNombreDeCartes();
 	}
 	private void testConstructeur1() {
 		Pile p = new Pile();
@@ -31,5 +32,18 @@ public class TestPile {
 		p.ajouterCarte(new Carte(11));
 		p.ajouterCarte(new Carte(12));
 		Test.test(p.toString().compareTo("{(10,3),(11,5),(12,1)}")==0, "test de la m�thode\"toString\"");
+	}
+
+	private void testNombreDeCartes() {
+		// PRÉPARER
+		Pile pile = new Pile();
+
+		Test.test(pile.nombreDeCartes() == 0, "une pile neuve ne contient aucune carte");
+
+		pile.ajouterCarte(new Carte(55));
+		pile.ajouterCarte(new Carte(10));
+
+		Test.test(pile.nombreDeCartes() == 2, "la pile contient 2 cartes (et non 10 têtes)");
+
 	}
 }

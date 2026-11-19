@@ -8,6 +8,10 @@ public class Pile {
         this.liste = new ArrayList<>();
     }
 
+    public int nombreDeCartes() {
+        return liste.size();
+    }
+
     public void ajouterCarte(Carte carte) {
         liste.add(carte);
     }
@@ -28,6 +32,8 @@ public class Pile {
 
         return somme;
     }
+
+
 
     @Override
     public String toString() {

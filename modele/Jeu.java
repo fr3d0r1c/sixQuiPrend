@@ -163,7 +163,12 @@ public class Jeu {
         int meilleureSerie = trouverSerie(c);
 
         if (meilleureSerie == -1) {
-            int choix = choisirSerieBot(j);
+            int choix;
+            if (j.estAvatar()) {
+                choix = choisirSerieBot(j);
+            } else {
+                choix = trouverSerieMoinsChere(); // PROVISOIRE
+            }
             ramasserSerie(choix, j, c);
         } else {
             Serie serie = getSerie(meilleureSerie);
@@ -239,5 +244,24 @@ public class Jeu {
         }
 
         return meilleureSerie;
+    }
+
+    public void jouerTour(Joueur humain, Carte carteHumain) {
+        CarteJouee[] cartesJouees = new CarteJouee[getNombreJoueurs()];
+
+        for (int i = 0; i < getNombreJoueurs(); i++) {
+            Joueur joueur = getJoueur(i);
+            if (joueur == humain) {
+                cartesJouees[i] = new CarteJouee(carteHumain, joueur);
+            } else {
+                cartesJouees[i] = new CarteJouee(choisirCarteBot(joueur), joueur);
+            }
+        }
+
+        ordonnerCartesJouees(cartesJouees);
+
+        for (int i = 0; i < getNombreJoueurs(); i++) {
+            poserCarteBot(cartesJouees[i]);
+        }
     }
 }

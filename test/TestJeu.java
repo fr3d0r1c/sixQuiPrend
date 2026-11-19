@@ -39,6 +39,7 @@ public class TestJeu {
         monTest.testBotDifficileSixiemeCarteMoinsChere();
         monTest.testBotDifficileCarteLaPlusSure();
         monTest.testCreerStrategie();
+        monTest.testJouerTour();
     }
 
     private void testConstructeur1() {
@@ -626,5 +627,30 @@ public class TestJeu {
         Test.test(TypeBot.FACILE.creerStrategie() instanceof BotFacile, "FACILE crée un BotFacile");
         Test.test(TypeBot.MOYEN.creerStrategie() instanceof BotMoyen, "MOYEN crée un BotMoyen");
         Test.test(TypeBot.DIFFICILE.creerStrategie() instanceof BotDifficile, "DIFFICILE crée un BotDifficile");
+    }
+
+    private void testJouerTour() {
+        // PRÉPARER : un humain et un bot, une manche préparée
+        Jeu jeu = new Jeu(2);
+        Joueur humain = new Joueur("Humain", false);
+        Joueur bot = new Joueur("Bot", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(humain);
+        jeu.ajouterJoueur(bot);
+        jeu.preparerManche();
+
+        Carte carte = humain.getMain().prendreUneCarte(0);
+        jeu.jouerTour(humain, carte);
+
+        int total = jeu.getSerie(0).nombreDeCartes()
+        + jeu.getSerie(1).nombreDeCartes()
+        + jeu.getSerie(2).nombreDeCartes()
+        + jeu.getSerie(3).nombreDeCartes()
+        + humain.getPile().nombreDeCartes()
+        + bot.getPile().nombreDeCartes();
+
+
+        Test.test(humain.getMain().nombreDeCartes() == 9, "l'humain a 9 cartes après un tour");
+        Test.test(bot.getMain().nombreDeCartes() == 9, "le bot a aussi joué une carte");
+        Test.test(total == 6, "les cartes jouées sont placées ou ramassées dans une série");
     }
 }
