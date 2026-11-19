@@ -1,13 +1,17 @@
+import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import javafx.geometry.Insets;
 import modele.Carte;
+import modele.Jeu;
+import modele.Joueur;
+import modele.TypeBot;
+import modele.CarteJouee;
 import vue.CarteVue;
-
+import vue.PlateauVue;
 public class ApplicationFX extends javafx.application.Application {
     private int compteur = 0;
     
@@ -16,21 +20,25 @@ public class ApplicationFX extends javafx.application.Application {
         Label message = new Label("Six qui prend");
         Button bouton = new Button("Jouer");
 
+        Jeu jeu = new Jeu(2);
+        Joueur moi = new Joueur("Moi", false);
+        Joueur bot = new Joueur("Bot 1", true, TypeBot.MOYEN);
+        jeu.ajouterJoueur(moi);
+        jeu.ajouterJoueur(bot);
+
+        jeu.preparerManche();
+        PlateauVue plateau = new PlateauVue(jeu);
+        plateau.setPadding(new Insets(20));
+
         bouton.setOnAction(e -> {
-            compteur++;
-            message.setText("Cliqué " + compteur + " fois");
+            jeu.poserCarteBot(new CarteJouee(jeu.choisirCarteBot(bot), bot));
+            plateau.rafraichir();
         });
 
-        VBox racine = new VBox(10, message, bouton); // empile verticalement, 10 px d'écart
-        HBox rangee = new HBox(10,
-            new CarteVue(new Carte(1)),
-            new CarteVue(new Carte(5)),
-            new CarteVue(new Carte(10)),
-            new CarteVue(new Carte(11)),
-            new CarteVue(new Carte(55))
-        );
-        rangee.setPadding(new Insets(20));
-        Scene scene = new Scene(rangee, 400, 300);
+        VBox ecran = new VBox(plateau, bouton);
+        ecran.setPadding(new Insets(20));
+
+        Scene scene = new Scene(ecran, 700, 500);
 
         fenetre.setTitle("Six qui prend");
         fenetre.setScene(scene);
