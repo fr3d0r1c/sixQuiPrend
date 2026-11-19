@@ -16,7 +16,7 @@ public class CarteVue extends StackPane {
         this.carte = carte;
 
         // le fond : un rectangle aux coins arrondis
-        Rectangle fond = new Rectangle(60, 90);
+        Rectangle fond = new Rectangle(50, 75);
         fond.setArcWidth(12);
         fond.setArcHeight(12);
         fond.setFill(couleurSelonTetes(carte.getNombreTetesDeBoeuf()));
