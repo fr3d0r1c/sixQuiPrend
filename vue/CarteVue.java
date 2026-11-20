@@ -19,12 +19,12 @@ public class CarteVue extends StackPane {
         Rectangle fond = new Rectangle(50, 75);
         fond.setArcWidth(12);
         fond.setArcHeight(12);
-        fond.setFill(couleurSelonTetes(carte.getNombreTetesDeBoeuf()));
+        fond.getStyleClass().add("tetes-" + carte.getNombreTetesDeBoeuf());
         fond.setStroke(Color.BLACK);
 
         // le texte : la valeur en grand, les têtes en dessous
         Label valeur = new Label(String.valueOf(carte.getValeur()));
-        valeur.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
+        valeur.getStyleClass().add("valeur-carte");
         Label tetes = new Label(carte.getNombreTetesDeBoeuf() + " 🐮");
 
         VBox textes = new VBox(4, valeur, tetes);
@@ -35,16 +35,5 @@ public class CarteVue extends StackPane {
 
     public Carte getCarte() {
         return carte;
-    }
-
-    private Color couleurSelonTetes(int nbTetes) {
-        switch (nbTetes) {
-            case 1: return Color.WHITE;
-            case 2: return Color.LIGHTBLUE;
-            case 3: return Color.GOLD;   // à toi de choisir
-            case 5: return Color.DARKORANGE;
-            case 7: return Color.MEDIUMPURPLE;
-            default: throw new IllegalArgumentException("Nombre de têtes impossible : " + nbTetes);
-        }
     }
 }

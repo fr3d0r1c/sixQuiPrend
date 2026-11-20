@@ -15,6 +15,7 @@ import modele.TypeBot;
 import vue.MainVue;
 import vue.PlateauVue;
 import vue.ScoresVue;
+import javafx.scene.Parent;
 
 public class ApplicationFX extends javafx.application.Application {
     
@@ -42,7 +43,7 @@ public class ApplicationFX extends javafx.application.Application {
 
     private Scene creerAccueil() {
         Label titre = new Label("Six qui prend");
-        titre.setStyle("-fx-font-size: 36px; -fx-font-weight: bold;");
+        titre.getStyleClass().add("titre-accueil");
 
         Spinner<Integer> choixNbBots = new Spinner<>(1, 9, 3);
 
@@ -60,7 +61,7 @@ public class ApplicationFX extends javafx.application.Application {
             boutonJouer);
         racine.setAlignment(Pos.CENTER);
 
-        return new Scene(racine, 900, 620);
+        return creerScene(racine);
     }
 
     private void lancerPartie(int nbBots, TypeBot niveau) {
@@ -113,7 +114,7 @@ public class ApplicationFX extends javafx.application.Application {
         ecran.setBottom(mainVue);
         ecran.setRight(droite);
 
-        fenetre.setScene(new Scene(ecran, 900,620));
+        fenetre.setScene(creerScene(ecran));
     }
 
     // ===== MÉTHODE 2 : remettre l'écran à jour après chaque action =====
@@ -153,6 +154,11 @@ public class ApplicationFX extends javafx.application.Application {
         }
     }
 
+    private Scene creerScene(Parent racine) {
+        Scene scene = new Scene(racine, 900, 620);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+        return scene;
+    }
     // ===== MÉTHODE 3 : lancer le programme =====
     public static void main(String[] args) {
         launch(args);

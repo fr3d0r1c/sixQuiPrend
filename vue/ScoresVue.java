@@ -18,7 +18,7 @@ public class ScoresVue extends VBox {
         getChildren().clear();
 
         Label titre = new Label("Scores");
-        titre.setStyle("-fx-font-size: 15px; -fx-font-weight : bold;");
+        titre.getStyleClass().add("titre-scores");
         getChildren().add(titre);
 
         for (int i = 0; i < jeu.getNombreJoueurs(); i++) {
@@ -26,10 +26,10 @@ public class ScoresVue extends VBox {
 
             Label ligne = new Label(joueur.getNom() + " : " + joueur.getNombreDePoints() + " 🐮 (+" + joueur.getPile().calculPoints() + ")");
 
+            ligne.getStyleClass().add("ligne-score");
+
             if (joueur.estAvatar() == false) {
-                ligne.setStyle("-fx-font-size: 15px; -fx-font-weight : bold;");
-            } else {
-                ligne.setStyle("-fx-font-size: 15px;");
+                ligne.getStyleClass().add("ligne-score-moi");
             }
 
             getChildren().add(ligne);

@@ -1,0 +1,41 @@
+/* ===== Accueil ===== */
+.titre-accueil {
+    -fx-font-size: 36px;
+    -fx-font-weight: bold;
+}
+
+/* ===== Scores ===== */
+.titre-scores {
+    -fx-font-size: 22px; 
+    -fx-font-weight : bold;
+}
+.ligne-score {
+    -fx-font-size: 15px;
+}
+.ligne-score-moi {
+    -fx-font-weight: bold;
+}
+
+/* ===== Cartes ===== */
+.valeur-carte {
+    -fx-font-size: 22px; 
+    -fx-font-weight: bold;
+}
+
+/* la couleur du fond selon les têtes (le Rectangle utilise -fx-fill) */
+.tetes-1 { -fx-fill: white; }
+.tetes-2 { -fx-fill: lightskyblue; }
+.tetes-3 { -fx-fill: gold; }
+.tetes-5 { -fx-fill: darkorange; }
+.tetes-7 { -fx-fill: mediumpurple; }
+
+/* ===== Séries ===== */
+.serie {
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-padding: 4;
+    -fx-border-color: transparent;
+}
+.serie-attente {
+    -fx-border-color: crimson;
+}
