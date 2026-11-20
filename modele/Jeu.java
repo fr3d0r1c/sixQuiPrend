@@ -157,9 +157,7 @@ public class Jeu {
         }
     }
 
-    // ATTENTION : même logique que deposerCarte() dans Application.
-    // Toute modification de la règle de dépôt doit être faite aux deux endroits.
-    public void poserCarteBot(CarteJouee carteJouee) {
+    public void poserCarte(CarteJouee carteJouee) {
         Joueur j = carteJouee.getJoueur();
         Carte c = carteJouee.getCarte();
         int meilleureSerie = trouverSerie(c);
@@ -201,7 +199,7 @@ public class Jeu {
             ordonnerCartesJouees(cartesJouees);
 
             for (int i=0; i < getNombreJoueurs(); i++) {
-                poserCarteBot(cartesJouees[i]);
+                poserCarte(cartesJouees[i]);
             }
         }
 
@@ -270,7 +268,7 @@ public class Jeu {
                 return true;
             }
 
-            poserCarteBot(cj);
+            poserCarte(cj);
             prochaineCarte++;
         }
         tourEnCours = null;

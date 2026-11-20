@@ -323,7 +323,7 @@ public class TestJeu {
         jeu.getSerie(2).ajouterCarte(new Carte(30));
         jeu.getSerie(3).ajouterCarte(new Carte(40));
 
-        jeu.poserCarteBot(new CarteJouee(new Carte(22), bot));
+        jeu.poserCarte(new CarteJouee(new Carte(22), bot));
 
         Test.test(jeu.getSerie(1).nombreDeCartes() == 2, "la carte 22 s'ajoute à la série de dernière carte 20");
         Test.test(jeu.getSerie(1).derniereCarte().getValeur() == 22, "22 est maintenant la dernière carte de la série");
@@ -342,7 +342,7 @@ public class TestJeu {
         jeu.getSerie(3).ajouterCarte(new Carte(40));
 
         // 2. AGIR
-        jeu.poserCarteBot(new CarteJouee(new Carte(22), bot));
+        jeu.poserCarte(new CarteJouee(new Carte(22), bot));
 
         // 3. VÉRIFIER
         Test.test(jeu.getSerie(1).nombreDeCartes() == 1, "après la 6e carte, la série ne contient plus que la 22");
@@ -360,7 +360,7 @@ public class TestJeu {
         jeu.getSerie(3).ajouterCarte(new Carte(40));
 
         // 2. AGIR
-        jeu.poserCarteBot(new CarteJouee(new Carte(5), bot));
+        jeu.poserCarte(new CarteJouee(new Carte(5), bot));
 
         // 3. VÉRIFIER
         // On ne sait pas QUELLE série le bot a ramassée : on la cherche
