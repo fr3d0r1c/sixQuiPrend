@@ -41,6 +41,7 @@ public class TestJeu {
         monTest.testCreerStrategie();
         monTest.testJouerTour();
         monTest.testJouerTourAttendChoixSerie();
+        monTest.testEstMancheFinie();
     }
 
     private void testConstructeur1() {
@@ -683,5 +684,28 @@ public class TestJeu {
         Test.test(humain.getPile().nombreDeCartes() == 1, "l'humain a ramassé la série du 30");
         Test.test(jeu.getSerie(2).derniereCarte().getValeur() == 5, "le 5 remplace la série ramassée");
         Test.test(jeu.getSerie(3).nombreDeCartes() == 2, "le 50 du bot a été posé après le 40");
+    }
+
+    private void testEstMancheFinie() {
+        // PRÉPARER
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur humain = new Joueur("Humain", false);
+        Joueur bot = new Joueur("Bot", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(humain);
+        jeu.ajouterJoueur(bot);
+        humain.getMain().ajouterCarte(new Carte(5));
+        bot.getMain().ajouterCarte(new Carte(50));
+
+        // 1. des cartes en main → pas finie
+        Test.test(jeu.estMancheFinie() == false, "la manche n'est pas finie tant qu'il reste des cartes");
+
+        // 2. dernière carte trop petite → mains vides, mais choix en attente
+        Carte carte = humain.getMain().prendreUneCarte(0);
+        jeu.jouerTour(humain, carte);
+        Test.test(jeu.estMancheFinie() == false, "pas finie tant que l'humain n'a pas choisi sa série");
+
+        // 3. après le choix → finie
+        jeu.choisirSerieHumain(0);
+        Test.test(jeu.estMancheFinie() == true, "la manche est finie quand tout est joué");
     }
 }

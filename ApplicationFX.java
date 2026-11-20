@@ -9,10 +9,9 @@ import modele.Carte;
 import modele.Jeu;
 import modele.Joueur;
 import modele.TypeBot;
-import modele.CarteJouee;
-import vue.CarteVue;
 import vue.MainVue;
 import vue.PlateauVue;
+import vue.ScoresVue;
 public class ApplicationFX extends javafx.application.Application {
     
     // ===== ATTRIBUTS : tout ce que plusieurs méthodes doivent voir =====
@@ -20,6 +19,8 @@ public class ApplicationFX extends javafx.application.Application {
     private PlateauVue plateau;
     private MainVue mainVue;
     private Label info;
+    private ScoresVue scores;
+    private Button boutonSuivant;
     
     // ===== MÉTHODE 1 : construire l'écran =====
     @Override
@@ -30,6 +31,18 @@ public class ApplicationFX extends javafx.application.Application {
         jeu.ajouterJoueur(moi);
         jeu.ajouterJoueur(bot);
         jeu.preparerManche();
+
+        scores = new ScoresVue(jeu);
+
+        boutonSuivant = new Button("Manche suivante");
+        boutonSuivant.setVisible(false);
+        boutonSuivant.setOnAction(e -> {
+            jeu.preparerManche();
+            boutonSuivant.setVisible(false);
+            mettreAJour(false);
+        }); 
+
+        VBox droite = new VBox(15, scores, boutonSuivant);
 
         info = new Label("Choisis une carte");
 
@@ -53,6 +66,7 @@ public class ApplicationFX extends javafx.application.Application {
         ecran.setTop(info);
         ecran.setCenter(plateau);
         ecran.setBottom(mainVue);
+        ecran.setRight(droite);
 
         Scene scene = new Scene(ecran, 900, 620);
         fenetre.setTitle("Six qui prend");
@@ -64,6 +78,7 @@ public class ApplicationFX extends javafx.application.Application {
     private void mettreAJour(boolean attente) {
         plateau.rafraichir();
         mainVue.rafraichir();
+        scores.rafraichir();
         mainVue.setDisable(attente);
 
         if (attente) {
@@ -71,7 +86,29 @@ public class ApplicationFX extends javafx.application.Application {
         } else {
             info.setText("À toi de jouer");
         }
+
+        if (!attente && jeu.estMancheFinie()) {
+            finirManche();
+        }
     }
+
+    private void finirManche() {
+        jeu.terminerManche();
+        scores.rafraichir();
+
+        if (jeu.estFinie()) {
+            if (jeu.estEgalite()) {
+                info.setText("Partie terminée : égalité !");
+            } else {
+                Joueur gagnant = jeu.trouverGagnant();
+                info.setText("Partie terminée : " + gagnant.getNom() + " gagne avec " + gagnant.getNombreDePoints() + " têtes !");
+            }
+        } else {
+            info.setText("Manche terminée !");
+            boutonSuivant.setVisible(true);
+        }
+    }
+
     // ===== MÉTHODE 3 : lancer le programme =====
     public static void main(String[] args) {
         launch(args);

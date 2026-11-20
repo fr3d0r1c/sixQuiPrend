@@ -287,4 +287,8 @@ public class Jeu {
     public boolean attendChoixSerie() {
         return tourEnCours != null;
     }
+
+    public boolean estMancheFinie() {
+        return !attendChoixSerie() && getJoueur(0).getMain().nombreDeCartes() == 0;
+    }
 }
