@@ -41,9 +41,13 @@ public class PlateauVue extends VBox {
             final int numeroSerie = i;
             ligne.setOnMouseClicked(e -> quandOnCliqueSerie.accept(numeroSerie));
 
+            String styleCommun = "-fx-border-width: 2; -fx-border-radius: 8; -fx-padding: 4;";
+
             if (jeu.attendChoixSerie()) {
                 ligne.setCursor(Cursor.HAND);
-                ligne.setStyle("-fx-border-color: crimson; -fx-border-width: 2; -fx-border-radius: 8; -fx-padding: 4;");
+                ligne.setStyle(styleCommun + "-fx-border-color: crimson");
+            } else {
+                ligne.setStyle(styleCommun + "-fx-border-color: transparent");
             }
 
             getChildren().add(ligne);
