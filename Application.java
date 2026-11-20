@@ -42,51 +42,39 @@ public class Application {
 	}
 	
 	private void jouerUneManche() {
-		// on affiche les séries
-		// les joueurs choisissent une carte
-		// (les avatars prendront leur carte aléatoirement)
-		// les joueurs jouent chaun leur tour, en fonction de la valeur des cartes jouées
 
 		initialiserManche();
-		CarteJouee[] cartesJouees = new CarteJouee[nbJoueurs];
 
-		while(jeu.getJoueur(0).getMain().nombreDeCartes() > 0) {
-			for (int i = 0; i < nbJoueurs; i++) {
-				Joueur joueur = jeu.getJoueur(i);
-				cartesJouees[i] = new CarteJouee(choisirCarte(joueur), joueur);
+		while (jeu.getJoueur(0).getMain().nombreDeCartes() > 0) {
+			// 1. l'humain choisit sa carte
+			Joueur humain = jeu.getJoueur(0);
+			Carte carte = choisirCarte(humain);
+
+			// 2. le tour est joué par le moteur ; on règle l'attente au clavier
+			boolean attente = jeu.jouerTour(humain, carte);
+			while (attente) {
+				System.out.println("Ta carte est plus petite que toutes les séries : tu dois en ramasser une.");
+				afficherPlateau();
+				System.out.print("Choisissez une série (1-4) : ");
+				int choix = lireEntier(1, 4);
+				attente = jeu.choisirSerieHumain(choix - 1);
 			}
 
-			System.out.println("=== CARTES CHOISIES ===");
-
-			for (int i = 0; i < nbJoueurs; i++) {
-				System.out.println(
-					cartesJouees[i].getJoueur().getNom()
-					+ " joue "
-					+ cartesJouees[i].getCarte()
-				);
-			}
-
-			jeu.ordonnerCartesJouees(cartesJouees);
-
+			// 3. afficher l'ordre de jeu du tour
+			CarteJouee[] tour = jeu.getDernierTour();
 			System.out.println("=== ORDRE DE JEU ===");
-
-			for (int i = 0; i < nbJoueurs; i++) {
+			for (int i = 0; i < tour.length; i++) {
 				System.out.println(
-					cartesJouees[i].getJoueur().getNom()
+					tour[i].getJoueur().getNom()
 					+ " -> "
-					+ cartesJouees[i].getCarte()
+					+ tour[i].getCarte()
 				);
-			}
-
-			for (int i = 0; i < nbJoueurs; i++) {
-				deposerCarte(cartesJouees[i].getCarte(), cartesJouees[i].getJoueur());
 			}
 
 			afficherPlateau();
 		}
 
 		System.out.println("=== FIN DE MANCHE ===");
-
 		calculerLesPoints();
 
 	}
@@ -144,85 +132,15 @@ public class Application {
 		if (nombreCartes == 1) {
 			return main.prendreUneCarte(0);
 		}
-
-		if (j.estAvatar()) {
-			carteChoisie = jeu.choisirCarteBot(j);
-		} else {
-			afficherMain(j);
-			System.out.print("Choisissez une carte : ");
-			int choix = lireEntier(1, nombreCartes);
-			carteChoisie = main.prendreUneCarte(choix - 1);
-		}
+		
+		afficherMain(j);
+		System.out.print("Choisissez une carte : ");
+		int choix = lireEntier(1, nombreCartes);
+		carteChoisie = main.prendreUneCarte(choix - 1);
 
 		return carteChoisie;
 
 	}
-
-	private int choisirSerie(Joueur j) {
-		int choix;
-
-		if (j.estAvatar()) {
-			choix = jeu.choisirSerieBot(j);
-		} else {
-
-			System.out.println(
-				"Ta carte est plus petite que toutes les séries : tu dois en ramasser une. "
-			);
-
-			afficherSeries();
-
-			System.out.print("Choisissez une série (1-4) : ");
-			choix = lireEntier(1, 4);
-
-			choix = choix - 1;
-		}
-
-		return choix;
-	}
-	
-	private void deposerCarte(Carte c, Joueur j) {
-		int meilleureSerie = jeu.trouverSerie(c);
-		
-		System.out.println(
-			j.getNom()
-			+ " depose "
-			+ c
-		);
-
-		if (meilleureSerie == -1) {
-			int choix = choisirSerie(j);
-			int points = jeu.ramasserSerie(choix, j, c);
-			System.out.println(
-				j.getNom()
-				+ " prend la serie "
-				+ (choix + 1)
-				+ " (+"
-				+ formaterQuantite(points, UNITE_TETE)
-				+ ")"
-			);
-		} else {
-			Serie serie = jeu.getSerie(meilleureSerie);
-			if (serie.nombreDeCartes() == 5) {
-				int points = jeu.ramasserSerie(meilleureSerie, j, c);
-				System.out.println(
-					j.getNom()
-					+ " prend les 5 cartes de la serie "
-					+ (meilleureSerie + 1)
-					+ " (+"
-					+ formaterQuantite(points, UNITE_TETE)
-					+ ")"
-				);
-			} else {
-				serie.ajouterCarte(c);
-				System.out.println(
-					c + " ajoutee a la serie "
-					+ (meilleureSerie + 1)
-				);
-			}
-		}
-
-	}
-	
 	
 	private void afficherMain(Joueur j) {
 		Main main = j.getMain();
@@ -252,57 +170,6 @@ public class Application {
 
 			System.out.println();
 		}
-	}
-
-	private void afficherSeries() {
-		System.out.println("=========================================");
-		System.out.println("                 PLATEAU");
-		System.out.println("=========================================");
-
-		Serie[] series = new Serie[4];
-
-		for (int i = 0; i < 4; i++) {
-			series[i] = jeu.getSerie(i);
-		} 
-
-		for (int i = 0; i < 4; i++) {
-			System.out.printf("     Serie %-2d        ", i + 1);
-		}
-		System.out.println();
-
-		// Dernière carte de chaque série
-		String[][] cartes = new String[4][];
-
-		for (int i = 0; i < 4; i++) {
-			cartes[i] = series[i]
-				.derniereCarte()
-				.toAsciiLines();
-		}
-
-		for (int ligne = 0; ligne < 4; ligne++) {
-
-			for (int serie = 0; serie < 4; serie++) {
-				System.out.print(cartes[serie][ligne] + "   ");
-			}
-
-			System.out.println();
-		}
-
-		System.out.println();
-
-		// Infos complémentaires
-		for (int i = 0; i < 4; i++) {
-			System.out.printf(
-				"[%s | %s]    ",
-				formaterQuantite(series[i].nombreDeCartes(), UNITE_CARTE),
-				formaterQuantite(series[i].calculPoints(), UNITE_TETE)
-			);
-		}
-
-		System.out.println();
-
-		System.out.println("====================================");
-
 	}
 
 	private void afficherPlateau() {

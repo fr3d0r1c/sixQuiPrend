@@ -654,10 +654,13 @@ public class TestJeu {
         + humain.getPile().nombreDeCartes()
         + bot.getPile().nombreDeCartes();
 
-
         Test.test(humain.getMain().nombreDeCartes() == 9, "l'humain a 9 cartes après un tour");
         Test.test(bot.getMain().nombreDeCartes() == 9, "le bot a aussi joué une carte");
         Test.test(total == 6, "les cartes jouées sont placées ou ramassées dans une série");
+        Test.test(jeu.getDernierTour().length == 2, "Apres un tour, il y a deux cartes");
+
+        CarteJouee[] tour = jeu.getDernierTour();
+        Test.test(tour[0].getCarte().getValeur() < tour[1].getCarte().getValeur(), "les cartes du dernier tour sont triées par ordre croissant");
     }
 
     private void testJouerTourAttendChoixSerie() {

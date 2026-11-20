@@ -7,6 +7,7 @@ public class Jeu {
     private Serie[] tableauSeries;
     private CarteJouee[] tourEnCours;
     private int prochaineCarte;
+    private CarteJouee[] dernierTour;
 
     public Jeu(int nbJoueurs){
         this.maPioche = new Pioche();
@@ -16,6 +17,10 @@ public class Jeu {
         for (int i=0; i<4; i++){
             tableauSeries[i] = new Serie();
         }
+    }
+
+    public CarteJouee[] getDernierTour() {
+        return dernierTour;
     }
 
     public Joueur getJoueur(int numero) {
@@ -256,6 +261,7 @@ public class Jeu {
         ordonnerCartesJouees(cartesJouees);
 
         this.tourEnCours = cartesJouees;
+        dernierTour = cartesJouees;
         this.prochaineCarte = 0;
         return continuerTour();
     }
