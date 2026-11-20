@@ -1,7 +1,10 @@
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.Spinner;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -12,6 +15,7 @@ import modele.TypeBot;
 import vue.MainVue;
 import vue.PlateauVue;
 import vue.ScoresVue;
+
 public class ApplicationFX extends javafx.application.Application {
     
     // ===== ATTRIBUTS : tout ce que plusieurs méthodes doivent voir =====
@@ -21,15 +25,52 @@ public class ApplicationFX extends javafx.application.Application {
     private Label info;
     private ScoresVue scores;
     private Button boutonSuivant;
+    private Button boutonRejouer;
+
+    private Stage fenetre;
+    private Scene sceneAccueil;
     
     // ===== MÉTHODE 1 : construire l'écran =====
     @Override
     public void start(Stage fenetre) {
-        jeu = new Jeu(2);                              // pas de type devant : on remplit l'attribut
+        this.fenetre = fenetre;
+        sceneAccueil = creerAccueil();
+        fenetre.setTitle("Six qui prend");
+        fenetre.setScene(sceneAccueil);
+        fenetre.show();
+    }
+
+    private Scene creerAccueil() {
+        Label titre = new Label("Six qui prend");
+        titre.setStyle("-fx-font-size: 36px; -fx-font-weight: bold;");
+
+        Spinner<Integer> choixNbBots = new Spinner<>(1, 9, 3);
+
+        ComboBox<TypeBot> choixNiveau = new ComboBox<>();
+        choixNiveau.getItems().addAll(TypeBot.values());           // toutes les valeurs de l'enum
+        choixNiveau.setValue(TypeBot.MOYEN);
+
+        Button boutonJouer = new Button("Jouer");
+        boutonJouer.setOnAction(e -> lancerPartie(choixNbBots.getValue(), choixNiveau.getValue()));
+
+        VBox racine = new VBox(15,
+            titre,
+            new Label("Nombre de bots :"), choixNbBots,
+            new Label("Niveau des bots :"), choixNiveau,
+            boutonJouer);
+        racine.setAlignment(Pos.CENTER);
+
+        return new Scene(racine, 900, 620);
+    }
+
+    private void lancerPartie(int nbBots, TypeBot niveau) {
+        jeu = new Jeu(10);                              // pas de type devant : on remplit l'attribut
         Joueur moi = new Joueur("Moi", false);
-        Joueur bot = new Joueur("Bot 1", true, TypeBot.MOYEN);
         jeu.ajouterJoueur(moi);
-        jeu.ajouterJoueur(bot);
+
+        for (int i = 1; i <= nbBots; i++) {
+            jeu.ajouterJoueur(new Joueur("Bot " + i, true, niveau));
+        }
         jeu.preparerManche();
 
         scores = new ScoresVue(jeu);
@@ -42,7 +83,11 @@ public class ApplicationFX extends javafx.application.Application {
             mettreAJour(false);
         }); 
 
-        VBox droite = new VBox(15, scores, boutonSuivant);
+        boutonRejouer = new Button("Nouvelle Partie");
+        boutonRejouer.setVisible(false);
+        boutonRejouer.setOnAction(e -> fenetre.setScene(sceneAccueil));
+
+        VBox droite = new VBox(15, scores, boutonSuivant, boutonRejouer);
 
         info = new Label("Choisis une carte");
 
@@ -68,10 +113,7 @@ public class ApplicationFX extends javafx.application.Application {
         ecran.setBottom(mainVue);
         ecran.setRight(droite);
 
-        Scene scene = new Scene(ecran, 900, 620);
-        fenetre.setTitle("Six qui prend");
-        fenetre.setScene(scene);
-        fenetre.show();
+        fenetre.setScene(new Scene(ecran, 900,620));
     }
 
     // ===== MÉTHODE 2 : remettre l'écran à jour après chaque action =====
@@ -99,9 +141,11 @@ public class ApplicationFX extends javafx.application.Application {
         if (jeu.estFinie()) {
             if (jeu.estEgalite()) {
                 info.setText("Partie terminée : égalité !");
+                boutonRejouer.setVisible(true);
             } else {
                 Joueur gagnant = jeu.trouverGagnant();
                 info.setText("Partie terminée : " + gagnant.getNom() + " gagne avec " + gagnant.getNombreDePoints() + " têtes !");
+                boutonRejouer.setVisible(true);
             }
         } else {
             info.setText("Manche terminée !");

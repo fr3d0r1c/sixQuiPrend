@@ -18,19 +18,21 @@ public class ScoresVue extends VBox {
         getChildren().clear();
 
         Label titre = new Label("Scores");
+        titre.setStyle("-fx-font-size: 15px; -fx-font-weight : bold;");
         getChildren().add(titre);
 
         for (int i = 0; i < jeu.getNombreJoueurs(); i++) {
             Joueur joueur = jeu.getJoueur(i);
 
-            Label nom = new Label("Nom : " + joueur.getNom());
-            nom.setStyle("-fx-font-size: 22px; -fx-font-weight: bold;");
-            Label score = new Label("Score : " + joueur.getNombreDePoints());
-            Label tetes = new Label("+ " + joueur.getPile().calculPoints() + " 🐮 cette manche");
+            Label ligne = new Label(joueur.getNom() + " : " + joueur.getNombreDePoints() + " 🐮 (+" + joueur.getPile().calculPoints() + ")");
 
-            VBox texte = new VBox(4, nom, score, tetes);
+            if (joueur.estAvatar() == false) {
+                ligne.setStyle("-fx-font-size: 15px; -fx-font-weight : bold;");
+            } else {
+                ligne.setStyle("-fx-font-size: 15px;");
+            }
 
-            getChildren().add(texte);
+            getChildren().add(ligne);
         }
     }
 }

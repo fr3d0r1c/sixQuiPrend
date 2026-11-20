@@ -3,7 +3,7 @@ import java.util.function.Consumer;
 import javafx.scene.Cursor;
 
 import javafx.geometry.Pos;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import modele.Jeu;
