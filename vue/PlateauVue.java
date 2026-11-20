@@ -1,4 +1,6 @@
 package vue;
+import java.util.function.Consumer;
+import javafx.scene.Cursor;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -10,10 +12,12 @@ import modele.Serie;
 public class PlateauVue extends VBox {
     
     private final Jeu jeu;
+    private final Consumer<Integer> quandOnCliqueSerie;
 
-    public PlateauVue(Jeu jeu) {
+    public PlateauVue(Jeu jeu, Consumer<Integer> quandOnCliqueSerie) {
         super(10);
         this.jeu = jeu;
+        this.quandOnCliqueSerie = quandOnCliqueSerie;
         rafraichir();
     }
 
@@ -32,6 +36,14 @@ public class PlateauVue extends VBox {
 
             for (int k = 0; k < serie.nombreDeCartes(); k++) {
                 ligne.getChildren().add(new CarteVue(serie.getCarte(k)));
+            }
+
+            final int numeroSerie = i;
+            ligne.setOnMouseClicked(e -> quandOnCliqueSerie.accept(numeroSerie));
+
+            if (jeu.attendChoixSerie()) {
+                ligne.setCursor(Cursor.HAND);
+                ligne.setStyle("-fx-border-color: crimson; -fx-border-width: 2; -fx-border-radius: 8; -fx-padding: 4;");
             }
 
             getChildren().add(ligne);

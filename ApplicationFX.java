@@ -1,4 +1,3 @@
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,31 +14,38 @@ import vue.CarteVue;
 import vue.MainVue;
 import vue.PlateauVue;
 public class ApplicationFX extends javafx.application.Application {
-    private int compteur = 0;
-    private MainVue mainVue;
     
+    // ===== ATTRIBUTS : tout ce que plusieurs méthodes doivent voir =====
+    private Jeu jeu;
+    private PlateauVue plateau;
+    private MainVue mainVue;
+    private Label info;
+    
+    // ===== MÉTHODE 1 : construire l'écran =====
     @Override
     public void start(Stage fenetre) {
-        // 1. LE MODÈLE (inchangé)
-        Jeu jeu = new Jeu(2);
+        jeu = new Jeu(2);                              // pas de type devant : on remplit l'attribut
         Joueur moi = new Joueur("Moi", false);
         Joueur bot = new Joueur("Bot 1", true, TypeBot.MOYEN);
         jeu.ajouterJoueur(moi);
         jeu.ajouterJoueur(bot);
         jeu.preparerManche();
 
-        jeu.preparerManche();
-        PlateauVue plateau = new PlateauVue(jeu);
+        info = new Label("Choisis une carte");
+
+        plateau = new PlateauVue(jeu, numeroSerie -> {
+            if (!jeu.attendChoixSerie()) {
+                return;
+            }
+            boolean attente = jeu.choisirSerieHumain(numeroSerie);
+            mettreAJour(attente);
+        });
         plateau.setPadding(new Insets(20));
 
-        Label info = new Label("Choisis une carte");
-
         mainVue = new MainVue(moi, numero -> {
-            Carte choisie = moi.getMain().prendreUneCarte(numero);   // a. retirer la carte de la main
-            jeu.jouerTour(moi, choisie);                                     // b. jouer le tour complet
-            info.setText("Tu as joué le " + choisie.getValeur());    // c. informer le joueur
-            plateau.rafraichir();                                         // d. redessiner le plateau
-            mainVue.rafraichir();                                           //    et la main
+            Carte choisie = moi.getMain().prendreUneCarte(numero);
+            boolean attente = jeu.jouerTour(moi, choisie);
+            mettreAJour(attente);
         });
 
         BorderPane ecran = new BorderPane();
@@ -54,6 +60,19 @@ public class ApplicationFX extends javafx.application.Application {
         fenetre.show();
     }
 
+    // ===== MÉTHODE 2 : remettre l'écran à jour après chaque action =====
+    private void mettreAJour(boolean attente) {
+        plateau.rafraichir();
+        mainVue.rafraichir();
+        mainVue.setDisable(attente);
+
+        if (attente) {
+            info.setText("Ta carte est trop petite : clique sur la série à ramasser");
+        } else {
+            info.setText("À toi de jouer");
+        }
+    }
+    // ===== MÉTHODE 3 : lancer le programme =====
     public static void main(String[] args) {
         launch(args);
     }
