@@ -43,3 +43,25 @@
 .carte-recente {
     -fx-effect: dropshadow(gaussian, royalblue, 14, 0.6, 0, 0);
 }
+
+.halo-0 { -fx-effect: dropshadow(gaussian, darkgoldenrod, 14, 0.6, 0, 0); }        /* toi */
+.halo-1 { -fx-effect: dropshadow(gaussian, royalblue, 14, 0.6, 0, 0); }
+.halo-2 { -fx-effect: dropshadow(gaussian, crimson, 14, 0.6, 0, 0); }
+.halo-3 { -fx-effect: dropshadow(gaussian, forestgreen, 14, 0.6, 0, 0); }
+.halo-4 { -fx-effect: dropshadow(gaussian, darkorange, 14, 0.6, 0, 0); }
+.halo-5 { -fx-effect: dropshadow(gaussian, mediumorchid, 14, 0.6, 0, 0); }
+.halo-6 { -fx-effect: dropshadow(gaussian, teal, 14, 0.6, 0, 0); }
+.halo-7 { -fx-effect: dropshadow(gaussian, saddlebrown, 14, 0.6, 0, 0); }
+.halo-8 { -fx-effect: dropshadow(gaussian, deeppink, 14, 0.6, 0, 0); }
+.halo-9 { -fx-effect: dropshadow(gaussian, crimsoslategrayn, 14, 0.6, 0, 0); }
+
+.couleur-0 { -fx-text-fill: darkgoldenrod; }
+.couleur-1 { -fx-text-fill: royalblue; }
+.couleur-2 { -fx-text-fill: crimson; }
+.couleur-3 { -fx-text-fill: forestgreen; }
+.couleur-4 { -fx-text-fill: darkorange; }
+.couleur-5 { -fx-text-fill: mediumorchid; }
+.couleur-6 { -fx-text-fill: teal; }
+.couleur-7 { -fx-text-fill: saddlebrown; }
+.couleur-8 { -fx-text-fill: deeppink; }
+.couleur-9 { -fx-text-fill: slategray; }

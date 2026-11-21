@@ -42,6 +42,7 @@ public class TestJeu {
         monTest.testJouerTour();
         monTest.testJouerTourAttendChoixSerie();
         monTest.testEstMancheFinie();
+        monTest.testPositionDe();
     }
 
     private void testConstructeur1() {
@@ -716,5 +717,26 @@ public class TestJeu {
         // 3. après le choix → finie
         jeu.choisirSerieHumain(0);
         Test.test(jeu.estMancheFinie() == true, "la manche est finie quand tout est joué");
+    }
+
+    private void testPositionDe() {
+        // PRÉPARER : 3 joueurs dans le jeu, et un 4e qui n'y est PAS
+        Jeu jeu = new Jeu(3);
+        Joueur moi = new Joueur("Moi", false);
+        Joueur bot1 = new Joueur("Bot 1", true, TypeBot.FACILE);
+        Joueur bot2 = new Joueur("Bot 2", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(moi);
+        jeu.ajouterJoueur(bot1);
+        jeu.ajouterJoueur(bot2);
+
+        Joueur inconnu = new Joueur("Inconnu", true, TypeBot.FACILE);   // créé, mais jamais ajouté
+
+        // AGIR et VÉRIFIER : chaque joueur retrouve sa position
+        Test.test(jeu.positionDe(moi) == 0, "le premier joueur ajouté est en position 0");
+        Test.test(jeu.positionDe(bot1) == 1, "le deuxième joueur ajouté est en position 1");
+        Test.test(jeu.positionDe(bot2) == 2, "le troisième joueur ajouté est en position 2");
+
+        // un joueur absent du jeu n'a pas de position
+        Test.test(jeu.positionDe(inconnu) == -1, "un joueur qui n'est pas dans le jeu renvoie -1");
     }
 }

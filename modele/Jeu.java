@@ -296,4 +296,13 @@ public class Jeu {
     public boolean estMancheFinie() {
         return !attendChoixSerie() && getJoueur(0).getMain().nombreDeCartes() == 0;
     }
+
+    public int positionDe(Joueur joueur) {
+        for (int i = 0; i < getNombreJoueurs(); i++) {
+            if (getJoueur(i) == joueur) {
+                return i;
+            }
+        }
+        return -1;
+    }
 }

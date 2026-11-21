@@ -10,6 +10,8 @@ import modele.CarteJouee;
 import modele.Jeu;
 import modele.Serie;
 import modele.Carte;
+import modele.Joueur;
+import javafx.scene.control.Tooltip;
 
 public class PlateauVue extends VBox {
     
@@ -38,8 +40,11 @@ public class PlateauVue extends VBox {
 
             for (int k = 0; k < serie.nombreDeCartes(); k++) {
                 CarteVue vueCarte = new CarteVue(serie.getCarte(k));
-                if (estDansDernierTour(vueCarte.getCarte())) {
-                    vueCarte.getStyleClass().add("carte-recente");
+                Joueur poseur = trouverPoseur(vueCarte.getCarte());
+
+                if (poseur != null) {
+                    vueCarte.getStyleClass().add("halo-" + jeu.positionDe(poseur));
+                    Tooltip.install(vueCarte, new Tooltip("Posée par " + poseur.getNom()));
                 }
                 ligne.getChildren().add(vueCarte);
             }
@@ -69,5 +74,18 @@ public class PlateauVue extends VBox {
             }
         }
         return false;
+    }
+
+    private Joueur trouverPoseur(Carte carte) {
+        CarteJouee[] tour = jeu.getDernierTour();
+        if (tour == null) {
+            return null;
+        }
+        for (int i = 0; i < tour.length; i++) {
+            if (tour[i].getCarte() == carte) {
+                return tour[i].getJoueur();
+            }
+        }
+        return null;
     }
 }

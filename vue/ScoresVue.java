@@ -32,6 +32,8 @@ public class ScoresVue extends VBox {
                 ligne.getStyleClass().add("ligne-score-moi");
             }
 
+            ligne.getStyleClass().add("couleur-" + i);
+
             getChildren().add(ligne);
         }
     }
