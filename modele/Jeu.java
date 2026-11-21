@@ -268,18 +268,12 @@ public class Jeu {
     }
 
     private boolean continuerTour() {
-        while (prochaineCarte < tourEnCours.length) {
-            CarteJouee cj = tourEnCours[prochaineCarte];
+        EtatTour etat;
+        do {
+            etat = poserProchaineCarte();
+        } while (etat == EtatTour.CARTE_POSEE);
 
-            if (!cj.getJoueur().estAvatar() && trouverSerie(cj.getCarte()) == -1) {
-                return true;
-            }
-
-            poserCarte(cj);
-            prochaineCarte++;
-        }
-        tourEnCours = null;
-        return false;
+        return etat == EtatTour.ATTENTE_CHOIX;
     }
 
     public boolean choisirSerieHumain(int numeroSerie) {
@@ -304,5 +298,22 @@ public class Jeu {
             }
         }
         return -1;
+    }
+
+    public EtatTour poserProchaineCarte() {
+        if (prochaineCarte >= tourEnCours.length) {
+            tourEnCours = null;
+            return EtatTour.TOUR_FINI;
+        }
+
+        CarteJouee cj = tourEnCours[prochaineCarte];
+
+        if (!cj.getJoueur().estAvatar() && trouverSerie(cj.getCarte()) == -1) {
+            return EtatTour.ATTENTE_CHOIX;
+        }
+
+        poserCarte(cj);
+        prochaineCarte++;
+        return EtatTour.CARTE_POSEE;
     }
 }
