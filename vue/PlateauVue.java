@@ -3,11 +3,13 @@ import java.util.function.Consumer;
 import javafx.scene.Cursor;
 
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import modele.CarteJouee;
 import modele.Jeu;
 import modele.Serie;
+import modele.Carte;
 
 public class PlateauVue extends VBox {
     
@@ -35,7 +37,11 @@ public class PlateauVue extends VBox {
             ligne.getChildren().add(titre);
 
             for (int k = 0; k < serie.nombreDeCartes(); k++) {
-                ligne.getChildren().add(new CarteVue(serie.getCarte(k)));
+                CarteVue vueCarte = new CarteVue(serie.getCarte(k));
+                if (estDansDernierTour(vueCarte.getCarte())) {
+                    vueCarte.getStyleClass().add("carte-recente");
+                }
+                ligne.getChildren().add(vueCarte);
             }
 
             final int numeroSerie = i;
@@ -50,5 +56,18 @@ public class PlateauVue extends VBox {
 
             getChildren().add(ligne);
         }
+    }
+
+    private boolean estDansDernierTour(Carte carte) {
+        CarteJouee[] tour = jeu.getDernierTour();
+        if (tour == null) {
+            return false;
+        }
+        for (int i = 0; i < tour.length; i++) {
+            if (tour[i].getCarte() == carte) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -39,3 +39,7 @@
 .serie-attente {
     -fx-border-color: crimson;
 }
+
+.carte-recente {
+    -fx-effect: dropshadow(gaussian, royalblue, 14, 0.6, 0, 0);
+}

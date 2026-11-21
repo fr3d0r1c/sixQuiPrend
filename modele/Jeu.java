@@ -140,6 +140,7 @@ public class Jeu {
     public void preparerManche() {
         Pioche pioche = getPioche();
         pioche.reinitialiser();
+        dernierTour = null;
 
         for (int i = 0; i < 4; i++) {
             Serie serie = getSerie(i);

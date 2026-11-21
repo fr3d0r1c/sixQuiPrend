@@ -20,7 +20,7 @@ public class TestJeu {
         monTest.testConstructeur13();
         monTest.testConstructeur14();
         monTest.testConstructeur15();
-        monTest.testConstructeur16();
+        monTest.testPreparerMancheDeuxFois();
         monTest.testPoserCarteBotCasNormal();
         monTest.testPoserCarteBotSixiemeCarte();
         monTest.testPoserCarteBotCarteTropPetite();
@@ -294,13 +294,18 @@ public class TestJeu {
                 "la pioche a perdu les 34 cartes distribuées");
     }
 
-    private void testConstructeur16() {
+    private void testPreparerMancheDeuxFois() {
         Jeu jeu = new Jeu(3);
-        jeu.ajouterJoueur(new Joueur("Claude", false));
+        Joueur humain = new Joueur("Claude", false);
+        jeu.ajouterJoueur(humain);
         jeu.ajouterJoueur(new Joueur("Bot1", true));
         jeu.ajouterJoueur(new Joueur("Bot2", true));
 
         jeu.preparerManche();
+        boolean attente = jeu.jouerTour(humain, humain.getMain().prendreUneCarte(0));
+        if (attente == true) {
+            jeu.choisirSerieHumain(0);
+        }
         jeu.preparerManche();
         
         boolean seriesOk = true;
@@ -310,6 +315,7 @@ public class TestJeu {
             }
         }
         Test.test(seriesOk, "après une 2e préparation, chaque série ne contient toujours qu'une carte");
+        Test.test(jeu.getDernierTour() == null, "Une nouvelle manche efface le dernier tour.");
     }
 
     private void testPoserCarteBotCasNormal() {
