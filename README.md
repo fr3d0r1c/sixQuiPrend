@@ -103,3 +103,23 @@ Il n'y a aucune modification à faire dans `Jeu`. Le benchmark prend automatique
   - une stratégie par classe grâce à l'interface `StrategieBot`.
   - **À venir :** une interface graphique en JavaFX, puis le multijoueur en ligne.
 Le jeu se joue au clavier. Il faut entrer les numéros demandés (carte à jouer, série à ramasser) quand le programme les propose.
+
+## Protocole réseau
+
+Sens	Message	Exemple
+client → serveur	NOM <pseudo>	NOM Fred
+	CARTE <valeur>	CARTE 42
+	SERIE <numéro>	SERIE 2
+serveur → client	BIENVENUE <ta position>	BIENVENUE 1
+	JOUEURS <nom>;<nom>;…	JOUEURS Fred;Alice;Bot 1
+	MAIN <v> <v> …	MAIN 3 15 27 42
+	SERIES <cartes>|<cartes>|…	SERIES 10,22|30|45,47|90
+	SCORES <total>,<pile>|…	SCORES 12,3|8,0|15,5
+	A_TOI_DE_JOUER	
+	POSE <position> <valeur>	POSE 2 47
+	RAMASSE <position> <gain>	RAMASSE 0 5
+	CHOISIS_SERIE	
+	ATTENTE_SERIE <position>	ATTENTE_SERIE 1
+	FIN_MANCHE	
+	FIN_PARTIE <position>;<position>;…	FIN_PARTIE 2;0;1
+	ERREUR <texte>	ERREUR Cette carte n'est pas dans ta main
