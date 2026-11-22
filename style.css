@@ -35,6 +35,8 @@
     -fx-border-radius: 8;
     -fx-padding: 4;
     -fx-border-color: transparent;
+    -fx-background-color: rgba(0, 0, 0, 0.18);
+    -fx-background-radius: 8;
 }
 .serie-attente {
     -fx-border-color: crimson;
@@ -65,3 +67,24 @@
 .couleur-7 { -fx-text-fill: saddlebrown; }
 .couleur-8 { -fx-text-fill: deeppink; }
 .couleur-9 { -fx-text-fill: slategray; }
+
+
+.table {
+    -fx-background-color: radial-gradient(center 50% 40%, radius 75%, #2f8a57, #174a2e);
+    -fx-font-family: "Segoe UI";
+}
+
+.texte-table {
+    -fx-text-fill: white; 
+}
+
+.panneau-scores {
+    -fx-background-color: rgba(255, 255, 255, 0.88);   /* blanc légèrement transparent */
+    -fx-background-radius: 12;
+    -fx-padding: 12;
+}
+
+.carte-fond {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 6, 0.2, 2, 3);
+    -fx-stroke: #333333;
+}

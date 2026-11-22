@@ -36,6 +36,7 @@ public class PlateauVue extends VBox {
 
             Label titre = new Label("Série " + (i+1) + " (" + serie.calculPoints() + " 🐮)");
             titre.setMinWidth(90);
+            titre.getStyleClass().add("texte-table");
             ligne.getChildren().add(titre);
 
             for (int k = 0; k < serie.nombreDeCartes(); k++) {

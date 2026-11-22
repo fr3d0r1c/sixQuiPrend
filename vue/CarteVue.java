@@ -20,7 +20,7 @@ public class CarteVue extends StackPane {
         fond.setArcWidth(12);
         fond.setArcHeight(12);
         fond.getStyleClass().add("tetes-" + carte.getNombreTetesDeBoeuf());
-        fond.setStroke(Color.BLACK);
+        fond.getStyleClass().add("carte-fond");
 
         // le texte : la valeur en grand, les têtes en dessous
         Label valeur = new Label(String.valueOf(carte.getValeur()));

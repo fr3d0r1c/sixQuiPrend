@@ -11,6 +11,7 @@ public class ScoresVue extends VBox {
     public ScoresVue(Jeu jeu) {
         super(10);
         this.jeu = jeu;
+        getStyleClass().add("panneau-scores");
         rafraichir();
     }
 

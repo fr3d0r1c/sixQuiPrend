@@ -16,6 +16,9 @@ import vue.MainVue;
 import vue.PlateauVue;
 import vue.ScoresVue;
 import javafx.scene.Parent;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
+import modele.EtatTour;
 
 public class ApplicationFX extends javafx.application.Application {
     
@@ -44,6 +47,11 @@ public class ApplicationFX extends javafx.application.Application {
     private Scene creerAccueil() {
         Label titre = new Label("Six qui prend");
         titre.getStyleClass().add("titre-accueil");
+        titre.getStyleClass().add("texte-table");
+        Label nbBots = new Label("Nombre de bots : ");
+        nbBots.getStyleClass().add("texte-table");
+        Label niveauBots = new Label("Niveau de bots : ");
+        niveauBots.getStyleClass().add("texte-table");
 
         Spinner<Integer> choixNbBots = new Spinner<>(1, 9, 3);
 
@@ -56,10 +64,12 @@ public class ApplicationFX extends javafx.application.Application {
 
         VBox racine = new VBox(15,
             titre,
-            new Label("Nombre de bots :"), choixNbBots,
-            new Label("Niveau des bots :"), choixNiveau,
+            nbBots, choixNbBots,
+            niveauBots, choixNiveau,
             boutonJouer);
         racine.setAlignment(Pos.CENTER);
+
+        racine.getStyleClass().add("table");
 
         return creerScene(racine);
     }
@@ -91,20 +101,24 @@ public class ApplicationFX extends javafx.application.Application {
         VBox droite = new VBox(15, scores, boutonSuivant, boutonRejouer);
 
         info = new Label("Choisis une carte");
+        info.getStyleClass().add("texte-table");
 
         plateau = new PlateauVue(jeu, numeroSerie -> {
             if (!jeu.attendChoixSerie()) {
                 return;
             }
-            boolean attente = jeu.choisirSerieHumain(numeroSerie);
-            mettreAJour(attente);
+            jeu.ramasserPourHumain(numeroSerie);
+            animerTour();
         });
         plateau.setPadding(new Insets(20));
 
         mainVue = new MainVue(moi, numero -> {
             Carte choisie = moi.getMain().prendreUneCarte(numero);
-            boolean attente = jeu.jouerTour(moi, choisie);
-            mettreAJour(attente);
+            jeu.preparerTour(moi, choisie);
+            mainVue.rafraichir();
+            mainVue.setDisable(true);
+            info.setText("Les cartes sont posées...");
+            animerTour();
         });
 
         BorderPane ecran = new BorderPane();
@@ -113,6 +127,8 @@ public class ApplicationFX extends javafx.application.Application {
         ecran.setCenter(plateau);
         ecran.setBottom(mainVue);
         ecran.setRight(droite);
+
+        ecran.getStyleClass().add("table");
 
         fenetre.setScene(creerScene(ecran));
     }
@@ -162,5 +178,21 @@ public class ApplicationFX extends javafx.application.Application {
     // ===== MÉTHODE 3 : lancer le programme =====
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private void animerTour() {
+        EtatTour etat = jeu.poserProchaineCarte();
+        plateau.rafraichir();
+        scores.rafraichir();
+
+        if (etat == EtatTour.CARTE_POSEE) {
+            PauseTransition pause = new PauseTransition(Duration.millis(400));
+            pause.setOnFinished(e -> animerTour());
+            pause.play();
+        } else if (etat == EtatTour.ATTENTE_CHOIX) {
+            mettreAJour(true);
+        } else {
+            mettreAJour(false);
+        }
     }
 }
