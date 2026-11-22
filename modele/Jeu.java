@@ -247,7 +247,7 @@ public class Jeu {
         return meilleureSerie;
     }
 
-    public boolean jouerTour(Joueur humain, Carte carteHumain) {
+    public void preparerTour(Joueur humain, Carte carteHumain) {
         CarteJouee[] cartesJouees = new CarteJouee[getNombreJoueurs()];
 
         for (int i = 0; i < getNombreJoueurs(); i++) {
@@ -260,11 +260,21 @@ public class Jeu {
         }
 
         ordonnerCartesJouees(cartesJouees);
+        dernierTour = cartesJouees;
 
         this.tourEnCours = cartesJouees;
-        dernierTour = cartesJouees;
         this.prochaineCarte = 0;
+    }
+
+    public boolean jouerTour(Joueur humain, Carte carteHumain) {
+        preparerTour(humain, carteHumain);
         return continuerTour();
+    }
+
+    public void ramasserPourHumain(int numeroSerie) {
+        CarteJouee cj = tourEnCours[prochaineCarte];
+        ramasserSerie(numeroSerie, cj.getJoueur(), cj.getCarte());
+        prochaineCarte++;
     }
 
     private boolean continuerTour() {
@@ -277,18 +287,24 @@ public class Jeu {
     }
 
     public boolean choisirSerieHumain(int numeroSerie) {
-        CarteJouee cj = tourEnCours[prochaineCarte];
-        ramasserSerie(numeroSerie, cj.getJoueur(), cj.getCarte());
-        prochaineCarte++;
+        ramasserPourHumain(numeroSerie);
         return continuerTour();
     }
 
-    public boolean attendChoixSerie() {
+    public boolean estTourEnCours() {
         return tourEnCours != null;
     }
 
+    public boolean attendChoixSerie() {
+        if (!estTourEnCours() || prochaineCarte >= tourEnCours.length) {
+            return false;
+        }
+        CarteJouee cj = tourEnCours[prochaineCarte];
+        return !cj.getJoueur().estAvatar() && trouverSerie(cj.getCarte()) == -1 ;
+    }
+
     public boolean estMancheFinie() {
-        return !attendChoixSerie() && getJoueur(0).getMain().nombreDeCartes() == 0;
+        return !estTourEnCours() && getJoueur(0).getMain().nombreDeCartes() == 0;
     }
 
     public int positionDe(Joueur joueur) {
@@ -308,7 +324,7 @@ public class Jeu {
 
         CarteJouee cj = tourEnCours[prochaineCarte];
 
-        if (!cj.getJoueur().estAvatar() && trouverSerie(cj.getCarte()) == -1) {
+        if (attendChoixSerie()) {
             return EtatTour.ATTENTE_CHOIX;
         }
 

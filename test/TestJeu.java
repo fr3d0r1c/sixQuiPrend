@@ -43,6 +43,7 @@ public class TestJeu {
         monTest.testJouerTourAttendChoixSerie();
         monTest.testEstMancheFinie();
         monTest.testPositionDe();
+        monTest.testTourPasAPas();
     }
 
     private void testConstructeur1() {
@@ -738,5 +739,31 @@ public class TestJeu {
 
         // un joueur absent du jeu n'a pas de position
         Test.test(jeu.positionDe(inconnu) == -1, "un joueur qui n'est pas dans le jeu renvoie -1");
+    }
+
+    private void testTourPasAPas() {
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur humain = new Joueur("Humain", false);
+        Joueur bot = new Joueur("Bot", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(humain);
+        jeu.ajouterJoueur(bot);
+        bot.getMain().ajouterCarte(new Carte(35));
+
+        // 1. préparer : rien n'est encore posé
+        jeu.preparerTour(humain, new Carte(22));
+        Test.test(jeu.estTourEnCours(), "après la préparation, un tour est en cours");
+        Test.test(!jeu.attendChoixSerie(), "le 22 n'est pas trop petit : pas d'attente");
+        Test.test(jeu.getSerie(1).nombreDeCartes() == 1, "aucune carte n'est encore posée");
+
+        // 2. première étape : le 22 (la plus petite) est posé
+        Test.test(jeu.poserProchaineCarte() == EtatTour.CARTE_POSEE, "1re étape : une carte est posée");
+        Test.test(jeu.getSerie(1).derniereCarte().getValeur() == 22, "le 22 est posé après le 20");
+
+        // 3. deuxième étape : le 35 du bot
+        Test.test(jeu.poserProchaineCarte() == EtatTour.CARTE_POSEE, "2e étape : une carte est posée");
+
+        // 4. troisième étape : plus rien à poser
+        Test.test(jeu.poserProchaineCarte() == EtatTour.TOUR_FINI, "3e étape : le tour est fini");
+        Test.test(!jeu.estTourEnCours(), "après la fin, plus aucun tour en cours");
     }
 }
