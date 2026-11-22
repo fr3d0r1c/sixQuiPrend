@@ -6,18 +6,19 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import modele.Carte;
 import modele.Jeu;
 import modele.Joueur;
 import modele.TypeBot;
+import vue.FinPartieVue;
 import vue.MainVue;
 import vue.PlateauVue;
 import vue.ScoresVue;
 import javafx.scene.Parent;
 import javafx.animation.PauseTransition;
-import javafx.util.Duration;
 import modele.EtatTour;
 
 public class ApplicationFX extends javafx.application.Application {
@@ -29,10 +30,11 @@ public class ApplicationFX extends javafx.application.Application {
     private Label info;
     private ScoresVue scores;
     private Button boutonSuivant;
-    private Button boutonRejouer;
 
     private Stage fenetre;
     private Scene sceneAccueil;
+
+    private StackPane racineJeu;
     
     // ===== MÉTHODE 1 : construire l'écran =====
     @Override
@@ -92,13 +94,9 @@ public class ApplicationFX extends javafx.application.Application {
             jeu.preparerManche();
             boutonSuivant.setVisible(false);
             mettreAJour(false);
-        }); 
+        });
 
-        boutonRejouer = new Button("Nouvelle Partie");
-        boutonRejouer.setVisible(false);
-        boutonRejouer.setOnAction(e -> fenetre.setScene(sceneAccueil));
-
-        VBox droite = new VBox(15, scores, boutonSuivant, boutonRejouer);
+        VBox droite = new VBox(15, scores, boutonSuivant);
 
         info = new Label("Choisis une carte");
         info.getStyleClass().add("texte-table");
@@ -108,7 +106,13 @@ public class ApplicationFX extends javafx.application.Application {
                 return;
             }
             jeu.ramasserPourHumain(numeroSerie);
-            animerTour();
+            plateau.rafraichir(jeu.getDerniereCartePosee());
+            scores.rafraichir();
+            scores.afficherGain(jeu.getDernierRamasseur(), jeu.getDernierGain());
+
+            PauseTransition pause = new PauseTransition(javafx.util.Duration.millis(1300));
+            pause.setOnFinished(e -> animerTour());
+            pause.play();
         });
         plateau.setPadding(new Insets(20));
 
@@ -130,7 +134,8 @@ public class ApplicationFX extends javafx.application.Application {
 
         ecran.getStyleClass().add("table");
 
-        fenetre.setScene(creerScene(ecran));
+        racineJeu = new StackPane(ecran);
+        fenetre.setScene(creerScene(racineJeu));
     }
 
     // ===== MÉTHODE 2 : remettre l'écran à jour après chaque action =====
@@ -158,12 +163,14 @@ public class ApplicationFX extends javafx.application.Application {
         if (jeu.estFinie()) {
             if (jeu.estEgalite()) {
                 info.setText("Partie terminée : égalité !");
-                boutonRejouer.setVisible(true);
             } else {
                 Joueur gagnant = jeu.trouverGagnant();
                 info.setText("Partie terminée : " + gagnant.getNom() + " gagne avec " + gagnant.getNombreDePoints() + " têtes !");
-                boutonRejouer.setVisible(true);
             }
+            FinPartieVue fin = new FinPartieVue(jeu,
+                () -> fenetre.setScene(sceneAccueil),
+                () -> fenetre.close());
+            racineJeu.getChildren().add(fin);
         } else {
             info.setText("Manche terminée !");
             boutonSuivant.setVisible(true);
@@ -186,7 +193,12 @@ public class ApplicationFX extends javafx.application.Application {
         scores.rafraichir();
 
         if (etat == EtatTour.CARTE_POSEE) {
-            PauseTransition pause = new PauseTransition(Duration.millis(400));
+            int duree = 400;
+            if (jeu.getDernierRamasseur() != null) {
+                scores.afficherGain(jeu.getDernierRamasseur(), jeu.getDernierGain());
+                duree = 1300;
+            }
+            PauseTransition pause = new PauseTransition(javafx.util.Duration.millis(duree));
             pause.setOnFinished(e -> animerTour());
             pause.play();
         } else if (etat == EtatTour.ATTENTE_CHOIX) {

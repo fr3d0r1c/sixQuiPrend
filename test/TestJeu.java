@@ -44,6 +44,8 @@ public class TestJeu {
         monTest.testEstMancheFinie();
         monTest.testPositionDe();
         monTest.testTourPasAPas();
+        monTest.testDernierRamassage();
+        monTest.testGetClassement();
     }
 
     private void testConstructeur1() {
@@ -766,5 +768,53 @@ public class TestJeu {
         // 4. troisième étape : plus rien à poser
         Test.test(jeu.poserProchaineCarte() == EtatTour.TOUR_FINI, "3e étape : le tour est fini");
         Test.test(!jeu.estTourEnCours(), "après la fin, plus aucun tour en cours");
+    }
+
+    private void testDernierRamassage() {
+        // PRÉPARER : séries 10, 20, 30, 40 ; l'humain joue 5 (trop petit), le bot a le 50
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur humain = new Joueur("Humain", false);
+        Joueur bot = new Joueur("Bot", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(humain);
+        jeu.ajouterJoueur(bot);
+        bot.getMain().ajouterCarte(new Carte(50));
+        jeu.preparerTour(humain, new Carte(5));
+
+        // AGIR 1 : l'humain ramasse la série du 30
+        jeu.ramasserPourHumain(2);
+
+        // VÉRIFIER 1
+        Test.test(jeu.getDernierRamasseur() == humain, "l'humain est le dernier à avoir ramassé");
+        Test.test(jeu.getDernierGain() == 3, "il a ramassé les têtes du 30");
+
+        // AGIR 2 : le 50 du bot se pose sans ramasser
+        jeu.poserProchaineCarte();
+
+        // VÉRIFIER 2 : la nouvelle étape a effacé le ramassage précédent
+        Test.test(jeu.getDernierRamasseur() == null, "une étape sans ramassage efface le dernier ramasseur");
+    }
+
+    private void testGetClassement() {
+        Jeu jeu = new Jeu(3);
+        Joueur moi = new Joueur("Moi", false);
+        Joueur bot1 = new Joueur("Bot 1", true, TypeBot.FACILE);
+        Joueur bot2 = new Joueur("Bot 2", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(moi);
+        jeu.ajouterJoueur(bot1);
+        jeu.ajouterJoueur(bot2);
+
+        moi.ajouterPoints(40);
+        bot1.ajouterPoints(70);
+        bot2.ajouterPoints(15);
+
+        Joueur[] classement = jeu.getClassement();
+
+        Test.test(classement.length == 3, "le classement contient tous les joueurs");
+        Test.test(classement[0] == bot2, "le 1er est celui qui a le moins de têtes (Bot 2, 15)");
+        Test.test(classement[1] == moi, "le 2e est Moi (40)");
+        Test.test(classement[2] == bot1, "le dernier est celui qui a le plus de têtes (Bot 1, 70)");
+
+        // VÉRIFIER : l'ordre de la partie n'a pas bougé
+        Test.test(jeu.getJoueur(0) == moi, "le classement ne modifie pas l'ordre des joueurs du jeu");
     }
 }

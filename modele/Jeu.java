@@ -9,6 +9,8 @@ public class Jeu {
     private int prochaineCarte;
     private CarteJouee[] dernierTour;
     private Carte derniereCartePosee;
+    private Joueur dernierRamasseur;
+    private int dernierGain;
 
     public Jeu(int nbJoueurs){
         this.maPioche = new Pioche();
@@ -34,6 +36,14 @@ public class Jeu {
 
     public Serie getSerie(int numero) {
         return this.tableauSeries[numero];
+    }
+
+    public Joueur getDernierRamasseur() {
+        return this.dernierRamasseur;
+    }
+
+    public int getDernierGain() {
+        return this.dernierGain;
     }
 
     public void ajouterJoueur(Joueur joueur) {
@@ -72,6 +82,9 @@ public class Jeu {
         prendreToutesLesCartesDeLaSerie(j, numeroSerie);
 
         serie.ajouterCarte(c);
+
+        dernierRamasseur = j;
+        dernierGain = nombreDeTetes;
 
 		return nombreDeTetes;
 	}
@@ -273,6 +286,9 @@ public class Jeu {
     }
 
     public void ramasserPourHumain(int numeroSerie) {
+        dernierRamasseur = null;
+        dernierGain = 0;
+
         CarteJouee cj = tourEnCours[prochaineCarte];
         derniereCartePosee = cj.getCarte();
         ramasserSerie(numeroSerie, cj.getJoueur(), cj.getCarte());
@@ -319,6 +335,9 @@ public class Jeu {
     }
 
     public EtatTour poserProchaineCarte() {
+        dernierRamasseur = null;
+        dernierGain = 0;
+
         if (prochaineCarte >= tourEnCours.length) {
             tourEnCours = null;
             return EtatTour.TOUR_FINI;
@@ -338,5 +357,26 @@ public class Jeu {
 
     public Carte getDerniereCartePosee() {
         return derniereCartePosee;
+    }
+
+    public Joueur[] getClassement() {
+        // 1. copier les joueurs dans un nouveau tableau
+        Joueur[] classement = new Joueur[getNombreJoueurs()];
+        for (int i = 0; i < getNombreJoueurs(); i++) {
+            classement[i] = getJoueur(i);
+        }
+
+        for (int i = 0; i < classement.length - 1; i++) {
+            for (int j = i + 1; j < classement.length; j++) {
+
+                if (classement[i].getNombreDePoints() > classement[j].getNombreDePoints()) {
+                    Joueur tempJoueur = classement[i];
+                    classement[i] = classement[j];
+                    classement[j] = tempJoueur;
+                }
+            }
+        }
+
+        return classement;
     }
 }

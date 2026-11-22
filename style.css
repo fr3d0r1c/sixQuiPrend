@@ -88,3 +88,24 @@
     -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.45), 6, 0.2, 2, 3);
     -fx-stroke: #333333;
 }
+
+.gain {
+    -fx-text-fill: crimson;
+    -fx-font-weight : bold;
+}
+
+.fin-partie {
+    -fx-background-color: rgba(0, 0, 0, 0.6);   /* assombrit la table en dessous */
+}
+.titre-fin {
+    -fx-font-size: 40px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+.ligne-fin {
+    -fx-font-size: 18px
+}
+.premier {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+}
