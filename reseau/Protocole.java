@@ -1,6 +1,8 @@
 package reseau;
 
+import modele.Jeu;
 import modele.Main;
+import modele.Serie;
 
 public class Protocole {
     public static String commande(String ligne) {
@@ -37,5 +39,35 @@ public class Protocole {
             valeurs[i] = Integer.parseInt(morceaux[i]);    // "27" (texte) → 27 (nombre)
         }
         return valeurs;
+    }
+
+    public static String encoderSeries(Jeu jeu) {
+        String texte = "SERIES ";
+        for (int i = 0; i < 4; i++) {
+            if (i > 0) {
+                texte = texte + "|";
+            }
+            Serie serie = jeu.getSerie(i);
+            for (int k = 0; k < serie.nombreDeCartes(); k++) {
+                if (k > 0) {
+                    texte = texte + ",";
+                }
+                texte = texte + serie.getCarte(k).getValeur();
+            }
+        }
+        return texte;
+    }
+
+    public static int[][] decoderSeries(String donnees) {
+        String[] morceauxSeries = donnees.split("\\|");
+        int[][] series = new int[morceauxSeries.length][];
+        for (int i = 0; i < morceauxSeries.length; i++) {
+            String[] morceauxCartes = morceauxSeries[i].split(",");
+            series[i] = new int[morceauxCartes.length];
+            for (int k = 0; k < morceauxCartes.length; k++) {
+                series[i][k] = Integer.parseInt(morceauxCartes[k]);
+            }
+        }
+        return series;
     }
 }

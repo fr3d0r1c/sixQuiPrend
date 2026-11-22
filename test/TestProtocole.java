@@ -70,4 +70,8 @@ public class TestProtocole {
         }
         Test.test(identiques, "l'aller-retour redonne exactement les mêmes valeurs");
     }
+
+    private void testEncoderScores() {
+        
+    }
 }
