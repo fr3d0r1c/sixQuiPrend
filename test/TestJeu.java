@@ -758,6 +758,7 @@ public class TestJeu {
         // 2. première étape : le 22 (la plus petite) est posé
         Test.test(jeu.poserProchaineCarte() == EtatTour.CARTE_POSEE, "1re étape : une carte est posée");
         Test.test(jeu.getSerie(1).derniereCarte().getValeur() == 22, "le 22 est posé après le 20");
+        Test.test(jeu.getDerniereCartePosee().getValeur() == 22, "La carte 22 est la dernière carte posée");
 
         // 3. deuxième étape : le 35 du bot
         Test.test(jeu.poserProchaineCarte() == EtatTour.CARTE_POSEE, "2e étape : une carte est posée");

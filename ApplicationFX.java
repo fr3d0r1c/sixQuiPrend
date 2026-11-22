@@ -182,7 +182,7 @@ public class ApplicationFX extends javafx.application.Application {
 
     private void animerTour() {
         EtatTour etat = jeu.poserProchaineCarte();
-        plateau.rafraichir();
+        plateau.rafraichir(jeu.getDerniereCartePosee());
         scores.rafraichir();
 
         if (etat == EtatTour.CARTE_POSEE) {

@@ -13,6 +13,9 @@ import modele.Carte;
 import modele.Joueur;
 import javafx.scene.control.Tooltip;
 
+import javafx.animation.*;
+import javafx.util.Duration;
+
 public class PlateauVue extends VBox {
     
     private final Jeu jeu;
@@ -26,6 +29,10 @@ public class PlateauVue extends VBox {
     }
 
     public void rafraichir() {
+        rafraichir(null);
+    }
+
+    public void rafraichir(Carte carteAAnimer) {
         getChildren().clear();
 
         for (int i = 0; i < 4; i++) {
@@ -47,6 +54,11 @@ public class PlateauVue extends VBox {
                     vueCarte.getStyleClass().add("halo-" + jeu.positionDe(poseur));
                     Tooltip.install(vueCarte, new Tooltip("Posée par " + poseur.getNom()));
                 }
+
+                if (vueCarte.getCarte() == carteAAnimer) {
+                    animerApparition(vueCarte);
+                }
+
                 ligne.getChildren().add(vueCarte);
             }
 
@@ -88,5 +100,19 @@ public class PlateauVue extends VBox {
             }
         }
         return null;
+    }
+
+    private void animerApparition(CarteVue vueCarte) {
+        ScaleTransition zoom = new ScaleTransition(Duration.millis(300), vueCarte);
+        zoom.setFromX(0.3);
+        zoom.setFromY(0.3);
+        zoom.setToX(1);
+        zoom.setToY(1);
+
+        FadeTransition fondu = new FadeTransition(Duration.millis(300), vueCarte);
+        fondu.setFromValue(0);
+        fondu.setToValue(1);
+
+        new ParallelTransition(zoom, fondu).play();
     }
 }

@@ -8,6 +8,7 @@ public class Jeu {
     private CarteJouee[] tourEnCours;
     private int prochaineCarte;
     private CarteJouee[] dernierTour;
+    private Carte derniereCartePosee;
 
     public Jeu(int nbJoueurs){
         this.maPioche = new Pioche();
@@ -273,6 +274,7 @@ public class Jeu {
 
     public void ramasserPourHumain(int numeroSerie) {
         CarteJouee cj = tourEnCours[prochaineCarte];
+        derniereCartePosee = cj.getCarte();
         ramasserSerie(numeroSerie, cj.getJoueur(), cj.getCarte());
         prochaineCarte++;
     }
@@ -328,8 +330,13 @@ public class Jeu {
             return EtatTour.ATTENTE_CHOIX;
         }
 
+        derniereCartePosee = cj.getCarte();
         poserCarte(cj);
         prochaineCarte++;
         return EtatTour.CARTE_POSEE;
+    }
+
+    public Carte getDerniereCartePosee() {
+        return derniereCartePosee;
     }
 }
