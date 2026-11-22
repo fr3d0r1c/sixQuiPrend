@@ -46,6 +46,7 @@ public class TestJeu {
         monTest.testTourPasAPas();
         monTest.testDernierRamassage();
         monTest.testGetClassement();
+        monTest.testDeuxHumains();
     }
 
     private void testConstructeur1() {
@@ -816,5 +817,43 @@ public class TestJeu {
 
         // VÉRIFIER : l'ordre de la partie n'a pas bougé
         Test.test(jeu.getJoueur(0) == moi, "le classement ne modifie pas l'ordre des joueurs du jeu");
+    }
+
+    private void testDeuxHumains() {
+        // PRÉPARER : séries 10, 20, 30, 40 ; deux humains et un bot
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur alice = new Joueur("Alice", false);
+        Joueur bob = new Joueur("Bob", false);
+        Joueur bot = new Joueur("Bot", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(alice);
+        jeu.ajouterJoueur(bob);
+        jeu.ajouterJoueur(bot);
+        bot.getMain().ajouterCarte(new Carte(50));
+
+        // 1. Alice choisit : il manque encore Bob
+        jeu.choisirCarte(alice, new Carte(22));
+        Test.test(!jeu.tousLesHumainsOntChoisi(), "tant que Bob n'a pas choisi, on attend");
+
+        // 2. Bob choisit une carte trop petite
+        jeu.choisirCarte(bob, new Carte(5));
+        Test.test(jeu.tousLesHumainsOntChoisi(), "les deux humains ont choisi");
+
+        // 3. on prépare et on joue : Bob (5) passe en premier, et doit choisir une série
+        jeu.preparerTour();
+        Test.test(jeu.poserProchaineCarte() == EtatTour.ATTENTE_CHOIX, "le 5 de Bob est trop petit");
+        Test.test(jeu.getJoueurQuiDoitChoisir() == bob, "c'est Bob qui doit choisir, pas Alice");
+
+        // 4. Bob ramasse, puis la suite se joue
+        jeu.ramasserPourHumain(0);
+        
+        // pose les cartes restantes jusqu'à la fin du tour, puis vérifie :
+        EtatTour etat;
+        do {
+            etat = jeu.poserProchaineCarte();
+        } while (etat == EtatTour.CARTE_POSEE);
+
+        Test.test(jeu.getDernierTour().length == 3, "les 3 cartes font partie du tour");
+        Test.test(!jeu.tousLesHumainsOntChoisi(), "le tour suivant repart de zéro");
+        Test.test(!jeu.estTourEnCours(), "Le tour est terminé");
     }
 }

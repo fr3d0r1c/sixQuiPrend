@@ -261,13 +261,16 @@ public class Jeu {
         return meilleureSerie;
     }
 
-    public void preparerTour(Joueur humain, Carte carteHumain) {
+    public void preparerTour() {
+        if (!tousLesHumainsOntChoisi()) {
+            throw new IllegalStateException("Tous les humains n'ont pas encore choisi leur carte");
+        }
         CarteJouee[] cartesJouees = new CarteJouee[getNombreJoueurs()];
 
         for (int i = 0; i < getNombreJoueurs(); i++) {
             Joueur joueur = getJoueur(i);
-            if (joueur == humain) {
-                cartesJouees[i] = new CarteJouee(carteHumain, joueur);
+            if (!joueur.estAvatar()) {
+                cartesJouees[i] = new CarteJouee(cartesChoisies[i], joueur);
             } else {
                 cartesJouees[i] = new CarteJouee(choisirCarteBot(joueur), joueur);
             }
@@ -278,6 +281,15 @@ public class Jeu {
 
         this.tourEnCours = cartesJouees;
         this.prochaineCarte = 0;
+
+        for (int i = 0; i < cartesChoisies.length; i++) {
+            cartesChoisies[i] = null;
+        }
+    }
+
+    public void preparerTour(Joueur humain, Carte carteHumain) {
+        choisirCarte(humain, carteHumain);
+        preparerTour();
     }
 
     public boolean jouerTour(Joueur humain, Carte carteHumain) {
@@ -378,5 +390,27 @@ public class Jeu {
         }
 
         return classement;
+    }
+
+    private Carte[] cartesChoisies = new Carte[10];
+
+    public void choisirCarte(Joueur joueur, Carte carte) {
+        cartesChoisies[positionDe(joueur)] = carte;
+    }
+
+    public boolean tousLesHumainsOntChoisi() {
+        for (int i = 0; i < getNombreJoueurs(); i++) {
+            if (!getJoueur(i).estAvatar() && cartesChoisies[i] == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public Joueur getJoueurQuiDoitChoisir() {
+        if (!attendChoixSerie()) {
+            return null;
+        }
+        return tourEnCours[prochaineCarte].getJoueur();
     }
 }
