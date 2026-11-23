@@ -179,6 +179,8 @@ public class ServeurJeu {
 
         if (etat == EtatTour.ATTENTE_CHOIX) {
             demanderChoixSerie();
+        }  else if (jeu.estMancheFinie()) {
+            finirManche();
         } else {
             for (ClientJeu client : clients) {
                 if (client.getJoueur() != null) {
@@ -240,5 +242,29 @@ public class ServeurJeu {
         jeu.ramasserPourHumain(numero);
         annoncerDerniereEtape();
         resoudreTour();
+    }
+
+    public static String encoderClassement(Jeu jeu) {
+        Joueur[] classement = jeu.getClassement();
+        String texte = "FIN_PARTIE ";
+        for (int i=0; i < classement.length; i++) {
+            if (i>0) {
+                texte = texte + ";";
+            }
+            texte = texte + jeu.positionDe(classement[i]);
+        }
+        return texte;
+    }
+
+    private void finirManche() {
+        jeu.terminerManche();
+        diffuser(Protocole.encoderScores(jeu));
+        diffuser("FIN_MANCHE");
+
+        if (jeu.estFinie()) {
+            diffuser(Protocole.encoderClassement(jeu));
+        } else {
+            demarrerManche();
+        }
     }
 }

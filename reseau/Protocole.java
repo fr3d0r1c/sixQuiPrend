@@ -115,4 +115,28 @@ public class Protocole {
         }
         return donnees.split(";");
     }
+
+    public static String encoderClassement(Jeu jeu) {
+        Joueur[] classement = jeu.getClassement();
+        String texte = "FIN_PARTIE ";
+        for (int i = 0; i < classement.length; i++) {
+            if (i > 0) {
+                texte = texte + ";";
+            }
+            texte = texte + jeu.positionDe(classement[i]);      // sa POSITION, pas son nom
+        }
+        return texte;
+    }
+
+    public static int[] decoderClassement(String donnees) {
+        if (donnees.isEmpty()) {
+            return new int[0];
+        }
+        String[] morceaux = donnees.split(";");
+        int[] positions = new int[morceaux.length];
+        for (int i = 0; i < morceaux.length; i++) {
+            positions[i] = Integer.parseInt(morceaux[i]);
+        }
+        return positions;
+    }
 }

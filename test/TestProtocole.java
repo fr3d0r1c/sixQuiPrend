@@ -20,6 +20,7 @@ public class TestProtocole {
         monTest.testAllerRetourSeries();
         monTest.testAllerRetourScores();
         monTest.testAllerRetourJoueur();
+        monTest.testGetClassement();
     }
 
     private void testCommandeEtDonnees() {
@@ -148,5 +149,28 @@ public class TestProtocole {
 
         Test.test(joueurs.length == 3, "On retrouve 3 joueurs");
         Test.test(joueurs[0].equals("j1"), "Le joueur 1 s'appelle j1");
+    }
+
+    private void testGetClassement() {
+        Jeu jeu = new Jeu(3);
+        Joueur j1 = new Joueur("j1", false);
+        Joueur j2 = new Joueur("j2", true, TypeBot.FACILE);
+        Joueur j3 = new Joueur("j3", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+        jeu.ajouterJoueur(j3);
+
+        j1.ajouterPoints(50);
+        j2.ajouterPoints(35);
+        j3.ajouterPoints(75);
+
+        String ligne = Protocole.encoderClassement(jeu);
+        Test.test(ligne.equals("FIN_PARTIE 1;0;2"), "Le classement s'encodent avec ; pour chaque joueur");
+
+        int [] classement = Protocole.decoderClassement(Protocole.donnees(ligne));
+
+        Test.test(classement.length == 3, "On retrouve tout nos joueurs dans le classement");
+        Test.test(classement[0] == 1, "Le premier est le joueur à la position 1");
+
     }
 }
