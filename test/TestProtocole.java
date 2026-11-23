@@ -1,6 +1,7 @@
 package test;
 
 import modele.Carte;
+import modele.Jeu;
 import modele.Main;
 import reseau.Protocole;
 
@@ -14,6 +15,7 @@ public class TestProtocole {
         monTest.testDecoderValeurs();
         monTest.testDecoderValeursVide();
         monTest.testAllerRetourMain();
+        monTest.testAllerRetourSeries();
     }
 
     private void testCommandeEtDonnees() {
@@ -71,7 +73,32 @@ public class TestProtocole {
         Test.test(identiques, "l'aller-retour redonne exactement les mêmes valeurs");
     }
 
-    private void testEncoderScores() {
+    private Jeu creerJeuAvecSeries() {
+        Jeu jeu = new Jeu(2);
+        jeu.getSerie(0).ajouterCarte(new Carte(10));
+        jeu.getSerie(1).ajouterCarte(new Carte(20));
+        jeu.getSerie(2).ajouterCarte(new Carte(30));
+        jeu.getSerie(3).ajouterCarte(new Carte(40));
+        return jeu;
+    }
+
+    private void testAllerRetourSeries() {
+        // PRÉPARER : séries 10, 20, 30, 40, puis une 2e carte sur la série 2
+        Jeu jeu = creerJeuAvecSeries();
+        jeu.getSerie(2).ajouterCarte(new Carte(35));
         
+        // AGIR : encoder…
+        String ligne = Protocole.encoderSeries(jeu);
+
+        // VÉRIFIER l'encodage
+        Test.test(ligne.equals("SERIES 10|20|30,35|40"), "les séries s'encodent avec | entre elles et , dans une série");
+
+        // AGIR : …puis décoder
+        int[][] series = Protocole.decoderSeries(Protocole.donnees(ligne));
+
+        Test.test(series.length == 4, "on retrouve 4 séries");
+        Test.test(series[2].length == 2, "la série 2 a bien 2 cartes");
+        Test.test(series[2][0] == 30 && series[2][1] == 35, "la série 2 contient 30 puis 35");
+        Test.test(series[0].length == 1 && series[0][0] == 10, "la série 0 contient seulement le 10");
     }
 }
