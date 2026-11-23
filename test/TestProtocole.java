@@ -19,6 +19,7 @@ public class TestProtocole {
         monTest.testAllerRetourMain();
         monTest.testAllerRetourSeries();
         monTest.testAllerRetourScores();
+        monTest.testAllerRetourJoueur();
     }
 
     private void testCommandeEtDonnees() {
@@ -129,5 +130,23 @@ public class TestProtocole {
         Test.test(scores.length == 3, "On retrouve 3 scores");
         Test.test(scores[0].length == 2, "Le socre de J1 contient son total et le total de la pile en cours");
         Test.test(scores[0][0] == 10 && scores[0][1] == 2, "Le score 0 contient 10 points au total et 2 points au niveau de la pile");
+    }
+
+    private void testAllerRetourJoueur() {
+        Jeu jeu = new Jeu(3);
+        Joueur j1 = new Joueur("j1", false);
+        Joueur j2 = new Joueur("j2", true, TypeBot.FACILE);
+        Joueur j3 = new Joueur("j3", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+        jeu.ajouterJoueur(j3);
+
+        String ligne = Protocole.encoderJoueurs(jeu);
+        Test.test(ligne.equals("JOUEURS j1;j2;j3"), "Les joueurs s'encodent avec ; entre chaque joueur");
+
+        String [] joueurs = Protocole.decoderJoueurs(Protocole.donnees(ligne));
+
+        Test.test(joueurs.length == 3, "On retrouve 3 joueurs");
+        Test.test(joueurs[0].equals("j1"), "Le joueur 1 s'appelle j1");
     }
 }

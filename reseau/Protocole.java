@@ -60,6 +60,9 @@ public class Protocole {
     }
 
     public static int[][] decoderSeries(String donnees) {
+        if (donnees.isEmpty()) {
+            return new int[0][];
+        }
         String[] morceauxSeries = donnees.split("\\|");
         int[][] series = new int[morceauxSeries.length][];
         for (int i = 0; i < morceauxSeries.length; i++) {
@@ -90,5 +93,26 @@ public class Protocole {
 
     public static int[][] decoderScores(String donnees) {
         return decoderSeries(donnees);
+    }
+
+    public static String encoderJoueurs(Jeu jeu) {
+        String texte = "JOUEURS ";
+        for (int i = 0; i < jeu.getNombreJoueurs(); i++) {
+            if (i > 0) {
+                texte = texte + ";";
+            }
+            Joueur joueur = jeu.getJoueur(i);
+
+            texte = texte + joueur.getNom();
+        }
+
+        return texte;
+    }
+
+    public static String[] decoderJoueurs(String donnees) {
+        if (donnees.isEmpty()) {
+            return new String[0];
+        }
+        return donnees.split(";");
     }
 }
