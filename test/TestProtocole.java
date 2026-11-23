@@ -2,7 +2,9 @@ package test;
 
 import modele.Carte;
 import modele.Jeu;
+import modele.Joueur;
 import modele.Main;
+import modele.TypeBot;
 import reseau.Protocole;
 
 public class TestProtocole {
@@ -16,6 +18,7 @@ public class TestProtocole {
         monTest.testDecoderValeursVide();
         monTest.testAllerRetourMain();
         monTest.testAllerRetourSeries();
+        monTest.testAllerRetourScores();
     }
 
     private void testCommandeEtDonnees() {
@@ -100,5 +103,31 @@ public class TestProtocole {
         Test.test(series[2].length == 2, "la série 2 a bien 2 cartes");
         Test.test(series[2][0] == 30 && series[2][1] == 35, "la série 2 contient 30 puis 35");
         Test.test(series[0].length == 1 && series[0][0] == 10, "la série 0 contient seulement le 10");
+    }
+
+    private void testAllerRetourScores() {
+        Jeu jeu = new Jeu(3);
+        Joueur j1 = new Joueur("j1", false);
+        Joueur j2 = new Joueur("j2", true, TypeBot.FACILE);
+        Joueur j3 = new Joueur("j3", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(j1);
+        jeu.ajouterJoueur(j2);
+        jeu.ajouterJoueur(j3);
+
+        j1.ajouterPoints(10);
+        j2.ajouterPoints(15);
+        j3.ajouterPoints(30);
+
+        j1.getPile().ajouterCarte(new Carte(25));
+
+        String ligne = Protocole.encoderScores(jeu);
+
+        Test.test(ligne.equals("SCORES 10,2|15,0|30,0"), "Les scores s'encodent avec | entre eux et , entre les scores");
+
+        int [][] scores = Protocole.decoderScores(Protocole.donnees(ligne));
+
+        Test.test(scores.length == 3, "On retrouve 3 scores");
+        Test.test(scores[0].length == 2, "Le socre de J1 contient son total et le total de la pile en cours");
+        Test.test(scores[0][0] == 10 && scores[0][1] == 2, "Le score 0 contient 10 points au total et 2 points au niveau de la pile");
     }
 }

@@ -3,6 +3,7 @@ package reseau;
 import modele.Jeu;
 import modele.Main;
 import modele.Serie;
+import modele.Joueur;
 
 public class Protocole {
     public static String commande(String ligne) {
@@ -69,5 +70,25 @@ public class Protocole {
             }
         }
         return series;
+    }
+
+    public static String encoderScores(Jeu jeu) {
+        String texte = "SCORES ";
+        for (int i = 0; i < jeu.getNombreJoueurs(); i++) {
+            if (i > 0) {
+                texte = texte + "|";
+            }
+            Joueur joueur = jeu.getJoueur(i);
+            int nbPoints = joueur.getNombreDePoints();
+            int nbPile = joueur.getPile().calculPoints();
+
+            texte = texte + nbPoints + "," + nbPile;
+        }
+
+        return texte;
+    }
+
+    public static int[][] decoderScores(String donnees) {
+        return decoderSeries(donnees);
     }
 }
