@@ -47,6 +47,7 @@ public class TestJeu {
         monTest.testDernierRamassage();
         monTest.testGetClassement();
         monTest.testDeuxHumains();
+        monTest.testAChoisi();
     }
 
     private void testConstructeur1() {
@@ -765,6 +766,7 @@ public class TestJeu {
 
         // 3. deuxième étape : le 35 du bot
         Test.test(jeu.poserProchaineCarte() == EtatTour.CARTE_POSEE, "2e étape : une carte est posée");
+        Test.test(jeu.getDernierPoseur() == bot, "Bot est le dernier poseur");
 
         // 4. troisième étape : plus rien à poser
         Test.test(jeu.poserProchaineCarte() == EtatTour.TOUR_FINI, "3e étape : le tour est fini");
@@ -855,5 +857,15 @@ public class TestJeu {
         Test.test(jeu.getDernierTour().length == 3, "les 3 cartes font partie du tour");
         Test.test(!jeu.tousLesHumainsOntChoisi(), "le tour suivant repart de zéro");
         Test.test(!jeu.estTourEnCours(), "Le tour est terminé");
+    }
+
+    private void testAChoisi() {
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur alice = new Joueur("Alice", false);
+        jeu.ajouterJoueur(alice);
+
+        Test.test(!jeu.aChoisi(alice), "au debut, Alice n'a pas choisi");
+        jeu.choisirCarte(alice, new Carte(22));
+        Test.test(jeu.aChoisi(alice), "après choisirCarte, Alice a choisi");
     }
 }

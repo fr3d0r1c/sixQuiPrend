@@ -12,6 +12,7 @@ public class TestMain {
 		monTest.testConstructeur4();
 		monTest.testConstructeur5();
 		monTest.testConstructeur6();
+		monTest.testTrouverCarte();
 	}
 	private void testConstructeur1() {
 		Main m = new Main();
@@ -62,5 +63,16 @@ public class TestMain {
 		Test.test(c1==c2, "test pour prendre la troisi�me carte de la main");
 		Test.test(m.toString().compareTo("[(10,3),(11,5)]")==0, 
 				"test du reste de la main apr�s avoir pris la deuxi�me carte de la main");
+	}
+	private void testTrouverCarte() {
+		Main main = new Main();
+		main.ajouterCarte(new Carte(12));
+		main.ajouterCarte(new Carte(45));
+		main.ajouterCarte(new Carte(98));
+
+		Test.test(main.trouverCarte(12) == 0, "la 1re carte est trouvée en position 0");
+		Test.test(main.trouverCarte(98) == 2, "la dernière carte est trouvée aussi");
+		Test.test(main.trouverCarte(50) == -1, "une carte absente renvoie -1");
+
 	}
 }

@@ -40,6 +40,15 @@ public class Main {
         return this.tableau[i];
     }
 
+    public int trouverCarte(int valeur) {
+        for (int i = 0; i < nombreDeCartes(); i++) {
+            if (getCarte(i).getValeur() == valeur) {
+                return i;
+            } 
+        }
+        return -1;
+    }
+
     public void trierMain() {
         for (int i = 0; i < this.nombreCartes - 1; i++) {
             for (int j = i + 1; j < nombreCartes; j++) {

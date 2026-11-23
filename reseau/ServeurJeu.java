@@ -5,6 +5,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+
+import modele.Carte;
+import modele.EtatTour;
 import modele.Jeu;
 import modele.Joueur;
 import modele.TypeBot;
@@ -63,6 +66,8 @@ public class ServeurJeu {
 
         if (commande.equals("NOM")) {
             traiterNom(client, donnees);
+        } else if (commande.equals("CARTE")) {
+            traiterCarte(client, donnees);
         } else {
             client.envoyer("ERREUR Commande inconnue : " + commande);
         }
@@ -112,5 +117,79 @@ public class ServeurJeu {
                 client.envoyer("A_TOI_DE_JOUER");
             }
         }
+    }
+
+    private void traiterCarte(ClientJeu client, String donnees) {
+        Joueur joueur = client.getJoueur();
+
+        // 1. les refus
+        if (joueur == null) {
+            client.envoyer("ERREUR Envoie d'abord ton pseudo avec NOM");
+            return;
+        }
+        if (jeu.estTourEnCours()) {
+            client.envoyer("ERREUR Un tour est déjà en cours");
+            return;
+        }
+        if (jeu.aChoisi(joueur)) {
+            client.envoyer("ERREUR Tu as déjà choisi ta carte pour ce tour");
+            return;
+        }
+
+        int valeur;
+        try {
+            valeur = Integer.parseInt(donnees);
+        } catch (NumberFormatException e) {
+            client.envoyer("ERREUR " + donnees + " n'est pas un numéro de carte");
+            return;
+        }
+
+        int position = joueur.getMain().trouverCarte(valeur);
+        if (position == -1) {
+            client.envoyer("ERREUR Cette carte n'est pas dans ta main");
+            return;
+        }
+
+        // 2. on l'accepte : la carte quitte la main, et elle est mémorisée
+        Carte carte = joueur.getMain().prendreUneCarte(position);
+        jeu.choisirCarte(joueur, carte);
+        client.envoyer(Protocole.encoderMain(joueur.getMain()));   // sa main, sans la carte jouée
+
+        // 3. le dernier humain vient de choisir : on joue le tour
+        if (jeu.tousLesHumainsOntChoisi()) {
+            jeu.preparerTour();
+            resoudreTour();
+        }
+    }
+
+    private void resoudreTour() {
+        EtatTour etat = jeu.poserProchaineCarte();
+
+        // tant que des cartes sont posées : on prévient tout le monde, carte par carte
+        while (etat == EtatTour.CARTE_POSEE) {
+            diffuser("POSE " + jeu.positionDe(jeu.getDernierPoseur()) + " " + jeu.getDerniereCartePosee().getValeur());
+            if (jeu.getDernierRamasseur() != null) {
+                diffuser("RAMASSE " + jeu.positionDe(jeu.getDernierRamasseur()) + " " + jeu.getDernierGain());
+            }
+            etat = jeu.poserProchaineCarte();
+        }
+
+        // l'état complet, pour que tout le monde soit synchronisé
+        diffuser(Protocole.encoderSeries(jeu));
+        diffuser(Protocole.encoderScores(jeu));
+
+        if (etat == EtatTour.ATTENTE_CHOIX) {
+            demanderChoixSerie();
+        } else {
+            for (ClientJeu client : clients) {
+                if (client.getJoueur() != null) {
+                    client.envoyer("A_TOI_DE_JOUER");
+                }
+            }
+        }
+    }
+
+    private void demanderChoixSerie() {
+        
     }
 }

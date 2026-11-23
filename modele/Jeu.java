@@ -11,6 +11,7 @@ public class Jeu {
     private Carte derniereCartePosee;
     private Joueur dernierRamasseur;
     private int dernierGain;
+    private Joueur dernierPoseur;
 
     public Jeu(int nbJoueurs){
         this.maPioche = new Pioche();
@@ -20,6 +21,10 @@ public class Jeu {
         for (int i=0; i<4; i++){
             tableauSeries[i] = new Serie();
         }
+    }
+
+    public Joueur getDernierPoseur() {
+        return this.dernierPoseur;
     }
 
     public CarteJouee[] getDernierTour() {
@@ -303,6 +308,7 @@ public class Jeu {
 
         CarteJouee cj = tourEnCours[prochaineCarte];
         derniereCartePosee = cj.getCarte();
+        dernierPoseur = cj.getJoueur();
         ramasserSerie(numeroSerie, cj.getJoueur(), cj.getCarte());
         prochaineCarte++;
     }
@@ -362,6 +368,7 @@ public class Jeu {
         }
 
         derniereCartePosee = cj.getCarte();
+        dernierPoseur = cj.getJoueur();
         poserCarte(cj);
         prochaineCarte++;
         return EtatTour.CARTE_POSEE;
@@ -412,5 +419,9 @@ public class Jeu {
             return null;
         }
         return tourEnCours[prochaineCarte].getJoueur();
+    }
+
+    public boolean aChoisi(Joueur joueur) {
+        return cartesChoisies[positionDe(joueur)] != null;
     }
 }
