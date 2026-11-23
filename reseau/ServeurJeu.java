@@ -95,6 +95,22 @@ public class ServeurJeu {
                 jeu.ajouterJoueur(new Joueur("Bot " + i, true, TypeBot.MOYEN));
             }
             diffuser(Protocole.encoderJoueurs(jeu));
+             demarrerManche();
+        }
+    }
+
+    private void demarrerManche() {
+        jeu.preparerManche();
+
+        diffuser(Protocole.encoderSeries(jeu));
+        diffuser(Protocole.encoderScores(jeu));
+
+        for (ClientJeu client : clients) {
+            Joueur joueur = client.getJoueur();
+            if (joueur != null) {
+                client.envoyer(Protocole.encoderMain(joueur.getMain()));
+                client.envoyer("A_TOI_DE_JOUER");
+            }
         }
     }
 }
