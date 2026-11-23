@@ -68,6 +68,8 @@ public class ServeurJeu {
             traiterNom(client, donnees);
         } else if (commande.equals("CARTE")) {
             traiterCarte(client, donnees);
+        } else if (commande.equals("SERIE")) {
+            traiterSerie(client, donnees);
         } else {
             client.envoyer("ERREUR Commande inconnue : " + commande);
         }
@@ -167,10 +169,7 @@ public class ServeurJeu {
 
         // tant que des cartes sont posées : on prévient tout le monde, carte par carte
         while (etat == EtatTour.CARTE_POSEE) {
-            diffuser("POSE " + jeu.positionDe(jeu.getDernierPoseur()) + " " + jeu.getDerniereCartePosee().getValeur());
-            if (jeu.getDernierRamasseur() != null) {
-                diffuser("RAMASSE " + jeu.positionDe(jeu.getDernierRamasseur()) + " " + jeu.getDernierGain());
-            }
+            annoncerDerniereEtape();
             etat = jeu.poserProchaineCarte();
         }
 
@@ -190,6 +189,56 @@ public class ServeurJeu {
     }
 
     private void demanderChoixSerie() {
-        
+        Joueur choisisseur = jeu.getJoueurQuiDoitChoisir();
+        int position = jeu.positionDe(choisisseur);
+
+        for (ClientJeu client : clients) {
+            if (client.getJoueur() == choisisseur) {
+                client.envoyer("CHOISIS_SERIE");
+            } else if (client.getJoueur() != null) {
+                client.envoyer("ATTENTE_SERIE " + position);
+            }
+        }
+    }
+
+    private void annoncerDerniereEtape() {
+        diffuser("POSE " + jeu.positionDe(jeu.getDernierPoseur()) + " " + jeu.getDerniereCartePosee().getValeur());
+        if (jeu.getDernierRamasseur() != null) {
+             diffuser("RAMASSE " + jeu.positionDe(jeu.getDernierRamasseur()) + " " + jeu.getDernierGain());
+        }
+    }
+
+    private void traiterSerie(ClientJeu client, String donnees) {
+        Joueur joueur = client.getJoueur();
+
+        // 1. les refus
+        if (joueur == null) {
+            client.envoyer("ERREUR Envoie d'abord ton pseudo avec NOM");
+            return;
+        }
+        if (!jeu.attendChoixSerie()) {
+            client.envoyer("ERREUR Aucun choix de série n'est attendu pour l'instant");
+            return;
+        }
+        if (joueur != jeu.getJoueurQuiDoitChoisir()) {
+            client.envoyer("ERREUR Ce n'est pas à toi de choisir la série");
+            return;
+        }
+
+        int numero;
+        try {
+            numero = Integer.parseInt(donnees);
+        } catch (NumberFormatException e) {
+            client.envoyer("ERREUR " + donnees + " n'est pas un numéro de série");
+            return;
+        }
+        if (numero < 0 || numero > 3) {
+            client.envoyer("ERREUR Mauvais numéro de série");
+            return;
+        }
+
+        jeu.ramasserPourHumain(numero);
+        annoncerDerniereEtape();
+        resoudreTour();
     }
 }
