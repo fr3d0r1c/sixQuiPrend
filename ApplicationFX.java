@@ -116,7 +116,7 @@ public class ApplicationFX extends javafx.application.Application {
         });
         plateau.setPadding(new Insets(20));
 
-        mainVue = new MainVue(moi, numero -> {
+        mainVue = new MainVue(jeu, numero -> {
             Carte choisie = moi.getMain().prendreUneCarte(numero);
             jeu.preparerTour(moi, choisie);
             mainVue.rafraichir();
