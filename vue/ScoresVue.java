@@ -6,16 +6,15 @@ import javafx.util.Duration;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import modele.Jeu;
-import modele.Joueur;
+import modele.InfosPartie;
 
 public class ScoresVue extends VBox {
 
-    private final Jeu jeu;
+    private final InfosPartie infos;
 
-    public ScoresVue(Jeu jeu) {
+    public ScoresVue(InfosPartie infos) {
         super(10);
-        this.jeu = jeu;
+        this.infos = infos;
         getStyleClass().add("panneau-scores");
         rafraichir();
     }
@@ -27,14 +26,13 @@ public class ScoresVue extends VBox {
         titre.getStyleClass().add("titre-scores");
         getChildren().add(titre);
 
-        for (int i = 0; i < jeu.getNombreJoueurs(); i++) {
-            Joueur joueur = jeu.getJoueur(i);
-
-            Label ligne = new Label(joueur.getNom() + " : " + joueur.getNombreDePoints() + " 🐮 (+" + joueur.getPile().calculPoints() + ")");
+        for (int i = 0; i < infos.getNombreJoueurs(); i++) {
+            
+            Label ligne = new Label(infos.getNom(i) + " : " + infos.getScore(i) + " 🐮 (+" + infos.getTetesPile(i) + ")");
 
             ligne.getStyleClass().add("ligne-score");
 
-            if (joueur.estAvatar() == false) {
+            if (infos.estMoi(i)) {
                 ligne.getStyleClass().add("ligne-score-moi");
             }
 
@@ -45,8 +43,7 @@ public class ScoresVue extends VBox {
         }
     }
 
-    public void afficherGain(Joueur joueur, int gain) {
-        int position = jeu.positionDe(joueur);
+    public void afficherGain(int position, int gain) {
         HBox ligne = (HBox) getChildren().get(position + 1);
 
         Label texteGain = new Label("+" + gain + " 🐮");
@@ -63,8 +60,6 @@ public class ScoresVue extends VBox {
 
         ParallelTransition animation = new ParallelTransition(montee, disparition);
         animation.setOnFinished(e -> ligne.getChildren().remove(texteGain));   // il se supprime à la fin
-        animation.play()
-        
-        ;
+        animation.play();
     }
 }

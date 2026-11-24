@@ -108,7 +108,7 @@ public class ApplicationFX extends javafx.application.Application {
             jeu.ramasserPourHumain(numeroSerie);
             plateau.rafraichir(jeu.getDerniereCartePosee());
             scores.rafraichir();
-            scores.afficherGain(jeu.getDernierRamasseur(), jeu.getDernierGain());
+            scores.afficherGain(jeu.positionDe(jeu.getDernierRamasseur()), jeu.getDernierGain());
 
             PauseTransition pause = new PauseTransition(javafx.util.Duration.millis(1300));
             pause.setOnFinished(e -> animerTour());
@@ -195,7 +195,7 @@ public class ApplicationFX extends javafx.application.Application {
         if (etat == EtatTour.CARTE_POSEE) {
             int duree = 400;
             if (jeu.getDernierRamasseur() != null) {
-                scores.afficherGain(jeu.getDernierRamasseur(), jeu.getDernierGain());
+                scores.afficherGain(jeu.positionDe(jeu.getDernierRamasseur()), jeu.getDernierGain());
                 duree = 1300;
             }
             PauseTransition pause = new PauseTransition(javafx.util.Duration.millis(duree));
