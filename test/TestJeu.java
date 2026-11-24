@@ -48,6 +48,9 @@ public class TestJeu {
         monTest.testGetClassement();
         monTest.testDeuxHumains();
         monTest.testAChoisi();
+        monTest.testGetPoseur();
+        monTest.testGetMaMain();
+        monTest.testGetMaMainSansHumain();
     }
 
     private void testConstructeur1() {
@@ -867,5 +870,45 @@ public class TestJeu {
         Test.test(!jeu.aChoisi(alice), "au debut, Alice n'a pas choisi");
         jeu.choisirCarte(alice, new Carte(22));
         Test.test(jeu.aChoisi(alice), "après choisirCarte, Alice a choisi");
+    }
+
+    private void testGetPoseur() {
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur humain = new Joueur("Humain", false);
+        Joueur bot = new Joueur("Bot", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(humain);
+        jeu.ajouterJoueur(bot);
+        bot.getMain().ajouterCarte(new Carte(35));
+
+        Test.test(jeu.getPoseur(22) == -1, "avant tout tour, getPoseur renvoie -1");
+
+        jeu.preparerTour(humain, new Carte(22));
+        while (jeu.poserProchaineCarte() != EtatTour.TOUR_FINI) {}
+
+        Test.test(jeu.getPoseur(22) == 0, "Le 22 a été joué par l'humain");
+        Test.test(jeu.getPoseur(35) == 1, "le 35 a été posé par le bot");
+        Test.test(jeu.getPoseur(99) == -1, "le 99 n'a été posé par personne");
+    }
+
+    private void testGetMaMain() {
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur bot = new Joueur("Bot", true, TypeBot.FACILE);
+        Joueur humain = new Joueur("Humain", false);
+        jeu.ajouterJoueur(bot);   // le bot d'abord !
+        jeu.ajouterJoueur(humain);
+
+        Test.test(jeu.getMaMain() == humain.getMain(), "getMaMain renvoie la main de l'humain, pas celle du bot");
+        Test.test(jeu.estMoi(0) == false, "Le joueur 0 n'est pas l'humain");
+        Test.test(jeu.estMoi(1) == true, "Le joueur 1 est humain");
+        Test.test(jeu.getTetesPile(1) == 0, "Le joueur 1 n'au aucune carte dans sa pile");
+        Test.test(jeu.getNom(0).equals("Bot"), "Le joueur 0 s'appelle Bot");
+    }
+
+    private void testGetMaMainSansHumain() {
+        Jeu jeu = creerJeuAvecSeries();
+        jeu.ajouterJoueur(new Joueur("Bot1", true, TypeBot.FACILE));
+        jeu.ajouterJoueur(new Joueur("Bot2", true, TypeBot.FACILE));
+
+        Test.test(jeu.getMaMain() == null, "sans humain, getMaMain renvoie null");
     }
 }

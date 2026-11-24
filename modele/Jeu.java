@@ -1,6 +1,5 @@
 package modele;
-
-public class Jeu {
+public class Jeu implements InfosPartie{
     private Pioche maPioche;
     private Joueur[] tableauJoueurs;
     private int nombreJoueurs;
@@ -423,5 +422,47 @@ public class Jeu {
 
     public boolean aChoisi(Joueur joueur) {
         return cartesChoisies[positionDe(joueur)] != null;
+    }
+
+    public String getNom(int position) {
+        return tableauJoueurs[position].getNom();
+    }
+
+    public int getScore(int position) {
+        return this.tableauJoueurs[position].getNombreDePoints();
+    }
+
+    public int getTetesPile(int position) {
+        return this.tableauJoueurs[position].getPile().calculPoints();
+    }
+
+    public boolean estMoi(int position) {
+        return !this.tableauJoueurs[position].estAvatar();
+    }
+
+    public boolean doisChoisirSerie() {
+        return attendChoixSerie();
+    }
+
+    public Main getMaMain() {
+        for (int i = 0; i < this.getNombreJoueurs(); i++) {
+            if (!tableauJoueurs[i].estAvatar()) {
+                return tableauJoueurs[i].getMain();
+            }
+        }
+        return null;
+    }
+
+    public int getPoseur(int valeurCarte) {
+        CarteJouee[] tour = getDernierTour();
+        if (tour == null) {
+            return -1;
+        }
+        for (int i = 0; i < tour.length; i++) {
+            if (tour[i].getCarte().getValeur() == valeurCarte) {
+                return positionDe(tour[i].getJoueur());
+            }
+        }
+        return -1;
     }
 }

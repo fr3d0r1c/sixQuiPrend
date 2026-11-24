@@ -26,6 +26,7 @@ goto aide
 javac -d out modele\*.java reseau\*.java test\*.java || goto erreur
 java -cp out test.TestJeu
 java -cp out test.TestProtocole
+java -cp out test.TestEtatClient
 goto fin
 
 :console
