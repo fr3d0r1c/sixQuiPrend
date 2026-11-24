@@ -6,11 +6,9 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import modele.CarteJouee;
-import modele.Jeu;
 import modele.Serie;
 import modele.Carte;
-import modele.Joueur;
+import modele.InfosPartie;
 import javafx.scene.control.Tooltip;
 
 import javafx.animation.*;
@@ -18,12 +16,12 @@ import javafx.util.Duration;
 
 public class PlateauVue extends VBox {
     
-    private final Jeu jeu;
+    private final InfosPartie infos;
     private final Consumer<Integer> quandOnCliqueSerie;
 
-    public PlateauVue(Jeu jeu, Consumer<Integer> quandOnCliqueSerie) {
+    public PlateauVue(InfosPartie infos, Consumer<Integer> quandOnCliqueSerie) {
         super(10);
-        this.jeu = jeu;
+        this.infos = infos;
         this.quandOnCliqueSerie = quandOnCliqueSerie;
         rafraichir();
     }
@@ -36,7 +34,7 @@ public class PlateauVue extends VBox {
         getChildren().clear();
 
         for (int i = 0; i < 4; i++) {
-            Serie serie = jeu.getSerie(i);
+            Serie serie = infos.getSerie(i);
 
             HBox ligne = new HBox(8);  
             ligne.setAlignment(Pos.CENTER_LEFT);
@@ -48,14 +46,15 @@ public class PlateauVue extends VBox {
 
             for (int k = 0; k < serie.nombreDeCartes(); k++) {
                 CarteVue vueCarte = new CarteVue(serie.getCarte(k));
-                Joueur poseur = trouverPoseur(vueCarte.getCarte());
+                int poseur = infos.getPoseur(vueCarte.getCarte().getValeur());
 
-                if (poseur != null) {
-                    vueCarte.getStyleClass().add("halo-" + jeu.positionDe(poseur));
-                    Tooltip.install(vueCarte, new Tooltip("Posée par " + poseur.getNom()));
+                if (poseur != -1) {
+                    vueCarte.getStyleClass().add("halo-" + poseur);
+                    Tooltip.install(vueCarte, new Tooltip("Posée par " + infos.getNom(poseur)));
                 }
 
-                if (vueCarte.getCarte() == carteAAnimer) {
+                if (carteAAnimer != null
+                        && vueCarte.getCarte().getValeur() == carteAAnimer.getValeur()) {
                     animerApparition(vueCarte);
                 }
 
@@ -67,7 +66,7 @@ public class PlateauVue extends VBox {
 
             ligne.getStyleClass().add("serie");
 
-            if (jeu.attendChoixSerie()) {
+            if (infos.doisChoisirSerie()) {
                 ligne.setCursor(Cursor.HAND);
                 ligne.getStyleClass().add("serie-attente");
             }
@@ -75,33 +74,7 @@ public class PlateauVue extends VBox {
             getChildren().add(ligne);
         }
     }
-
-    private boolean estDansDernierTour(Carte carte) {
-        CarteJouee[] tour = jeu.getDernierTour();
-        if (tour == null) {
-            return false;
-        }
-        for (int i = 0; i < tour.length; i++) {
-            if (tour[i].getCarte() == carte) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private Joueur trouverPoseur(Carte carte) {
-        CarteJouee[] tour = jeu.getDernierTour();
-        if (tour == null) {
-            return null;
-        }
-        for (int i = 0; i < tour.length; i++) {
-            if (tour[i].getCarte() == carte) {
-                return tour[i].getJoueur();
-            }
-        }
-        return null;
-    }
-
+    
     private void animerApparition(CarteVue vueCarte) {
         ScaleTransition zoom = new ScaleTransition(Duration.millis(300), vueCarte);
         zoom.setFromX(0.3);
