@@ -20,6 +20,7 @@ if "%1"=="serveur"  goto serveur
 if "%1"=="texte"    goto texte
 if "%1"=="auto"     goto auto
 if "%1"=="clientfx" goto clientfx
+if "%1"=="enligne"  goto enligne
 goto aide
 
 :tests
@@ -68,6 +69,12 @@ copy /y style.css out\ >nul
 java %FXRUN% -cp out client.ConsoleReseauFX %2
 goto fin
 
+:enligne
+javac %FXOPT% -d out modele\*.java reseau\*.java vue\*.java client\*.java || goto erreur
+copy /y style.css out\ >nul
+java %FXRUN% -cp out client.ApplicationReseauFX
+goto fin
+
 :aide
 echo.
 echo Utilisation : .\lancer.bat ^<cible^> [arguments]
@@ -80,6 +87,7 @@ echo   serveur H B        le serveur de jeu (H humains, B bots)
 echo   texte [adresse]    un client a la main
 echo   auto PSEUDO        un client automatique
 echo   clientfx           le client graphique en reseau
+echo   enligne            le jeu graphique en ligne.
 echo.
 goto fin
 
