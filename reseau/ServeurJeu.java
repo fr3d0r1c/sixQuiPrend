@@ -63,7 +63,7 @@ public class ServeurJeu {
         diffuser(Protocole.encoderJoueurs(jeu));
 
         boolean partieCommencee = jeu.getNombreJoueurs() == nbHumains + nbBots;
-        if (!partieCommencee) {
+        if (!partieCommencee || jeu.estFinie()) {
             return;
         }
 
