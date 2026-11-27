@@ -79,7 +79,7 @@ goto fin
 echo.
 echo Utilisation : .\lancer.bat ^<cible^> [arguments]
 echo.
-echo   tests              tests unitaires (TestJeu, TestProtocole)
+echo   tests              tests unitaires (TestJeu, TestProtocole, TestEtatClient)
 echo   console            le jeu en console
 echo   bench              le benchmark des bots
 echo   fx                 le jeu graphique en local
@@ -87,7 +87,7 @@ echo   serveur H B        le serveur de jeu (H humains, B bots)
 echo   texte [adresse]    un client a la main
 echo   auto PSEUDO        un client automatique
 echo   clientfx           le client graphique en reseau
-echo   enligne            le jeu graphique en ligne.
+echo   enligne            le jeu graphique en ligne
 echo.
 goto fin
 
