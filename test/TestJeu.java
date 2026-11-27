@@ -51,6 +51,8 @@ public class TestJeu {
         monTest.testGetPoseur();
         monTest.testGetMaMain();
         monTest.testGetMaMainSansHumain();
+        monTest.testDevenirBot();
+        monTest.testPreparerTourCarteDejaChoisie();
     }
 
     private void testConstructeur1() {
@@ -910,5 +912,37 @@ public class TestJeu {
         jeu.ajouterJoueur(new Joueur("Bot2", true, TypeBot.FACILE));
 
         Test.test(jeu.getMaMain() == null, "sans humain, getMaMain renvoie null");
+    }
+
+    private void testDevenirBot() {
+        Joueur alice = new Joueur("alice", false);
+
+        alice.devenirBot(TypeBot.DIFFICILE);
+
+        Test.test(alice.estAvatar(), "après devenirBot, alice est un bot");
+        Test.test(alice.getStrategie() != null, "le nouveau bot a une stratégie");
+        Test.test(alice.getTypeBot() == TypeBot.DIFFICILE, "le type du bot est celui demandé");
+        Test.test(alice.getNom().equals("alice (bot)"), "le nom indique de c'est un bot");
+    }
+
+    private void testPreparerTourCarteDejaChoisie() {
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur alice = new Joueur("alice", false);
+        jeu.ajouterJoueur(alice);
+        alice.getMain().ajouterCarte(new Carte(42));
+        alice.getMain().ajouterCarte(new Carte(55));
+        alice.getMain().ajouterCarte(new Carte(66));
+
+        Carte choisie = alice.getMain().prendreUneCarte(0);   // comme le serveur : le 42 quitte la main
+        jeu.choisirCarte(alice, choisie);
+        alice.devenirBot(TypeBot.MOYEN);
+
+        jeu.preparerTour();
+
+        Test.test(jeu.getDernierTour()[0].getCarte().getValeur() == 42,
+              "la carte choisie avant le départ (42) est bien jouée");
+        Test.test(alice.getMain().nombreDeCartes() == 2,
+              "le bot n'a pas pris une 2e carte dans la main");
+        Test.test(jeu.aChoisi(alice), "le 42 est bien mémorisé avant le départ");
     }
 }

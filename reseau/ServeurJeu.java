@@ -52,7 +52,29 @@ public class ServeurJeu {
 
     public synchronized void retirer(ClientJeu client) { 
         clients.remove(client);
+
+        Joueur joueur = client.getJoueur();
+        if (joueur == null) {
+            return;
+        }
+
+        System.out.println(joueur.getNom() + " est parti : un bot prend sa place");
+        joueur.devenirBot(TypeBot.MOYEN);
+        diffuser(Protocole.encoderJoueurs(jeu));
+
+        boolean partieCommencee = jeu.getNombreJoueurs() == nbHumains + nbBots;
+        if (!partieCommencee) {
+            return;
+        }
+
+        if (jeu.estTourEnCours()) {
+            resoudreTour();
+        } else if (jeu.tousLesHumainsOntChoisi()) {
+            jeu.preparerTour();
+            resoudreTour();
+        }
      }
+
     public synchronized void diffuser(String message) {
         System.out.println(message);
         for (ClientJeu client : clients) {

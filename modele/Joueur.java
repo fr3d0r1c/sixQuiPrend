@@ -57,4 +57,11 @@ public class Joueur {
         this.nombreDePoints = this.nombreDePoints + nbPoints;
     }
 
+    public void devenirBot(TypeBot type) {
+        this.avatar = true;
+        this.typeBot = type;
+        this.strategie = type.creerStrategie();
+        this.nom = this.nom + " (bot)";
+    }
+
 }

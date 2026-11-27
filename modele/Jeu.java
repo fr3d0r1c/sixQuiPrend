@@ -273,7 +273,7 @@ public class Jeu implements InfosPartie{
 
         for (int i = 0; i < getNombreJoueurs(); i++) {
             Joueur joueur = getJoueur(i);
-            if (!joueur.estAvatar()) {
+            if (cartesChoisies[i] != null) {
                 cartesJouees[i] = new CarteJouee(cartesChoisies[i], joueur);
             } else {
                 cartesJouees[i] = new CarteJouee(choisirCarteBot(joueur), joueur);
