@@ -44,6 +44,8 @@ public class ApplicationReseauFX extends Application {
     private int ramasseur = -1;
     private int gain = 0;
 
+    private boolean deconnecte = false;
+
 
     @Override
     public void start(Stage fenetre) {
@@ -80,7 +82,9 @@ public class ApplicationReseauFX extends Application {
 
     private void seConnecter(String adresse, String pseudo) {
         try {
-            connexion = new Connexion(adresse, 5555, message -> recevoir(message));
+            if (connexion == null) {
+                connexion = new Connexion(adresse, 5555, message -> recevoir(message));
+            }
             connexion.envoyer("NOM " + pseudo);
             statut.setText("Connecté ! En attente des autres joueurs...");
         } catch (IOException ex) {
@@ -111,6 +115,16 @@ public class ApplicationReseauFX extends Application {
             int[] valeurs = Protocole.decoderValeurs(Protocole.donnees(message));
             ramasseur = valeurs[0];
             gain = valeurs[1];
+        }
+
+        if (commande.equals("DECONNECTE")) {
+            deconnecte = true;
+            if (plateau == null) {
+                statut.setText("Connexion perdue avec le serveur");
+                connexion = null;
+                return;
+            }
+            // pendant la partie : on laisse continuer, le rafraîchissement appellera mettreAJourInfo
         }
 
         if (plateau != null) {
@@ -148,7 +162,7 @@ public class ApplicationReseauFX extends Application {
 
         scores = new ScoresVue(etat);
         plateau = new PlateauVue(etat, numeroSerie -> { 
-            if (!etat.doisChoisirSerie()) {
+            if (deconnecte || !etat.doisChoisirSerie()) {
                 return;
             }
             connexion.envoyer("SERIE " + numeroSerie);
@@ -187,6 +201,11 @@ public class ApplicationReseauFX extends Application {
     }
 
     private void mettreAJourInfo() {
+        if (deconnecte == true) {
+            info.setText("Connexion perdue avec le serveur");
+            mainVue.setDisable(true);
+            return;
+        }
         if (etat.getClassement() != null) {
             info.setText("Partie terminée !");
         } else if (etat.doisChoisirSerie()) {
@@ -222,6 +241,7 @@ public class ApplicationReseauFX extends Application {
         });
         pause.play();
     }
+
     public static void main(String[] args) {
         launch(args);
     }

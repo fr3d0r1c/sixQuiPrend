@@ -111,6 +111,12 @@ public class ServeurJeu {
             client.envoyer("ERREUR La partie est complète");
             return;
         }
+        for (int i = 0; i < jeu.getNombreJoueurs(); i++) {
+            if (jeu.getJoueur(i).getNom().equalsIgnoreCase(pseudo)) {
+                client.envoyer("ERREUR Nom déjà pris");
+                return;
+            }
+        }
 
         // 2. on l'accepte
         Joueur joueur = new Joueur(pseudo, false);
@@ -291,4 +297,6 @@ public class ServeurJeu {
             demarrerManche();
         }
     }
+
+    
 }
