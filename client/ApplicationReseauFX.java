@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import modele.Carte;
 import reseau.Protocole;
+import vue.FinPartieVue;
 import vue.MainVue;
 import vue.PlateauVue;
 import vue.ScoresVue;
@@ -119,6 +120,7 @@ public class ApplicationReseauFX extends Application {
 
         if (commande.equals("DECONNECTE")) {
             deconnecte = true;
+            etat.aChoisiUneSerie();
             if (plateau == null) {
                 statut.setText("Connexion perdue avec le serveur");
                 connexion = null;
@@ -151,6 +153,11 @@ public class ApplicationReseauFX extends Application {
                 valeurAAnimer = -1;     // l'étape est finie : on oublie
                 ramasseur = -1;
                 mettreEnPause(duree);
+            }
+
+            if (commande.equals("FIN_PARTIE")) {
+                FinPartieVue fin = new FinPartieVue(etat, etat.getClassement(), null, () -> fenetre.close());
+                racineJeu.getChildren().add(fin);
             }
         }
     }

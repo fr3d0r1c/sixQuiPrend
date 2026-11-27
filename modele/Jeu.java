@@ -12,6 +12,7 @@ public class Jeu implements InfosPartie{
     private int dernierGain;
     private Joueur dernierPoseur;
 
+
     public Jeu(int nbJoueurs){
         this.maPioche = new Pioche();
         this.tableauJoueurs = new Joueur[10];
@@ -464,5 +465,15 @@ public class Jeu implements InfosPartie{
             }
         }
         return -1;
+    }
+
+    public int[] getClassementPositions() {
+        Joueur[] classement = getClassement();
+        int[] positions = new int[classement.length];
+        for (int i = 0; i < classement.length; i++) {
+            positions[i] = positionDe(classement[i]);
+        }
+        return positions;
+
     }
 }

@@ -53,6 +53,7 @@ public class TestJeu {
         monTest.testGetMaMainSansHumain();
         monTest.testDevenirBot();
         monTest.testPreparerTourCarteDejaChoisie();
+        monTest.testGetClassementPositions();
     }
 
     private void testConstructeur1() {
@@ -935,6 +936,7 @@ public class TestJeu {
 
         Carte choisie = alice.getMain().prendreUneCarte(0);   // comme le serveur : le 42 quitte la main
         jeu.choisirCarte(alice, choisie);
+        Test.test(jeu.aChoisi(alice), "le 42 est bien mémorisé avant le départ");
         alice.devenirBot(TypeBot.MOYEN);
 
         jeu.preparerTour();
@@ -943,6 +945,27 @@ public class TestJeu {
               "la carte choisie avant le départ (42) est bien jouée");
         Test.test(alice.getMain().nombreDeCartes() == 2,
               "le bot n'a pas pris une 2e carte dans la main");
-        Test.test(jeu.aChoisi(alice), "le 42 est bien mémorisé avant le départ");
+    }
+
+    public void testGetClassementPositions() {
+        Jeu jeu = new Jeu(3);
+        Joueur moi = new Joueur("Moi", false);
+        Joueur bot1 = new Joueur("Bot 1", true, TypeBot.FACILE);
+        Joueur bot2 = new Joueur("Bot 2", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(moi);
+        jeu.ajouterJoueur(bot1);
+        jeu.ajouterJoueur(bot2);
+
+        moi.ajouterPoints(40);
+        bot1.ajouterPoints(70);
+        bot2.ajouterPoints(15);
+
+        int[] classement = jeu.getClassementPositions();
+
+        Test.test(classement.length == 3, "le classement contient tous les joueurs");
+        Test.test(classement[0] == 2, "le 1er est celui qui a le moins de têtes (Bot 2, 15)");
+        Test.test(classement[1] == 0, "le 2e est Moi (40)");
+        Test.test(classement[2] == 1, "le dernier est celui qui a le plus de têtes (Bot 1, 70)");
+
     }
 }

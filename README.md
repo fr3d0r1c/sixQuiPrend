@@ -214,7 +214,7 @@ Les vues affichent donc l'une ou l'autre sans changer une ligne de leur code.
 
 ## Tests
 
-- `test.TestJeu` : les règles, les bots, le tour étape par étape, le contrat `InfosPartie` et le remplacement d'un joueur par un bot (120 tests).
+- `test.TestJeu` : les règles, les bots, le tour étape par étape, le contrat `InfosPartie` et le remplacement d'un joueur par un bot (125 tests).
 - `test.TestProtocole` : l'encodage et le décodage de chaque message, avec des tests d'aller-retour (25 tests).
 - `test.TestEtatClient` : la reconstruction de la partie côté client à partir des messages reçus (18 tests).
 - Une classe de test par classe du modèle : `TestCarte`, `TestSerie`, `TestMain`, `TestPile`, `TestPioche` et `TestJoueur`.

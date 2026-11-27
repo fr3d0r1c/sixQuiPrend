@@ -167,7 +167,7 @@ public class ApplicationFX extends javafx.application.Application {
                 Joueur gagnant = jeu.trouverGagnant();
                 info.setText("Partie terminée : " + gagnant.getNom() + " gagne avec " + gagnant.getNombreDePoints() + " têtes !");
             }
-            FinPartieVue fin = new FinPartieVue(jeu,
+            FinPartieVue fin = new FinPartieVue(jeu, jeu.getClassementPositions(),
                 () -> fenetre.setScene(sceneAccueil),
                 () -> fenetre.close());
             racineJeu.getChildren().add(fin);
