@@ -208,6 +208,8 @@ public class ServeurJeu {
         if (jeu.getDernierRamasseur() != null) {
              diffuser("RAMASSE " + jeu.positionDe(jeu.getDernierRamasseur()) + " " + jeu.getDernierGain());
         }
+        diffuser(Protocole.encoderSeries(jeu));
+        diffuser(Protocole.encoderScores(jeu));
     }
 
     private void traiterSerie(ClientJeu client, String donnees) {

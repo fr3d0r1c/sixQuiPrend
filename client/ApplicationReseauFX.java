@@ -12,11 +12,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import modele.Carte;
 import reseau.Protocole;
 import vue.MainVue;
 import vue.PlateauVue;
 import vue.ScoresVue;
 import javafx.scene.layout.StackPane;
+
+import java.util.ArrayDeque;
+import javafx.animation.PauseTransition;
+import javafx.util.Duration;
 
 public class ApplicationReseauFX extends Application {
 
@@ -30,6 +35,15 @@ public class ApplicationReseauFX extends Application {
     private MainVue mainVue;
     private ScoresVue scores;
     private StackPane racineJeu;
+
+    // ===== la file d'attente des messages =====
+    private final ArrayDeque<String> file = new ArrayDeque<>();
+    private boolean enPause = false;
+
+    private int valeurAAnimer = -1;
+    private int ramasseur = -1;
+    private int gain = 0;
+
 
     @Override
     public void start(Stage fenetre) {
@@ -75,7 +89,7 @@ public class ApplicationReseauFX extends Application {
     }
 
     // ===== LE CŒUR : chaque ligne reçue du serveur passe ici =====
-    private void recevoir(String message) {
+    private void traiterMessage(String message) {
         System.out.println("← " + message);
         etat.traiter(message);
         String commande = Protocole.commande(message);
@@ -90,10 +104,40 @@ public class ApplicationReseauFX extends Application {
             creerEcranJeu();
         }
 
+        if (commande.equals("POSE")) {
+            int[] valeurs = Protocole.decoderValeurs(Protocole.donnees(message));
+            valeurAAnimer = valeurs[1];
+        } else if (commande.equals("RAMASSE")) {
+            int[] valeurs = Protocole.decoderValeurs(Protocole.donnees(message));
+            ramasseur = valeurs[0];
+            gain = valeurs[1];
+        }
+
         if (plateau != null) {
-            plateau.rafraichir();
+            boolean finEtape = commande.equals("SCORES") && valeurAAnimer != -1;
+            
+            if (finEtape) {
+                plateau.rafraichir(new Carte(valeurAAnimer));
+            } else {
+                plateau.rafraichir();
+            }
             mainVue.rafraichir();
             scores.rafraichir();
+
+            if (finEtape && ramasseur != -1) {
+                scores.afficherGain(ramasseur, gain);
+            }
+            mettreAJourInfo();
+
+            if (finEtape) {
+                int duree = 400;
+                if (ramasseur != -1) {
+                    duree = 1300;
+                }
+                valeurAAnimer = -1;     // l'étape est finie : on oublie
+                ramasseur = -1;
+                mettreEnPause(duree);
+            }
         }
     }
 
@@ -103,9 +147,25 @@ public class ApplicationReseauFX extends Application {
         info.getStyleClass().add("texte-table");
 
         scores = new ScoresVue(etat);
-        plateau = new PlateauVue(etat, numeroSerie -> { });   // les clics : en 4.6d-2
+        plateau = new PlateauVue(etat, numeroSerie -> { 
+            if (!etat.doisChoisirSerie()) {
+                return;
+            }
+            connexion.envoyer("SERIE " + numeroSerie);
+            etat.aChoisiUneSerie();
+            mettreAJourInfo();
+        });
         plateau.setPadding(new Insets(20));
-        mainVue = new MainVue(etat, numero -> { });           // les clics : en 4.6d-2
+        mainVue = new MainVue(etat, numero -> {
+            if (!etat.estMonTour()) {
+                return;
+            }
+            Carte choisie = etat.getMaMain().getCarte(numero);
+            connexion.envoyer("CARTE " + choisie.getValeur());
+            etat.aJoueUneCarte();
+            mettreAJourInfo();
+        });  
+        
 
         BorderPane ecran = new BorderPane();
         ecran.setPadding(new Insets(15));
@@ -126,6 +186,42 @@ public class ApplicationReseauFX extends Application {
         return scene;
     }
 
+    private void mettreAJourInfo() {
+        if (etat.getClassement() != null) {
+            info.setText("Partie terminée !");
+        } else if (etat.doisChoisirSerie()) {
+            info.setText("Ta carte est trop petite : clique sur la série à ramasser");
+        } else if (etat.getQuiChoisit() != -1) {
+            info.setText(etat.getNom(etat.getQuiChoisit()) + " choisit la série à ramasser...");
+        } else if (etat.estMonTour()) {
+            info.setText("À toi de jouer : choisis une carte");
+        } else {
+            info.setText("En attente des autres joueurs...");
+        }
+
+        mainVue.setDisable(!etat.estMonTour());
+    }
+
+    private void recevoir(String message) {
+        file.add(message);
+        traiterFile();
+    }
+
+    private void traiterFile() {
+        while(!enPause && !file.isEmpty()) {
+            traiterMessage(file.pollFirst());
+        }
+    }
+
+    private void mettreEnPause(int millis) {
+        enPause = true;
+        PauseTransition pause = new PauseTransition(Duration.millis(millis));
+        pause.setOnFinished(e -> {
+            enPause = false;
+            traiterFile();
+        });
+        pause.play();
+    }
     public static void main(String[] args) {
         launch(args);
     }
