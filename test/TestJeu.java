@@ -62,6 +62,7 @@ public class TestJeu {
         monTest.testCartesInconnues();
         monTest.testBotExpertEviteSixiemeCarte();
         monTest.testBotExpertCarteTropPetite();
+        monTest.testBotExpertDepartageEgalite();
     }
 
     private void testConstructeur1() {
@@ -1082,5 +1083,22 @@ public class TestJeu {
         int serie = jeu.choisirSerieBot(jeu.getJoueur(0));
 
         Test.test(serie >= 0 && serie <= 3, "La serie est entre 0 et 3");
+    }
+
+    private void testBotExpertDepartageEgalite() {
+        // PRÉPARER : séries 10, 20, 30, 40 (aucune 6e carte possible en un tour)
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur expert = new Joueur("Expert", true, TypeBot.EXPERT);
+        jeu.ajouterJoueur(expert);
+        jeu.ajouterJoueur(new Joueur("Bot", true, TypeBot.MOYEN));
+
+        // le 18 : petit mais loin de sa série (risque 8/4 = 2)
+        // le 41 : grand mais juste après la sienne (risque 1/4 = 0,25)
+        expert.getMain().ajouterCarte(new Carte(18));
+        expert.getMain().ajouterCarte(new Carte(41));
+
+        Carte carteJouee = jeu.choisirCarteBot(expert);
+
+        Test.test(carteJouee.getValeur() == 41, "à moyenne égale (0), l'EXPERT joue la carte la plus sûre, pas la plus petite");
     }
 }

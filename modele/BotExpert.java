@@ -17,6 +17,7 @@ public class BotExpert implements StrategieBot {
 
         int meilleurIndex = 0;
         double meilleureMoyenne = Double.MAX_VALUE;
+        double meilleurRisque = Double.MAX_VALUE;
 
         for (int i = 0; i < main.nombreDeCartes(); i++) {
             int maCarte = main.getCarte(i).getValeur();
@@ -28,8 +29,13 @@ public class BotExpert implements StrategieBot {
             }
 
             double moyenne = (double) total / NB_SIMULATIONS;
-            if (moyenne < meilleureMoyenne) {
+            double risqueCarte = risque(jeu, main.getCarte(i));
+
+            boolean meilleure = moyenne < meilleureMoyenne;
+            boolean egaliteMaisPlusSure = moyenne == meilleureMoyenne && risqueCarte < meilleurRisque;
+            if (meilleure || egaliteMaisPlusSure) {
                 meilleureMoyenne = moyenne;
+                meilleurRisque = risqueCarte;
                 meilleurIndex = i;
             }
         }
@@ -44,6 +50,20 @@ public class BotExpert implements StrategieBot {
             cartes[i] = inconnues.get(i);         // …et on prend les n premières
         }
         return cartes;
+    }
+
+    private double risque(Jeu jeu, Carte carte) {
+        int numeroSerie = jeu.trouverSerie(carte);
+        if (numeroSerie == -1) {
+            return Double.MAX_VALUE;
+        }
+        Serie serie = jeu.getSerie(numeroSerie);
+        if (serie.nombreDeCartes() == 5) {
+            return Double.MAX_VALUE;
+        }
+        int ecart = carte.getValeur() - serie.derniereCarte().getValeur();
+        int placesRestantes = 5 - serie.nombreDeCartes();
+        return (double) ecart / placesRestantes;
     }
 
     @Override
