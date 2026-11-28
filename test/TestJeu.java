@@ -63,6 +63,7 @@ public class TestJeu {
         monTest.testBotExpertEviteSixiemeCarte();
         monTest.testBotExpertCarteTropPetite();
         monTest.testBotExpertDepartageEgalite();
+        monTest.testBotExpertAdversaireRealiste();
     }
 
     private void testConstructeur1() {
@@ -1100,5 +1101,44 @@ public class TestJeu {
         Carte carteJouee = jeu.choisirCarteBot(expert);
 
         Test.test(carteJouee.getValeur() == 41, "à moyenne égale (0), l'EXPERT joue la carte la plus sûre, pas la plus petite");
+    }
+
+    private void testBotExpertAdversaireRealiste() {
+        Jeu jeu = creerJeuAvecSeries();                 // séries 10, 20, 30, 40
+
+        // CAS 1 : la carte la plus proche d'une série
+        ArrayList<Integer> main1 = new ArrayList<>();
+        main1.add(5);    // trop petite : évitée
+        main1.add(35);   // écart 5 avec le 30
+        main1.add(23);   // écart 3 avec le 20 : la plus proche
+        main1.add(60);   // écart 20 avec le 40
+        Test.test(BotExpert.choisirCommeMoyen(jeu, main1, 0, main1.size()) == 23,
+                "l'adversaire simulé joue la carte la plus proche d'une série");
+
+        // CAS 2 : toutes les cartes sont trop petites
+        ArrayList<Integer> main2 = new ArrayList<>();
+        main2.add(7);
+        main2.add(3);
+        main2.add(9);
+        Test.test(BotExpert.choisirCommeMoyen(jeu, main2, 0, main2.size()) == 3,
+                "si tout est dangereux, l'adversaire simulé joue sa plus petite carte");
+
+        // CAS 3 : la carte la plus proche serait une 6e carte
+        jeu.getSerie(1).vider();
+        for (int v = 16; v <= 20; v++) {
+            jeu.getSerie(1).ajouterCarte(new Carte(v));
+        }
+        ArrayList<Integer> main3 = new ArrayList<>();
+        main3.add(21);   // écart 1… mais 6e carte : évitée
+        main3.add(45);   // écart 5 avec le 40
+        Test.test(BotExpert.choisirCommeMoyen(jeu, main3, 0, main3.size()) == 45,
+                "l'adversaire simulé évite la 6e carte, même si elle est la plus proche");
+
+        // CAS 4 : le découpage des mains (« debut » et « taille »)
+        ArrayList<Integer> deuxMains = new ArrayList<>();
+        deuxMains.add(23); deuxMains.add(60);    // main de l'adversaire 0 : cases 0 et 1
+        deuxMains.add(35); deuxMains.add(48);    // main de l'adversaire 1 : cases 2 et 3
+        Test.test(BotExpert.choisirCommeMoyen(jeu, deuxMains, 2, 2) == 35,
+                "l'adversaire 1 ne choisit que dans SA main (cases 2 et 3), pas dans celle de l'adversaire 0");
     }
 }

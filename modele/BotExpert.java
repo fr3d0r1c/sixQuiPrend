@@ -18,13 +18,14 @@ public class BotExpert implements StrategieBot {
         int meilleurIndex = 0;
         double meilleureMoyenne = Double.MAX_VALUE;
         double meilleurRisque = Double.MAX_VALUE;
+        int tailleMain = main.nombreDeCartes();
 
         for (int i = 0; i < main.nombreDeCartes(); i++) {
             int maCarte = main.getCarte(i).getValeur();
 
             int total = 0;
             for (int s = 0; s < NB_SIMULATIONS; s++) {
-                int[] cartesAdverses = tirerCartes(inconnues, nbAdversaires);
+                int[] cartesAdverses = tirerCartesRealistes(jeu, inconnues, nbAdversaires, tailleMain);
                 total = total + SimulateurTour.coutPour(jeu, maCarte, cartesAdverses);
             }
 
@@ -43,13 +44,47 @@ public class BotExpert implements StrategieBot {
         return main.prendreUneCarte(meilleurIndex);
     }
 
-    private int[] tirerCartes(ArrayList<Integer> inconnues, int n) {
-        Collections.shuffle(inconnues, hasard);     // on mélange la liste…
-        int[] cartes = new int[n];
-        for (int i = 0; i < n; i++) {
-            cartes[i] = inconnues.get(i);         // …et on prend les n premières
+    private int[] tirerCartesRealistes(Jeu jeu, ArrayList<Integer> inconnues, int nbAdversaires, int tailleMain) {
+        Collections.shuffle(inconnues, hasard);
+        int[] cartes = new int[nbAdversaires];
+
+        for (int a = 0; a < nbAdversaires; a++) {
+            cartes[a] = choisirCommeMoyen(jeu, inconnues, a * tailleMain, tailleMain);
         }
         return cartes;
+    }
+
+    public static int choisirCommeMoyen(Jeu jeu, ArrayList<Integer> cartes, int debut, int taille) {
+        int meilleureCarte = -1;
+        int meilleurEcart = Integer.MAX_VALUE;
+        int plusPetite = Integer.MAX_VALUE;
+
+        for (int k = debut; k < debut + taille; k++) {
+            int v = cartes.get(k);
+            
+            if (v < plusPetite) {
+                plusPetite = v;
+            }
+
+            int numeroSerie = jeu.trouverSerie(new Carte(v));
+            if (numeroSerie == -1) {
+                continue;
+            }
+            Serie serie = jeu.getSerie(numeroSerie);
+            if (serie.nombreDeCartes() == 5) {
+                continue;
+            }
+            int ecart = v - serie.derniereCarte().getValeur();
+            if (ecart < meilleurEcart) {
+                meilleurEcart = ecart;
+                meilleureCarte = v;
+            }
+        }
+
+        if (meilleureCarte == -1) {
+            meilleureCarte = plusPetite;
+        }
+        return meilleureCarte;
     }
 
     private double risque(Jeu jeu, Carte carte) {
