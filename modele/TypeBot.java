@@ -4,7 +4,8 @@ public enum TypeBot {
     ALEATOIRE,
     FACILE,
     MOYEN,
-    DIFFICILE;
+    DIFFICILE,
+    EXPERT;
 
     public StrategieBot creerStrategie() {
         switch(this) {
@@ -19,6 +20,9 @@ public enum TypeBot {
             
             case DIFFICILE:
                 return new BotDifficile();
+
+            case EXPERT:
+                return new BotExpert();
 
             default:
                 throw new IllegalStateException("Type de bot non géré : " + this);

@@ -60,6 +60,8 @@ public class TestJeu {
         monTest.testMemoireApresTour();
         monTest.testMemoireNouvelleManche();
         monTest.testCartesInconnues();
+        monTest.testBotExpertEviteSixiemeCarte();
+        monTest.testBotExpertCarteTropPetite();
     }
 
     private void testConstructeur1() {
@@ -653,6 +655,7 @@ public class TestJeu {
         Test.test(TypeBot.FACILE.creerStrategie() instanceof BotFacile, "FACILE crée un BotFacile");
         Test.test(TypeBot.MOYEN.creerStrategie() instanceof BotMoyen, "MOYEN crée un BotMoyen");
         Test.test(TypeBot.DIFFICILE.creerStrategie() instanceof BotDifficile, "DIFFICILE crée un BotDifficile");
+        Test.test(TypeBot.EXPERT.creerStrategie() instanceof BotExpert, "EXPERT crée un BotExpert");
     }
 
     private void testJouerTour() {
@@ -1049,5 +1052,35 @@ public class TestJeu {
             }
         }
         Test.test(aucuneDeSesCartes, "ses propres cartes ne sont pas inconnues pour lui");
+    }
+
+    private void testBotExpertEviteSixiemeCarte() {
+        Jeu jeu = creerJeuAvecSeries();
+        jeu.getSerie(1).vider();
+        for (int v = 16; v <= 20; v++) {
+            jeu.getSerie(1).ajouterCarte(new Carte(v));
+        }
+
+        Joueur expert = new Joueur("Bot 1", true, TypeBot.EXPERT);
+        jeu.ajouterJoueur(expert);
+
+        expert.getMain().ajouterCarte(new Carte(22));
+        expert.getMain().ajouterCarte(new Carte(45));
+        jeu.ajouterJoueur(new Joueur("bot 2", true, TypeBot.MOYEN));
+
+        Carte carteJouee = jeu.choisirCarteBot(expert);
+
+        Test.test(carteJouee.getValeur() == 45, "l'EXPERT joue le 45 et évite la 6e carte");
+        Test.test(expert.getMain().nombreDeCartes() == 1, "Il reste 1 carte dans la main du joueur expert");
+    }
+
+    private void testBotExpertCarteTropPetite() {
+        Jeu jeu = creerJeuAvecSeries();
+        jeu.ajouterJoueur(new Joueur("Bot 1", true, TypeBot.EXPERT));
+        jeu.ajouterJoueur(new Joueur("Bot 2", true, TypeBot.MOYEN));
+
+        int serie = jeu.choisirSerieBot(jeu.getJoueur(0));
+
+        Test.test(serie >= 0 && serie <= 3, "La serie est entre 0 et 3");
     }
 }

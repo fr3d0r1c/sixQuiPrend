@@ -6,7 +6,7 @@ public class BenchmarkBots {
         int nbTypes = TypeBot.values().length;
 
         // ===== 1. TOURNOI À 4 =====
-        TypeBot[] participants = { TypeBot.ALEATOIRE, TypeBot.FACILE, TypeBot.MOYEN, TypeBot.DIFFICILE };
+        TypeBot[] participants = { TypeBot.ALEATOIRE, TypeBot.FACILE, TypeBot.MOYEN, TypeBot.DIFFICILE, TypeBot.EXPERT};
         int[] scoreCumule = new int[nbTypes];
         int[] nbJoueursParTypes = new int[nbTypes];
 
