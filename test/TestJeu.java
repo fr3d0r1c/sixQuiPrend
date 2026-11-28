@@ -1,5 +1,7 @@
 package test;
 
+import java.util.ArrayList;
+
 import modele.*;
 
 public class TestJeu {
@@ -54,6 +56,10 @@ public class TestJeu {
         monTest.testDevenirBot();
         monTest.testPreparerTourCarteDejaChoisie();
         monTest.testGetClassementPositions();
+        monTest.testMemoireDebutManche();
+        monTest.testMemoireApresTour();
+        monTest.testMemoireNouvelleManche();
+        monTest.testCartesInconnues();
     }
 
     private void testConstructeur1() {
@@ -967,5 +973,81 @@ public class TestJeu {
         Test.test(classement[1] == 0, "le 2e est Moi (40)");
         Test.test(classement[2] == 1, "le dernier est celui qui a le plus de têtes (Bot 1, 70)");
 
+    }
+
+    private int compterVues(Jeu jeu) {
+        int nbVues = 0;
+        for (int valeur = 1; valeur <= 104; valeur++) {
+            if (jeu.estVue(valeur)) {
+                nbVues++;
+            }
+        }
+        return nbVues;
+    }
+
+    private void testMemoireDebutManche() {
+        Jeu jeu = new Jeu(3);
+        jeu.ajouterJoueur(new Joueur("Moi", false));
+        jeu.ajouterJoueur(new Joueur("Bot 1", true, TypeBot.FACILE));
+        jeu.ajouterJoueur(new Joueur("Bot 2", true, TypeBot.FACILE));
+
+        jeu.preparerManche();
+
+        int nbVues = compterVues(jeu);
+        
+        Test.test(nbVues == 4, "au début d'une manche, seules les 4 cartes des séries sont vues");
+        Test.test(jeu.estVue(jeu.getSerie(0).derniereCarte().getValeur()), "la carte de la série 0 est vue");
+    }
+
+    private void testMemoireApresTour() {
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur humain = new Joueur("Moi", false);
+        Joueur bot = new Joueur("Bot", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(humain);
+        jeu.ajouterJoueur(bot);
+
+        bot.getMain().ajouterCarte(new Carte(35));
+        jeu.preparerTour(humain, new Carte(22));
+
+
+        Test.test(jeu.estVue(22) && jeu.estVue(35), "au début, seul le 22 et le 35 sont vues");
+        Test.test(!jeu.estVue(50), "La carte 50 n'est pas vue");
+    }
+
+    private void testMemoireNouvelleManche() {
+        Jeu jeu = creerJeuAvecSeries();
+        Joueur humain = new Joueur("Moi", false);
+        Joueur bot = new Joueur("Bot", true, TypeBot.FACILE);
+        jeu.ajouterJoueur(humain);
+        jeu.ajouterJoueur(bot);
+
+        jeu.preparerManche();
+
+        Test.test(compterVues(jeu) == 4, "au début de la manche, 4 cartes vues");
+
+        jeu.preparerTour(humain, humain.getMain().prendreUneCarte(0));
+        Test.test(compterVues(jeu) > 4, "Le tour a bien mémorisé les cartes");
+
+        jeu.preparerManche();
+        Test.test(compterVues(jeu) == 4, "La mémoire a bien été effacé");
+    }
+
+    private void testCartesInconnues() {
+        Jeu jeu = new Jeu(3);
+        Joueur moi = new Joueur("Moi", false);
+        jeu.ajouterJoueur(moi);
+
+        jeu.preparerManche();
+        ArrayList<Integer> inconnues = jeu.cartesInconnues(moi);
+        Test.test(inconnues.size() == 90, "Pour un joueur, 90 cartes lui sont inconnues");
+
+        boolean aucuneDeSesCartes = true;
+        for (int i = 0; i < moi.getMain().nombreDeCartes(); i++) {
+            int valeur = moi.getMain().getCarte(i).getValeur();
+            if (inconnues.contains(valeur)) {
+                aucuneDeSesCartes = false;
+            }
+        }
+        Test.test(aucuneDeSesCartes, "ses propres cartes ne sont pas inconnues pour lui");
     }
 }

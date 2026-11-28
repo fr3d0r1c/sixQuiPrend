@@ -1,4 +1,7 @@
 package modele;
+
+import java.util.ArrayList;
+
 public class Jeu implements InfosPartie{
     private Pioche maPioche;
     private Joueur[] tableauJoueurs;
@@ -11,6 +14,7 @@ public class Jeu implements InfosPartie{
     private Joueur dernierRamasseur;
     private int dernierGain;
     private Joueur dernierPoseur;
+    private boolean[] cartesVues = new boolean[104];
 
 
     public Jeu(int nbJoueurs){
@@ -161,12 +165,14 @@ public class Jeu implements InfosPartie{
         pioche.reinitialiser();
         dernierTour = null;
 
+        cartesVues = new boolean[104];
         for (int i = 0; i < 4; i++) {
             Serie serie = getSerie(i);
             Carte carte = pioche.piocher();
 
             serie.vider();
             serie.ajouterCarte(carte);
+            marquerVue(serie.derniereCarte().getValeur());
         }
 
         for (int i = 0; i < getNombreJoueurs(); i++) {
@@ -213,21 +219,10 @@ public class Jeu implements InfosPartie{
 
     public void jouerMancheAutomatique() {
         preparerManche();
-        CarteJouee[] cartesJouees = new CarteJouee[getNombreJoueurs()];
-
         while (getJoueur(0).getMain().nombreDeCartes() > 0) {
-            for (int i = 0; i < getNombreJoueurs(); i++) {
-                Joueur joueur = getJoueur(i);
-                cartesJouees[i] = new CarteJouee(choisirCarteBot(joueur), joueur);
-            }
-
-            ordonnerCartesJouees(cartesJouees);
-
-            for (int i=0; i < getNombreJoueurs(); i++) {
-                poserCarte(cartesJouees[i]);
-            }
+            preparerTour();
+            continuerTour();
         }
-
         terminerManche();
     }
 
@@ -279,6 +274,10 @@ public class Jeu implements InfosPartie{
             } else {
                 cartesJouees[i] = new CarteJouee(choisirCarteBot(joueur), joueur);
             }
+        }
+
+        for (int i = 0; i < cartesJouees.length; i++) {
+            marquerVue(cartesJouees[i].getCarte().getValeur());
         }
 
         ordonnerCartesJouees(cartesJouees);
@@ -474,6 +473,25 @@ public class Jeu implements InfosPartie{
             positions[i] = positionDe(classement[i]);
         }
         return positions;
-
     }
+
+    private void marquerVue(int valeur) {
+        cartesVues[valeur - 1] = true;
+    }
+
+    public boolean estVue(int valeur) {
+        return cartesVues[valeur - 1];
+    }
+
+    public ArrayList<Integer> cartesInconnues(Joueur joueur) {
+        ArrayList<Integer> inconnues =  new ArrayList<>();
+        for (int valeur = 1; valeur <= 104; valeur++) {
+            boolean dansSaMain = joueur.getMain().trouverCarte(valeur) != -1;
+            if (!estVue(valeur) && !dansSaMain)  {
+                inconnues.add(valeur);
+            }
+        }
+        return inconnues;
+    }
+
 }
